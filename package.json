@@ -24,6 +24,8 @@
     "express-session": "^1.10.3",
     "hmpo-form-controller": "0.0.2",
     "hmpo-model": "0.0.0",
+    "hogan.js": "^3.0.2",
+    "i18n-lookup": "^0.1.0",
     "underscore": "^1.8.2"
   },
   "devDependencies": {
