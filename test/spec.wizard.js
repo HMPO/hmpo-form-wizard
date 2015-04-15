@@ -15,7 +15,7 @@ describe('Form Wizard', function () {
             requestHandler = sinon.stub().yields();
             wizard = Wizard({
                 '/': {
-                    controller: StubController(requestHandler)
+                    controller: StubController({ requestHandler: requestHandler })
                 }
             }, {}, { name: 'test-wizard' });
         });
@@ -42,6 +42,26 @@ describe('Form Wizard', function () {
                 req.sessionModel.toJSON().should.eql({ name: 'John' });
                 done(err);
             });
+        });
+
+    });
+
+    describe('fields', function () {
+
+        it('includes all fields in fields option', function () {
+            var constructor = sinon.stub();
+            wizard = Wizard({
+                '/': {
+                    controller: StubController({ constructor: constructor }),
+                    fields: ['field1', 'field2']
+                }
+            }, { field1: { validate: 'required' } }, { name: 'test-wizard' });
+
+            constructor.args[0][0].fields.should.eql({
+                field1: { validate: 'required' },
+                field2: undefined
+            });
+
         });
 
     });
