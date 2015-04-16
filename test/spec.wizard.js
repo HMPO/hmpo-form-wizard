@@ -59,7 +59,7 @@ describe('Form Wizard', function () {
 
             constructor.args[0][0].fields.should.eql({
                 field1: { validate: 'required' },
-                field2: undefined
+                field2: {}
             });
 
         });
