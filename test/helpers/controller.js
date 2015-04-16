@@ -1,16 +1,21 @@
 var util = require('util'),
     EventEmitter = require('events').EventEmitter;
 
-module.exports = function (stub) {
+module.exports = function (options) {
+
+    options = options || {};
+    options.constructor = options.constructor || function () {};
+    options.requestHandler = options.requestHandler || function () {};
 
     var Controller = function () {
         this.options = {};
+        options.constructor.apply(null, arguments);
     };
 
     util.inherits(Controller, EventEmitter);
 
     Controller.prototype.requestHandler = function () {
-        return stub;
+        return options.requestHandler;
     };
 
     return Controller;
