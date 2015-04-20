@@ -1,12 +1,11 @@
-var chai = require('chai'),
-    reqres = require('reqres');
+var chai = require('chai');
 
 global.should = chai.should();
 global.expect = chai.expect;
 global.sinon = require('sinon');
 
 global.StubController = require('./helpers/controller');
-global.request = reqres.req;
-global.response = reqres.res;
+global.request = require('./helpers/request');
+global.response = require('./helpers/response');
 
 chai.use(require('sinon-chai'));
