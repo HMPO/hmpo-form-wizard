@@ -1,8 +1,25 @@
-var Controller = require('../lib/controller');
+var Controller = require('../lib/controller'),
+    Form = require('hmpo-form-controller');
 
 describe('Form Controller', function () {
 
     var controller, req, res;
+
+    describe('validators', function () {
+
+        it('exposes validators', function () {
+            Controller.validators.should.eql(Form.validators);
+        });
+
+    });
+
+    describe('formatters', function () {
+
+        it('exposes formatters', function () {
+            Controller.formatters.should.eql(Form.formatters);
+        });
+
+    });
 
     describe('getErrors', function () {
 
