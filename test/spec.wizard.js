@@ -66,4 +66,51 @@ describe('Form Wizard', function () {
 
     });
 
+    describe('router params', function () {
+
+        beforeEach(function () {
+            res = response();
+            next = sinon.stub();
+        });
+
+        it('binds additional params onto route', function (done) {
+            req = request({
+                url: '/step/edit'
+            });
+            requestHandler = function (req, res, next) {
+                req.params.action.should.equal('edit');
+                next();
+            };
+            wizard = Wizard({
+                '/step': {
+                    controller: StubController({ requestHandler: requestHandler })
+                }
+            }, {}, { name: 'test-wizard', params: '/:action?' });
+            wizard(req, res, function (err) {
+                expect(err).not.to.be.ok;
+                done(err);
+            });
+        });
+
+        it('handles parameterless routes', function (done) {
+            req = request({
+                url: '/step'
+            });
+            requestHandler = function (req, res, next) {
+                expect(req.params.action).to.be.undefined;
+                next();
+            };
+            wizard = Wizard({
+                '/step': {
+                    controller: StubController({ requestHandler: requestHandler })
+                }
+            }, {}, { name: 'test-wizard', params: '/:action?' });
+            wizard(req, res, function (err) {
+                expect(err).not.to.be.ok;
+                done(err);
+            });
+        });
+
+    });
+
 });
