@@ -17,7 +17,7 @@ describe('Form Wizard', function () {
                 '/': {
                     controller: StubController({ requestHandler: requestHandler })
                 }
-            }, {}, { name: 'test-wizard' });
+            }, {}, { name: 'test-wizard', csrf: false });
         });
 
         it('creates a namespace on the session', function (done) {
