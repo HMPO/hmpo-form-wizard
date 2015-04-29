@@ -10,6 +10,10 @@ module.exports = {
     },
     '/age': {
         fields: ['age'],
+        next: '/gender'
+    },
+    '/gender': {
+        fields: ['gender'],
         next: '/submit'
     },
     '/submit': {

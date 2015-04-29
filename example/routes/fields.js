@@ -8,9 +8,15 @@ module.exports = {
         validate: [
             'required',
             'numeric'
+        ]
+    },
+    gender: {
+        validate: [
+            'required'
         ],
-        formatter: [
-            'numeric'
+        options: [
+            { value: 'male', label: 'Male' },
+            { value: 'female', label: 'Female' }
         ]
     }
 }
