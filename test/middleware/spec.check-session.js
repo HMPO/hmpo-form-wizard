@@ -19,10 +19,27 @@ describe('middleware/check-session', function () {
         next = sinon.stub();
     });
 
+    it('throws session error if cookie exists, but session flag does not', function () {
+        var middleware = checkSession('/route', { options: {} }, {}, '/first');
+        middleware(req, res, function (err) {
+            err.should.be.an.instanceOf(Error);
+            err.code.should.equal('SESSION_TIMEOUT')
+        });
+    });
+
+    it('does not throw error on GET to first route', function () {
+        var middleware = checkSession('/route', { options: {} }, {}, '/first');
+        req.path = '/first';
+        middleware(req, res, function (err) {
+            expect(err).to.be.undefined;
+        });
+    });
+
     it('does not throw session error if controller checkSession option is false', function () {
         var middleware = checkSession('/route', { options: { checkSession: false } }, {}, '/first');
-        middleware(req, res, next);
-        next.should.have.been.calledWithExactly();
+        middleware(req, res, function (err) {
+            expect(err).to.be.undefined;
+        });
     });
 
 });
