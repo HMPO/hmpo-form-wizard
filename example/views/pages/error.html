@@ -1,0 +1,14 @@
+{{< layout}}
+
+{{$header}}Error{{#err.message}} - {{err.message}}{{/err.message}}{{/header}}
+
+{{$content}}
+    {{<partials-form}}
+        {{$form}}
+            <p>An error occurred</p>
+            <a href="/" class="button">Start again</a>
+        {{/form}}
+    {{/partials-form}}
+{{/content}}
+
+{{/ layout}}

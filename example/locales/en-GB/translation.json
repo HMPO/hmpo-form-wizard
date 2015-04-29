@@ -1,0 +1,23 @@
+{
+    "fields": {
+        "name": {
+            "label": "Your name"
+        },
+        "age": {
+            "label": "Your age"
+        }
+    },
+    "buttons": {
+        "next": "Continue",
+        "submit": "Submit"
+    },
+    "validation": {
+        "required": "Please enter {{label}}.",
+        "numeric": "{{label}} must only contain numbers.",
+        "default": "You must answer this question."
+    },
+    "error": {
+        "default": "An unknown error occured",
+        "session": "Session timeout"
+    }
+}

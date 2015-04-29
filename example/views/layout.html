@@ -1,0 +1,23 @@
+{{< govuk-template}}
+
+{{$head}}
+    {{> partials-head}}
+{{/head}}
+
+{{$pageTitle}}
+    {{$header}}{{/header}} &ndash; GOV.UK
+{{/pageTitle}}
+
+{{$headerClass}}with-proposition{{/headerClass}}
+
+{{$main}}
+    {{$breadcrumb}}{{/breadcrumb}}
+    <main id="content" class="main" role="main">
+        {{> partials-back}}
+        <div class="grid-row">
+            {{> partials-maincontent-left}}
+        </div>
+    </main>
+{{/main}}
+
+{{/ govuk-template}}

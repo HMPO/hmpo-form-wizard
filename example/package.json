@@ -1,0 +1,27 @@
+{
+  "name": "demo-form",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "postinstall": "node-sass ./assets/app.scss ./assets/app.css --include-path ./node_modules",
+    "start": "node app.js"
+  },
+  "author": "",
+  "dependencies": {
+    "body-parser": "^1.12.2",
+    "express": "^4.12.3",
+    "express-partial-templates": "^0.1.0",
+    "hmpo-form-controller": "0.0.6",
+    "hmpo-form-wizard": "0.2.10",
+    "hmpo-frontend-toolkit": "^1.0.3",
+    "hmpo-govuk-template": "0.0.3",
+    "hmpo-model": "^0.1.1",
+    "hmpo-template-mixins": "^0.1.9",
+    "hogan-express-strict": "^0.5.3",
+    "i18n-lookup": "^0.1.0",
+    "i18next": "^1.7.10",
+    "node-sass": "^2.1.1",
+    "underscore": "^1.8.3"
+  }
+}

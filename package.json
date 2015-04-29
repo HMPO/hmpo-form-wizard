@@ -1,7 +1,7 @@
 {
   "name": "hmpo-form-wizard",
   "version": "0.2.10",
-  "description": "",
+  "description": "routing and request handling for a multi-step form processes",
   "main": "index.js",
   "scripts": {
     "test": "mocha test/. --recursive --require test/helpers.js"
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/UKHomeOffice/passports-form-wizard.git"
   },
-  "author": "",
+  "author": "Leonard Martin <hello@lennym.co.uk>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/UKHomeOffice/passports-form-wizard/issues"
