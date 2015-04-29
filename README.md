@@ -4,7 +4,7 @@ Creates routing and request handling for a multi-step form process.
 
 Given a set of form steps and field definitions, the wizard function will create an express router with routing bound to each step of the form and input validation applied as configured.
 
-Additional checks are also applied to ensure a user completes the form in the correct order as well as CSRF checking at each step.
+Additional checks are also applied to ensure a user completes the form in the correct order.
 
 ## Usage
 
@@ -51,6 +51,12 @@ var wizard = require('hmpo-form-wizard'),
 
 app.use(wizard(steps, fields));
 ```
+
+## Sessions
+
+The wizard expects some kind of session to have been created in previous middleware layers. If this is not found then the wizard will create its own in-memory session using [express-session](https://github.com/expressjs/session) but this is not recommended for production use.
+
+For production use a database backed session store is recommended - such as [connect-redis](https://github.com/tj/connect-redis).
 
 ### Additional options
 
