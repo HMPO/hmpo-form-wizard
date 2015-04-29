@@ -58,7 +58,7 @@ The wizard expects some kind of session to have been created in previous middlew
 
 For production use a database backed session store is recommended - such as [connect-redis](https://github.com/tj/connect-redis).
 
-### Additional options
+### Additional step options
 
 The minimum amount of configuration for a wizard step is the `next` property to determine where the user should be taken after completing a step. A number of additional properties can be defined.
 
@@ -66,6 +66,15 @@ The minimum amount of configuration for a wizard step is the `next` property to 
 * `template` - Specifies the template to render for GET requests to this step. Defaults to the route (without railing slash)
 * `backLink` - Specifies the location of the step previous to this one. If not specified then an algorithm is applied which checks the previously visited steps which have the current step set as `next`.
 * `controller` - The constructor for the controller to be used for this step's request handling. The default is an extension of the [hmpo-form-controller](https://www.npmjs.com/package/hmpo-form-controller), which is exported as a `Controller` property of this module. If custom behaviour is required for a particular form step then custom extensions can be defined - see [Custom Controllers](#custom-controllers)
+
+### Additional wizard options
+
+A number of options can be passed to the wizard as a third argument to customise aspects of the behaviour for all steps.
+
+`translate` - provide a function for translating validation error codes into usable messages. Previous implementations have used [i18next](https://www.npmjs.com/package/i18next) to do translations.
+`templatePath` - provides the location within `app.get('views')` that templates are stored. Default `pages`.
+`controller` - override the [default controller](./lib/controller.js) for steps without a controller specified.
+`params` - define a suffix for the routes for supporting additional URL parameters.
 
 ### Custom Controllers
 
