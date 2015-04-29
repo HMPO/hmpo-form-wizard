@@ -20,5 +20,7 @@ module.exports = {
         controller: require('../controllers/submit'),
         next: '/done'
     },
-    '/done': {}
+    '/done': {
+        backLink: null
+    }
 }
