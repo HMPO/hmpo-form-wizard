@@ -45,6 +45,19 @@ describe('Form Controller', function () {
             errors.should.eql({ field1: 'foo' });
         });
 
+        it('does not return errors with a redirect property', function () {
+           req.sessionModel.set('errors', {
+                field1: {
+                    redirect: '/exit-page'
+                },
+                field2: {
+                    message: 'message'
+                }
+            });
+            var errors = controller.getErrors(req, res);
+            errors.should.eql({ field2: { message: 'message' } }); 
+        });
+
     });
 
 });
