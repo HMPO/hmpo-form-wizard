@@ -131,6 +131,16 @@ describe('Back Links', function () {
         res.locals.backLink.should.equal('whitelist');
     });
 
+    it('supports absolute paths in whitelist', function () {
+        req.get.withArgs('referrer').returns('http://example.com/whitelist');
+        req.sessionModel.set('steps', ['/step1', '/step2']);
+        req.baseUrl = '/base';
+        steps['/step2'].next = null;
+        controller.options.backLinks = ['/whitelist'];
+        backLinks('/step3', controller, steps)(req, res, next);
+        res.locals.backLink.should.equal('/whitelist');
+    });
+
     it('returns undefined if referrer header is not on whitelist', function () {
         req.get.withArgs('referrer').returns('http://example.com/not-whitelisted');
         req.sessionModel.set('steps', ['/step1', '/step2']);
