@@ -17,12 +17,12 @@ describe('Form Wizard', function () {
                 '/': {
                     controller: StubController({ requestHandler: requestHandler })
                 }
-            }, {}, { name: 'test-wizard', csrf: false });
+            }, {}, { name: 'test', csrf: false });
         });
 
         it('creates a namespace on the session', function (done) {
             wizard(req, res, function (err) {
-                req.session['test-wizard'].should.eql({});
+                req.session['hmpo-wizard-test'].should.eql({});
                 done(err);
             });
         });
@@ -35,7 +35,7 @@ describe('Form Wizard', function () {
         });
 
         it('initialises model with data from session', function (done) {
-            req.session['test-wizard'] = {
+            req.session['hmpo-wizard-test'] = {
                 name: 'John'
             };
             wizard(req, res, function (err) {
