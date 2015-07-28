@@ -10,7 +10,7 @@ describe('middleware/check-session', function () {
             method: 'GET',
             session: {},
             cookies: {
-                'pex-sc': 1
+                'hmpo-wizard-sc': 1
             }
         };
         res = {
@@ -24,6 +24,14 @@ describe('middleware/check-session', function () {
         middleware(req, res, function (err) {
             err.should.be.an.instanceOf(Error);
             err.code.should.equal('SESSION_TIMEOUT')
+        });
+    });
+
+    it('does not throw session error if cookie does not exist', function () {
+        req.cookies = {};
+        var middleware = checkSession('/route', { options: {} }, {}, '/first');
+        middleware(req, res, function (err) {
+            expect(err).to.be.undefined;
         });
     });
 
