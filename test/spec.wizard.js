@@ -113,4 +113,55 @@ describe('Form Wizard', function () {
 
     });
 
+    describe('middleware error handling', function () {
+
+        beforeEach(function () {
+            req = request();
+            res = response();
+            next = sinon.stub();
+            requestHandler = sinon.stub().yields();
+            sinon.stub(Wizard.Controller.prototype, 'errorHandler');
+            wizard = Wizard({
+                '/one': {
+                    next: '/two'
+                },
+                '/two': {
+                    next: '/three'
+                },
+                '/three': {},
+            }, {}, { name: 'test', csrf: false });
+        });
+
+        afterEach(function () {
+            Wizard.Controller.prototype.errorHandler.restore();
+        });
+
+        describe('check progress', function () {
+
+            it('catches pre-requisite errors at the controller error handler', function () {
+                req.url = '/three';
+                wizard.handle(req, res, next);
+                Wizard.Controller.prototype.errorHandler.should.have.been.calledOnce;
+                Wizard.Controller.prototype.errorHandler.args[0][0].should.have.property('code');
+                Wizard.Controller.prototype.errorHandler.args[0][0].code.should.equal('MISSING_PREREQ');
+            });
+
+        });
+
+        describe('check session', function () {
+
+            it('catches missing session errors at the controller error handler', function () {
+                req.url = '/two';
+                req.cookies['hmpo-wizard-sc'] = 1;
+                req.session.exists = false;
+                wizard.handle(req, res, next);
+                Wizard.Controller.prototype.errorHandler.should.have.been.calledOnce;
+                Wizard.Controller.prototype.errorHandler.args[0][0].should.have.property('code');
+                Wizard.Controller.prototype.errorHandler.args[0][0].code.should.equal('SESSION_TIMEOUT');
+            });
+
+        });
+
+    });
+
 });
