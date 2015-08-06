@@ -1,6 +1,6 @@
 {
   "name": "hmpo-form-wizard",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "routing and request handling for a multi-step form processes",
   "main": "index.js",
   "scripts": {
