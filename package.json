@@ -23,7 +23,7 @@
     "depd": "^1.0.0",
     "express": "^4.12.2",
     "express-session": "^1.10.3",
-    "hmpo-form-controller": "^0.3.0",
+    "hmpo-form-controller": "^0.4.0",
     "hmpo-model": "0.0.0",
     "hogan.js": "^3.0.2",
     "i18n-lookup": "^0.1.0",
