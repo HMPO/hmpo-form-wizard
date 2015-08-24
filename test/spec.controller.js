@@ -1,4 +1,5 @@
 var Controller = require('../lib/controller'),
+    ErrorClass = require('../lib/error'),
     Form = require('hmpo-form-controller');
 
 describe('Form Controller', function () {
@@ -30,6 +31,15 @@ describe('Form Controller', function () {
 
         it('exposes formatters', function () {
             Controller.formatters.should.eql(Form.formatters);
+        });
+
+    });
+
+    describe('Error', function () {
+
+        it('is an instance of Wizard.Error', function () {
+            var err = new controller.Error('key', { type: 'required' });
+            err.should.be.an.instanceOf(ErrorClass);
         });
 
     });
