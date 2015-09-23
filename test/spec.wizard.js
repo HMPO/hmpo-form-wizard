@@ -117,6 +117,7 @@ describe('Form Wizard', function () {
 
         beforeEach(function () {
             req = request();
+            req.header = sinon.stub();
             res = response();
             next = sinon.stub();
             requestHandler = sinon.stub().yields();
