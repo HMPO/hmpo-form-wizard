@@ -73,7 +73,7 @@ describe('Back Links', function () {
     it('adds the previous step to res.locals.backLink', function () {
         req.sessionModel.set('steps', ['/step1']);
         backLinks('/step2', controller, steps)(req, res, next);
-        res.locals.backLink.should.equal('step1');
+        res.locals.backLink.should.equal('/step1');
     });
 
     it('is not defined for first step of journey', function () {
@@ -84,11 +84,23 @@ describe('Back Links', function () {
     it('adds the most recently visited previous step if there are multiple options', function () {
         req.sessionModel.set('steps', ['/step1', '/step3', '/step3a']);
         backLinks('/step4', controller, steps)(req, res, next);
-        res.locals.backLink.should.equal('step3a');
+        res.locals.backLink.should.equal('/step3a');
 
         req.sessionModel.set('steps', ['/step1', '/step3a', '/step3']);
         backLinks('/step4', controller, steps)(req, res, next);
-        res.locals.backLink.should.equal('step3');
+        res.locals.backLink.should.equal('/step3');
+    });
+
+    it('removes the slash if the backlink is only a slash', function () {
+        var slashSteps = {
+            '/': {
+                next: '/step1'
+            },
+            '/step1': {}
+        };
+        req.sessionModel.set('steps', ['/']);
+        backLinks('/step1', controller, slashSteps)(req, res, next);
+        res.locals.backLink.should.equal('');
     });
 
     it('uses configured backLink property if it exists', function () {
