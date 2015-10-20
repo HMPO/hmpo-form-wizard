@@ -162,6 +162,34 @@ describe('Form Wizard', function () {
 
         });
 
+
+    });
+
+    describe('app middlewares', function () {
+        beforeEach(function () {
+            req = request();
+            res = response();
+            next = sinon.stub();
+            requestHandler = sinon.stub().yields();
+            wizard = Wizard({
+                '/': {
+                    controller: StubController({ requestHandler: requestHandler })
+                }
+            }, {}, { name: 'test', csrf: false, translate: 'i18ntranslator' });
+        });
+
+        describe('applying a translate', function () {
+
+            it('sets translate to the req when defined in settings', function (done) {
+                should.equal(req.translate, undefined);
+                wizard(req, res, function (err) {
+                    req.translate.should.equal('i18ntranslator');
+                    done(err);
+                });
+
+            });
+
+        });
     });
 
 });
