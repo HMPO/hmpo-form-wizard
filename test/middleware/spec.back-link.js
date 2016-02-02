@@ -150,6 +150,30 @@ describe('Back Links', function () {
         expect(res.locals.backLink).to.be.undefined;
     });
 
+    it('permits whitelisting of steps in history', function () {
+        req.get.withArgs('referrer').returns('http://example.com/base/step4');
+        req.sessionModel.set('steps', ['/step1', '/step2', '/step3a', '/step4']);
+        controller.options.backLinks = ['step2'];
+        backLinks('/step3a', controller, steps)(req, res, next);
+        res.locals.backLink.should.equal('step2');
+    });
+
+    it('returns most recent of whitelisted steps in history', function () {
+        req.get.withArgs('referrer').returns('http://example.com/base/step4');
+        req.sessionModel.set('steps', ['/step1', '/step2', '/step3a', '/step4']);
+        controller.options.backLinks = ['step2', 'step1'];
+        backLinks('/step3a', controller, steps)(req, res, next);
+        res.locals.backLink.should.equal('step2');
+    });
+
+    it('matches absolute whitelisted steps in history', function () {
+        req.get.withArgs('referrer').returns('http://example.com/base/step4');
+        req.sessionModel.set('steps', ['/step1', '/step2', '/step3a', '/step4']);
+        controller.options.backLinks = ['/step2'];
+        backLinks('/step3a', controller, steps)(req, res, next);
+        res.locals.backLink.should.equal('/step2');
+    });
+
     describe('isBackLink request object property', function () {
 
         it('is true when the last step matches the page path', function () {
