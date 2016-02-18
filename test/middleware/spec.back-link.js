@@ -112,6 +112,15 @@ describe('Back Links', function () {
         res.locals.backLink.should.equal('whitelist');
     });
 
+    it('whitelists historical steps if no configured backwards route', function () {
+        req.get.withArgs('referrer').returns('http://example.com/referrer');
+        req.session['hmpo-wizard-test-form'] = { steps: ['/history1', '/history2']};
+        steps['/step2'].next = null;
+        controller.options.backLinks = ['/history1'];
+        backLinks('/step3', controller, steps)(req, res, next);
+        res.locals.backLink.should.equal('history1');
+    });
+
     it('supports links prefixed with `./`', function () {
         req.get.withArgs('referrer').returns('http://example.com/whitelist');
         req.sessionModel.set('steps', ['/step1', '/step2']);
