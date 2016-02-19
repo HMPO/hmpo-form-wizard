@@ -54,7 +54,7 @@ app.use(wizard(steps, fields));
 
 ## Sessions
 
-The wizard expects some kind of session to have been created in previous middleware layers. If this is not found then the wizard will create its own in-memory session using [express-session](https://github.com/expressjs/session) but this is not recommended for production use.
+The wizard expects some kind of session to have been created in previous middleware layers.
 
 For production use a database backed session store is recommended - such as [connect-redis](https://github.com/tj/connect-redis).
 
