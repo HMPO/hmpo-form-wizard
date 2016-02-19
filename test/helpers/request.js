@@ -4,6 +4,6 @@ var _ = require('underscore'),
 
 module.exports = function (settings) {
     var req = reqres.req(settings);
-    req.sessionModel = req.sessionModel || new SessionModel({}, { session: req.session, key: 'test' });
+    req.sessionModel = req.sessionModel || new SessionModel({}, { session: req.session, key: 'hmpo-wizard-test' });
     return req;
 };
