@@ -166,9 +166,9 @@ describe('Back Links', function () {
         expect(res.locals.backLink).to.be.undefined;
     });
 
-    it('permits whitelisting of steps from separate form instance', function () {
+    it('permits whitelisting of steps from a separate form instance', function () {
         req.get.withArgs('referrer').returns('http://example.com/referrer');
-        req.session['hmpo-wizard-test-form'] = { steps: ['/history1', '/history2']};
+        req.session['hmpo-wizard-test-form'] = { steps: ['/history1', '/history2', '/step1', '/step2', '/step3', '/step4']};
         steps['/step2'].next = null;
         controller.options.backLinks = ['/history1'];
         backLinks('/step3', controller, steps)(req, res, next);
