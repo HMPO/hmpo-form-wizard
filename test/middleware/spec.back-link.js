@@ -141,6 +141,22 @@ describe('Back Links', function () {
         res.locals.backLink.should.equal('/whitelist');
     });
 
+    it('permits whitelisting of steps in history', function () {
+        req.get.withArgs('referrer').returns('http://example.com/base/step4');
+        req.sessionModel.set('steps', ['/step1', '/step2', '/step3a', '/step4']);
+        controller.options.backLinks = ['/step2'];
+        backLinks('/step3a', controller, steps)(req, res, next);
+        res.locals.backLink.should.equal('step2');
+    });
+
+    it('returns most recent of whitelisted steps in history', function () {
+        req.get.withArgs('referrer').returns('http://example.com/base/step4');
+        req.sessionModel.set('steps', ['/step1', '/step2', '/step3a', '/step4']);
+        controller.options.backLinks = ['/step2', '/step1'];
+        backLinks('/step3a', controller, steps)(req, res, next);
+        res.locals.backLink.should.equal('step2');
+    });
+
     it('returns undefined if referrer header is not on whitelist', function () {
         req.get.withArgs('referrer').returns('http://example.com/not-whitelisted');
         req.sessionModel.set('steps', ['/step1', '/step2']);
@@ -148,6 +164,16 @@ describe('Back Links', function () {
         controller.options.backLinks = ['whitelist'];
         backLinks('/', controller, steps)(req, res, next);
         expect(res.locals.backLink).to.be.undefined;
+    });
+
+    it('permits whitelisting of steps from a separate form instance', function () {
+        req.get.withArgs('referrer').returns('http://example.com/referrer');
+        req.sessionModel.set('steps', ['/step1', '/step2', '/step3', '/step4']);
+        req.session['hmpo-wizard-test-form'] = { steps: ['/history1', '/history2']};
+        steps['/step2'].next = null;
+        controller.options.backLinks = ['./history1'];
+        backLinks('/step3', controller, steps)(req, res, next);
+        res.locals.backLink.should.equal('history1');
     });
 
     describe('isBackLink request object property', function () {
