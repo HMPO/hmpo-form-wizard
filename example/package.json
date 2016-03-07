@@ -10,8 +10,10 @@
   "author": "",
   "dependencies": {
     "body-parser": "^1.12.2",
+    "cookie-parser": "^1.4.1",
     "express": "^4.12.3",
     "express-partial-templates": "^0.1.0",
+    "express-session": "^1.13.0",
     "hmpo-form-controller": "0.0.6",
     "hmpo-form-wizard": "0.2.10",
     "hmpo-frontend-toolkit": "^1.0.3",

@@ -1,7 +1,18 @@
 var express = require('express'),
     app = express(),
+    cookieParser = require('cookie-parser'),
+    session = require('express-session'),
     path = require('path'),
     i18n = require('i18next');
+
+app.use(cookieParser());
+
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false }
+}))
 
 // add routing for static assets if running as a standalone server
 app.use('/public', express.static(path.resolve(__dirname, './assets')));
