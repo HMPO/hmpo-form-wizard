@@ -2,12 +2,13 @@ var ErrorClass = require('../lib/error');
 
 describe('Error', function () {
 
-    var req;
+    var req, res;
 
     beforeEach(function () {
         req = request({
             translate: sinon.stub().returnsArg(0)
         });
+        res = response();
     });
 
     describe('getMessage', function () {
@@ -71,6 +72,13 @@ describe('Error', function () {
             req.translate.withArgs('validation.key.custom').returns('This must be {{custom}}');
             var error = new ErrorClass('key', { type: 'custom', arguments: ['dynamic'] }, req);
             error.message.should.equal('This must be dynamic');
+        });
+
+        it('populates messages with values from `res.locals` when present', function () {
+            req.translate.withArgs('validation.key.required').returns('This must be a {{something}}');
+            res.locals.something = 'value';
+            var error = new ErrorClass('key', { type: 'required' }, req, res);
+            error.message.should.equal('This must be a value');
         });
 
         it('uses own translate method if no req.translate is defined', function () {
