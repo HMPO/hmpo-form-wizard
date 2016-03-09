@@ -67,6 +67,12 @@ describe('Error', function () {
             error.message.should.equal('This must be less than 5 days ago');
         });
 
+        it('populates custom messages with the required variable', function () {
+            req.translate.withArgs('validation.key.custom').returns('This must be {{custom}}');
+            var error = new ErrorClass('key', { type: 'custom', arguments: ['dynamic'] }, req);
+            error.message.should.equal('This must be dynamic');
+        });
+
         it('uses own translate method if no req.translate is defined', function () {
             delete req.translate;
             sinon.stub(ErrorClass.prototype, 'translate').returns('Custom translate');
