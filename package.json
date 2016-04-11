@@ -4,7 +4,8 @@
   "description": "routing and request handling for a multi-step form processes",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/. --recursive --require test/helpers.js"
+    "test": "mocha test/. --recursive --require test/helpers.js",
+    "test:watch": "npm run test -- --watch"
   },
   "repository": {
     "type": "git",
