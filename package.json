@@ -4,7 +4,9 @@
   "description": "routing and request handling for a multi-step form processes",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/. --recursive --require test/helpers.js"
+    "test": "mocha test/. --recursive --require test/helpers.js",
+    "lint": "eslint .",
+    "style": "jscs ."
   },
   "repository": {
     "type": "git",
@@ -28,9 +30,20 @@
   },
   "devDependencies": {
     "chai": "^2.1.2",
+    "eslint": "^0.23.0",
+    "eslint-config-homeoffice": "^0.1.4",
+    "eslint-plugin-filenames": "^0.1.2",
+    "eslint-plugin-mocha": "^0.2.2",
+    "eslint-plugin-one-variable-per-var": "0.0.3",
+    "jscs": "^2.11.0",
     "mocha": "^2.2.1",
     "reqres": "^1.2.0",
     "sinon": "^1.14.1",
     "sinon-chai": "^2.7.0"
-  }
+  },
+  "pre-commit": [
+    "lint",
+    "style",
+    "test"
+  ]
 }

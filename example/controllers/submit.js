@@ -1,19 +1,20 @@
-var util = require('util'),
-    _ = require('underscore');
+'use strict';
 
-var Controller = require('hmpo-form-wizard').Controller,
-    Model = require('../models/submit');
+var util = require('util');
+var _ = require('underscore');
+var Controller = require('hmpo-form-wizard').Controller;
+var Model = require('../models/submit');
 
-var Submit = function () {
-    Controller.apply(this, arguments);
-}
+var Submit = function Submit() {
+  Controller.apply(this, arguments);
+};
 
 util.inherits(Submit, Controller);
 
-Submit.prototype.saveValues = function (req, res, callback) {
-    var data = _.pick(req.sessionModel.toJSON(), Object.keys(require('../routes/fields'))),
-        model = new Model(data);
-        model.save(callback);
-}
+Submit.prototype.saveValues = function saveValues(req, res, callback) {
+  var data = _.pick(req.sessionModel.toJSON(), Object.keys(require('../routes/fields')));
+  var model = new Model(data);
+  model.save(callback);
+};
 
 module.exports = Submit;
