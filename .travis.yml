@@ -1,8 +1,15 @@
 language: node_js
 node_js:
-  - "0.10"
-  - "0.12"
-  - "iojs"
+  - "5"
+  - "4"
+  - "4.2"
+
 notifications:
   email: false
+
 sudo: false
+
+script:
+  - npm run style
+  - npm run lint
+  - npm run test
