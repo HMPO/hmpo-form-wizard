@@ -10,13 +10,23 @@ module.exports = {
             'numeric'
         ]
     },
-    gender: {
+    direction: {
         validate: [
             'required'
         ],
         options: [
-            { value: 'male', label: 'Male' },
-            { value: 'female', label: 'Female' }
+            { value: 'left', label: 'Left' },
+            { value: 'right', label: 'Right' }
+        ]
+    },
+    'left-only': {
+        validate: [
+            'required'
+        ]
+    },
+    'right-only': {
+        validate: [
+            'required'
         ]
     }
 }

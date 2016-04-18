@@ -10,10 +10,25 @@ module.exports = {
     },
     '/age': {
         fields: ['age'],
-        next: '/gender'
+        next: '/direction'
     },
-    '/gender': {
-        fields: ['gender'],
+    '/direction': {
+        fields: ['direction'],
+        next: '/left',
+        forks: [{
+            target: '/right',
+            condition: {
+                field: 'direction',
+                value: 'right'
+            }
+        }]
+    },
+    '/right': {
+        fields: ['right-only'],
+        next: '/submit'
+    },
+    '/left': {
+        fields: ['left-only'],
         next: '/submit'
     },
     '/submit': {
