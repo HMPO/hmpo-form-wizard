@@ -2,7 +2,7 @@ var checkSession = require('../../lib/middleware/check-progress'),
     Model = require('../../lib/model'),
     Controller = require('../../lib/controller');
 
-describe('middleware/check-session', function () {
+describe('middleware/check-progress', function () {
 
     var req, res, next, controller, steps;
 
@@ -35,6 +35,38 @@ describe('middleware/check-session', function () {
         middleware(req, res, function (err) {
             err.code.should.equal('MISSING_PREREQ');
             done();
+        });
+    });
+
+    describe('invalidating fields', function () {
+        beforeEach(function () {
+            controller = new Controller({
+                template: 'index',
+                fields: {
+                    'field-one': {
+                        invalidates: ['field-two']
+                    }
+                }
+            });
+            steps['/one'].fields = ['field-two'];
+            steps['/two'].fields = ['field-one'];
+        });
+
+        it('should invalidate field-two if field-one is changed', function () {
+            req.sessionModel.set('steps', [ '/one', '/two' ]);
+            req.sessionModel.set('field-two', 'test');
+            checkSession('/two', controller, steps, '/one')(req, res, next);
+            req.sessionModel.set('field-one', 'test');
+            expect(req.sessionModel.get('field-two')).to.be.equal(undefined);
+        });
+
+        it('should remove the step from sessionModel if all fields are invalidated', function () {
+            req.sessionModel.set('steps', [ '/one', '/two' ]);
+            req.sessionModel.set('field-two', 'test');
+            req.sessionModel.set('field-three', 'test');
+            checkSession('/three', controller, steps, '/one')(req, res, next);
+            req.sessionModel.set('field-one', 'test');
+            req.sessionModel.get('steps').should.not.contain('/one');
         });
     });
 
