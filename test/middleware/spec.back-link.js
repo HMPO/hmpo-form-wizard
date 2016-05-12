@@ -1,18 +1,11 @@
-var proxyquire = require('proxyquire'),
-    util = require('util'),
-    EventEmitter = require('events').EventEmitter;
+var backLinks = require('../../lib/middleware/back-links');
 
-var getBackLinks = function (previousSteps) {
-    return proxyquire('../../lib/middleware/back-links', {
-        '../util/helpers': {
-            getPreviousSteps: sinon.stub().returns(previousSteps)
-        }
-    });
-};
+var util = require('util'),
+    EventEmitter = require('events').EventEmitter,
+    helpers = require('../../lib/util/helpers');
 
 describe('Back Links', function () {
-
-    var controller, steps, req, res, next, backLinks;
+    var controller, steps, req, res, next;
 
     var StubController = function () {
         this.options = {};
@@ -68,32 +61,41 @@ describe('Back Links', function () {
         };
         next = sinon.stub();
 
+        sinon.stub(helpers, 'getRouteSteps').returns([]);
+    });
+
+    afterEach(function () {
+        helpers.getRouteSteps.restore();
+    });
+
+    it('calls getRouteSteps helper with route and steps', function () {
+        backLinks('/', controller, steps);
+        helpers.getRouteSteps.should.have.been.calledWithExactly('/', steps);
     });
 
     it('is only set on a GET request', function () {
         req.method = 'POST';
         req.sessionModel.set('steps', ['/step1']);
-        backLinks = getBackLinks();
         backLinks('/', controller, steps)(req, res, next);
         expect(res.locals.backLink).to.be.undefined;
     });
 
     it('adds the previous step to res.locals.backLink', function () {
         req.sessionModel.set('steps', ['/step1']);
-        backLinks = getBackLinks(['/step1']);
+        helpers.getRouteSteps.returns(['/step1']);
         backLinks('/step2', controller, steps)(req, res, next);
         res.locals.backLink.should.equal('step1');
     });
 
     it('is not defined for first step of journey', function () {
-        backLinks = getBackLinks();
         backLinks('/', controller, steps)(req, res, next);
         expect(res.locals.backLink).to.be.undefined;
     });
 
     it('adds the most recently visited previous step if there are multiple options', function () {
+        helpers.getRouteSteps.returns(['/step3', '/step3a']);
+
         req.sessionModel.set('steps', ['/step1', '/step3', '/step3a']);
-        backLinks = getBackLinks(['/step3a', '/step3'])
         backLinks('/step4', controller, steps)(req, res, next);
         res.locals.backLink.should.equal('step3a');
 
@@ -104,14 +106,12 @@ describe('Back Links', function () {
 
     it('uses configured backLink property if it exists', function () {
         controller.options.backLink = '/back';
-        backLinks = getBackLinks();
         backLinks('/', controller, steps)(req, res, next);
         res.locals.backLink.should.equal('/back');
     });
 
     it('sets backLink to falsy value if it is configured', function () {
         controller.options.backLink = null;
-        backLinks = getBackLinks();
         backLinks('/', controller, steps)(req, res, next);
         expect(res.locals.backLink).to.be.null;
     });
@@ -120,7 +120,6 @@ describe('Back Links', function () {
         req.get.withArgs('referrer').returns('http://example.com/whitelist');
         req.sessionModel.set('steps', ['/step1', '/step2']);
         controller.options.backLinks = ['whitelist'];
-        backLinks = getBackLinks();
         backLinks('/step3', controller, steps)(req, res, next);
         res.locals.backLink.should.equal('whitelist');
     });
@@ -129,7 +128,6 @@ describe('Back Links', function () {
         req.get.withArgs('referrer').returns('http://example.com/whitelist');
         req.sessionModel.set('steps', ['/step1', '/step2']);
         controller.options.backLinks = ['./whitelist'];
-        backLink = getBackLinks();
         backLinks('/step3', controller, steps)(req, res, next);
         res.locals.backLink.should.equal('whitelist');
     });
@@ -139,7 +137,6 @@ describe('Back Links', function () {
         req.sessionModel.set('steps', ['/step1', '/step2']);
         req.baseUrl = '/base';
         controller.options.backLinks = ['whitelist'];
-        backLinks = getBackLinks();
         backLinks('/step3', controller, steps)(req, res, next);
         res.locals.backLink.should.equal('whitelist');
     });
@@ -149,7 +146,6 @@ describe('Back Links', function () {
         req.sessionModel.set('steps', ['/step1', '/step2']);
         req.baseUrl = '/base';
         controller.options.backLinks = ['/whitelist'];
-        backLinks = getBackLinks();
         backLinks('/step3', controller, steps)(req, res, next);
         res.locals.backLink.should.equal('/whitelist');
     });
@@ -158,7 +154,6 @@ describe('Back Links', function () {
         req.get.withArgs('referrer').returns('http://example.com/base/step4');
         req.sessionModel.set('steps', ['/step1', '/step2', '/step3a', '/step4']);
         controller.options.backLinks = ['/step2'];
-        backLinks = getBackLinks();
         backLinks('/step3a', controller, steps)(req, res, next);
         res.locals.backLink.should.equal('step2');
     });
@@ -167,7 +162,6 @@ describe('Back Links', function () {
         req.get.withArgs('referrer').returns('http://example.com/base/step4');
         req.sessionModel.set('steps', ['/step1', '/step2', '/step3a', '/step4']);
         controller.options.backLinks = ['/step2', '/step1'];
-        backLinks = getBackLinks();
         backLinks('/step3a', controller, steps)(req, res, next);
         res.locals.backLink.should.equal('step2');
     });
@@ -176,7 +170,6 @@ describe('Back Links', function () {
         req.get.withArgs('referrer').returns('http://example.com/not-whitelisted');
         req.sessionModel.set('steps', ['/step1', '/step2']);
         controller.options.backLinks = ['whitelist'];
-        backLinks = getBackLinks();
         backLinks('/', controller, steps)(req, res, next);
         expect(res.locals.backLink).to.be.undefined;
     });
@@ -186,7 +179,6 @@ describe('Back Links', function () {
         req.sessionModel.set('steps', ['/step1', '/step2', '/step3', '/step4']);
         req.session['hmpo-wizard-test-form'] = { steps: ['/history1', '/history2']};
         controller.options.backLinks = ['./history1'];
-        backLinks = getBackLinks();
         backLinks('/step3', controller, steps)(req, res, next);
         res.locals.backLink.should.equal('history1');
     });
@@ -196,7 +188,6 @@ describe('Back Links', function () {
         it('is true when the last step matches the page path', function () {
             req.sessionModel.set('steps', ['/step1', '/step2']);
             controller.options.path ='/step2';
-            backLinks = getBackLinks();
             backLinks('/step2', controller, steps)(req, res, next);
             req.isBackLink.should.be.ok;
         });
@@ -204,7 +195,6 @@ describe('Back Links', function () {
         it('is true when the last step matches the next path', function () {
             req.sessionModel.set('steps', ['/step1', '/step2']);
             controller.options.next = '/step2';
-            backLinks = getBackLinks();
             backLinks('/step1', controller, steps)(req, res, next);
             req.isBackLink.should.be.ok;
         });

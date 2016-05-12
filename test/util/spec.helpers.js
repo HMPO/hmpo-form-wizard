@@ -2,116 +2,64 @@ var helpers = require('../../lib/util/helpers');
 
 describe('helpers', function () {
 
-    describe('getPreviousSteps', function () {
-        var getPreviousSteps, steps;
+    describe('getRouteSteps', function () {
+        var getRouteSteps, steps;
 
         beforeEach(function () {
-            getPreviousSteps = helpers.getPreviousSteps;
+            getRouteSteps = helpers.getRouteSteps;
+            steps = {
+                '/step1': {
+                    next: '/step2'
+                },
+                '/step2': {
+                    next: '/step3'
+                },
+                '/step2a': {
+                    next: '/step3'
+                },
+                '/step3': {
+                    next: '/step4',
+                    forks: [
+                        { target: '/step5' }
+                    ]
+                },
+                '/step4': {
+                    next: '/step5',
+                    forks: [
+                        { target: '/step6' }
+                    ]
+                },
+                '/step5': {
+                    forks: [
+                        { target: '/step6' }
+                    ]
+                },
+                '/step6': {},
+                '/orphan': {}
+            };
         });
 
         it('is a function', function () {
-            getPreviousSteps.should.be.a('function');
+            getRouteSteps.should.be.a('function');
         });
 
         it('returns an array', function () {
-            getPreviousSteps().should.be.an('array');
+            getRouteSteps().should.be.an('array');
         });
 
-        describe('only using next property', function () {
-            beforeEach(function () {
-                steps = {
-                    '/step1': {
-                        next: '/step2'
-                    },
-                    '/step2': {
-                        next: '/step3'
-                    },
-                    '/step3': {
-                        next: '/step4'
-                    },
-                    '/step3a': {
-                        next: '/step4'
-                    },
-                    '/step4': {}
-                };
-            });
-
-            it('returns /step3a and /step3 when called with steps object and /step4', function () {
-                getPreviousSteps('/step4', steps).should.be.eql(['/step3', '/step3a']);
-            });
-
-            it('should return an empty array if step isn\'t linked to', function () {
-                getPreviousSteps('/step5', steps).should.be.an('array')
-                  .and.have.property('length')
-                  .and.equal(0);
-            });
+        it('returns an empty array when there are no matching previous steps', function () {
+            getRouteSteps('/orphan', steps).should.eql([]);
         });
 
-        describe('using forks', function () {
-            beforeEach(function () {
-              steps = {
-                  '/step1': {
-                      forks: [{
-                        target: '/step2'
-                      }]
-                  },
-                  '/step2': {
-                      forks: [{
-                        target: '/step3'
-                      }, {
-                        target: '/step4'
-                      }]
-                  },
-                  '/step3': {
-                      forks: [{
-                        target: '/step3a'
-                      }]
-                  },
-                  '/step3a': {
-                      forks: [{
-                        target: '/step4'
-                      }]
-                  },
-                  '/step4': {}
-              };
-            });
-
-            it('should return a step that has route as a fork target', function () {
-                getPreviousSteps('/step2', steps).should.be.eql(['/step1']);
-            })
-
-            it('should return all steps that have given step as fork target', function () {
-                getPreviousSteps('/step4', steps).should.be.eql(['/step2', '/step3a']);
-            });
+        it('returns an array of all routes from `next` and `forks` properties', function () {
+            // next
+            getRouteSteps('/step3', steps).should.eql(['/step2', '/step2a']);
+            // next and forks
+            getRouteSteps('/step5', steps).should.eql(['/step3', '/step4']);
+            // forks
+            getRouteSteps('/step6', steps).should.eql(['/step4', '/step5']);
         });
 
-        describe('using next property and forks', function () {
-            beforeEach(function () {
-                steps = {
-                    '/step1': {
-                        next: '/step2',
-                        forks: [{
-                          target: '/step3'
-                        }]
-                    },
-                    '/step2': {
-                        next: '/step3',
-                        forks: [{
-                          target: '/step3a'
-                        }, {
-                          target: '/step4'
-                        }]
-                    },
-                    '/step3': {},
-                    '/step3a': {},
-                    '/step4': {}
-                }
-            });
-
-            it('should return all steps that link to route', function () {
-                getPreviousSteps('/step3', steps).should.be.eql(['/step1', '/step2']);
-            });
-        });
     });
 
 });

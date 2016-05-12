@@ -1,18 +1,11 @@
-var proxyquire = require('proxyquire'),
+var checkProgress = require('../../lib/middleware/check-progress'),
     Model = require('../../lib/model'),
-    Controller = require('../../lib/controller');
-
-var getCheckSession = function (previousSteps) {
-    return proxyquire('../../lib/middleware/check-progress', {
-        '../util/helpers': {
-            getPreviousSteps: sinon.stub().returns(previousSteps)
-        }
-    });
-}
+    Controller = require('../../lib/controller'),
+    helpers = require('../../lib/util/helpers');
 
 describe('middleware/check-session', function () {
 
-    var req, res, next, controller, steps, checkSession;
+    var req, res, next, controller, steps;
 
     beforeEach(function () {
         req = request();
@@ -25,13 +18,22 @@ describe('middleware/check-session', function () {
             '/two': { next: '/three' },
             '/three': { next: '/four' },
             '/four': {}
-        }
+        };
+        sinon.stub(helpers, 'getRouteSteps').returns(['/one', '/two']);
+    });
+
+    afterEach(function () {
+        helpers.getRouteSteps.restore();
+    });
+
+    it('calls getRouteSteps helper with route and steps', function () {
+        checkProgress('/two', controller, steps, '/three');
+        helpers.getRouteSteps.should.have.been.calledWithExactly('/two', steps);
     });
 
     it('calls callback with no arguments if prerequisite steps are complete', function (done) {
         req.sessionModel.set('steps', [ '/one', '/two' ]);
-        checkSession = getCheckSession(['/one', '/two']);
-        var middleware = checkSession('/three', controller, steps, '/one');
+        var middleware = checkProgress('/three', controller, steps, '/one');
         middleware(req, res, function (err) {
             expect(err).to.be.undefined;
             done();
@@ -40,8 +42,8 @@ describe('middleware/check-session', function () {
 
     it('calls callback with MISSING_PREREQ error code if accessing step that has not had prerequisite steps complete', function (done) {
         req.sessionModel.set('steps', []);
-        checkSession = getCheckSession();
-        var middleware = checkSession('/three', controller, steps, '/one');
+        helpers.getRouteSteps.returns(['/two']);
+        var middleware = checkProgress('/three', controller, steps, '/one');
         middleware(req, res, function (err) {
             err.code.should.equal('MISSING_PREREQ');
             done();
