@@ -17,17 +17,17 @@
   },
   "homepage": "https://github.com/UKHomeOffice/passports-form-wizard",
   "dependencies": {
-    "csrf": "^2.0.6",
+    "csrf": "^3.0.1",
     "debug": "^2.1.2",
     "express": "^4.12.2",
     "hmpo-form-controller": "^0.7.0",
-    "hmpo-model": "0.0.0",
+    "hmpo-model": "^0.5.0",
     "hogan.js": "^3.0.2",
     "i18n-lookup": "^0.1.0",
     "underscore": "^1.8.2"
   },
   "devDependencies": {
-    "chai": "^2.1.2",
+    "chai": "^3.5.0",
     "mocha": "^2.2.1",
     "reqres": "^1.2.0",
     "sinon": "^1.14.1",
