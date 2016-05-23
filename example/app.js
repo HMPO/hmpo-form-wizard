@@ -1,5 +1,4 @@
 /* eslint no-console: 0 */
-/* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^next$" }]*/
 
 var express = require('express'),
     cookieParser = require('cookie-parser'),

@@ -1,0 +1,22 @@
+{
+    "env": {
+        "node": true
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+        "no-unused-vars": [2, { "argsIgnorePattern": "^(err|req|res|next)$" }],
+        "no-mixed-requires": [2, { "allowCall": true }],
+        "quotes": [2, "single"],
+        "no-trailing-spaces": 2,
+        "indent": 2,
+        "linebreak-style": [2, "unix"],
+        "semi": [2, "always"],
+        "brace-style": [2, "1tbs", { "allowSingleLine": true }],
+        "keyword-spacing": 2,
+        "space-before-blocks": 2,
+        "space-before-function-paren": [2, { "anonymous": "always", "named": "never" }],
+        "no-mixed-spaces-and-tabs": 2,
+        "comma-spacing": [2, {"before": false, "after": true}],
+        "key-spacing": [2, {"beforeColon": false, "afterColon": true}]
+    }
+}

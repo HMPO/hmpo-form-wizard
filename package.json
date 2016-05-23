@@ -4,7 +4,12 @@
   "description": "routing and request handling for a multi-step form processes",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/. --recursive --require test/helpers.js"
+    "test": "npm run lint && npm run unit && npm run cover && npm run check-coverage && npm run snyk",
+    "lint": "eslint .",
+    "unit": "mocha test/. --recursive --require test/helpers",
+    "cover": "istanbul cover _mocha -- -R dot test/. --recursive --require test/helpers",
+    "check-coverage": "istanbul check-coverage --statement 85.53 --branch 81.58 --function 79.17 --line 86.21",
+    "snyk": "snyk test --dev"
   },
   "repository": {
     "type": "git",
@@ -17,20 +22,23 @@
   },
   "homepage": "https://github.com/UKHomeOffice/passports-form-wizard",
   "dependencies": {
-    "csrf": "^3.0.1",
+    "csrf": "^3.0.2",
     "debug": "^2.1.2",
     "express": "^4.12.2",
-    "hmpo-form-controller": "^0.7.0",
-    "hmpo-model": "^0.5.0",
+    "hmpo-form-controller": "^0.8.0",
+    "hmpo-model": "^0.6.0",
     "hogan.js": "^3.0.2",
     "i18n-lookup": "^0.1.0",
     "underscore": "^1.8.2"
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "mocha": "^2.2.1",
+    "eslint": "^2.10.2",
+    "istanbul": "^0.4.3",
+    "mocha": "^2.5.3",
     "reqres": "^1.2.0",
     "sinon": "^1.14.1",
-    "sinon-chai": "^2.7.0"
+    "sinon-chai": "^2.7.0",
+    "snyk": "^1.14.3"
   }
 }
