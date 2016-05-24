@@ -1,10 +1,10 @@
 var backLinks = require('../../lib/middleware/back-links');
 
 var util = require('util'),
-    EventEmitter = require('events').EventEmitter;
+    EventEmitter = require('events').EventEmitter,
+    helpers = require('../../lib/util/helpers');
 
 describe('Back Links', function () {
-
     var controller, steps, req, res, next;
 
     var StubController = function () {
@@ -61,6 +61,16 @@ describe('Back Links', function () {
         };
         next = sinon.stub();
 
+        sinon.stub(helpers, 'getRouteSteps').returns([]);
+    });
+
+    afterEach(function () {
+        helpers.getRouteSteps.restore();
+    });
+
+    it('calls getRouteSteps helper with route and steps', function () {
+        backLinks('/', controller, steps);
+        helpers.getRouteSteps.should.have.been.calledWithExactly('/', steps);
     });
 
     it('is only set on a GET request', function () {
@@ -72,6 +82,7 @@ describe('Back Links', function () {
 
     it('adds the previous step to res.locals.backLink', function () {
         req.sessionModel.set('steps', ['/step1']);
+        helpers.getRouteSteps.returns(['/step1']);
         backLinks('/step2', controller, steps)(req, res, next);
         res.locals.backLink.should.equal('step1');
     });
@@ -82,6 +93,8 @@ describe('Back Links', function () {
     });
 
     it('adds the most recently visited previous step if there are multiple options', function () {
+        helpers.getRouteSteps.returns(['/step3', '/step3a']);
+
         req.sessionModel.set('steps', ['/step1', '/step3', '/step3a']);
         backLinks('/step4', controller, steps)(req, res, next);
         res.locals.backLink.should.equal('step3a');
@@ -106,7 +119,6 @@ describe('Back Links', function () {
     it('whitelists referrer header if no configured backwards route', function () {
         req.get.withArgs('referrer').returns('http://example.com/whitelist');
         req.sessionModel.set('steps', ['/step1', '/step2']);
-        steps['/step2'].next = null;
         controller.options.backLinks = ['whitelist'];
         backLinks('/step3', controller, steps)(req, res, next);
         res.locals.backLink.should.equal('whitelist');
@@ -115,7 +127,6 @@ describe('Back Links', function () {
     it('supports links prefixed with `./`', function () {
         req.get.withArgs('referrer').returns('http://example.com/whitelist');
         req.sessionModel.set('steps', ['/step1', '/step2']);
-        steps['/step2'].next = null;
         controller.options.backLinks = ['./whitelist'];
         backLinks('/step3', controller, steps)(req, res, next);
         res.locals.backLink.should.equal('whitelist');
@@ -125,7 +136,6 @@ describe('Back Links', function () {
         req.get.withArgs('referrer').returns('http://example.com/base/whitelist');
         req.sessionModel.set('steps', ['/step1', '/step2']);
         req.baseUrl = '/base';
-        steps['/step2'].next = null;
         controller.options.backLinks = ['whitelist'];
         backLinks('/step3', controller, steps)(req, res, next);
         res.locals.backLink.should.equal('whitelist');
@@ -135,7 +145,6 @@ describe('Back Links', function () {
         req.get.withArgs('referrer').returns('http://example.com/whitelist');
         req.sessionModel.set('steps', ['/step1', '/step2']);
         req.baseUrl = '/base';
-        steps['/step2'].next = null;
         controller.options.backLinks = ['/whitelist'];
         backLinks('/step3', controller, steps)(req, res, next);
         res.locals.backLink.should.equal('/whitelist');
@@ -160,7 +169,6 @@ describe('Back Links', function () {
     it('returns undefined if referrer header is not on whitelist', function () {
         req.get.withArgs('referrer').returns('http://example.com/not-whitelisted');
         req.sessionModel.set('steps', ['/step1', '/step2']);
-        steps['/step2'].next = null;
         controller.options.backLinks = ['whitelist'];
         backLinks('/', controller, steps)(req, res, next);
         expect(res.locals.backLink).to.be.undefined;
@@ -170,7 +178,6 @@ describe('Back Links', function () {
         req.get.withArgs('referrer').returns('http://example.com/referrer');
         req.sessionModel.set('steps', ['/step1', '/step2', '/step3', '/step4']);
         req.session['hmpo-wizard-test-form'] = { steps: ['/history1', '/history2']};
-        steps['/step2'].next = null;
         controller.options.backLinks = ['./history1'];
         backLinks('/step3', controller, steps)(req, res, next);
         res.locals.backLink.should.equal('history1');
