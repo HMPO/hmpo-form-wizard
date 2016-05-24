@@ -8,6 +8,12 @@
         },
         "gender": {
             "label": "Your gender"
+        },
+        "left-only": {
+            "label": "This field is only shown if you selected Left"
+        },
+        "right-only": {
+            "label": "This field is only shown if you selected Right"
         }
     },
     "buttons": {

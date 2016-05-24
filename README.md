@@ -66,6 +66,7 @@ The minimum amount of configuration for a wizard step is the `next` property to 
 * `template` - Specifies the template to render for GET requests to this step. Defaults to the route (without trailing slash)
 * `backLink` - Specifies the location of the step previous to this one. If not specified then an algorithm is applied which checks the previously visited steps which have the current step set as `next`.
 * `controller` - The constructor for the controller to be used for this step's request handling. The default is an extension of the [hmpo-form-controller](https://www.npmjs.com/package/hmpo-form-controller), which is exported as a `Controller` property of this module. If custom behaviour is required for a particular form step then custom extensions can be defined - see [Custom Controllers](#custom-controllers)
+* `forks` - Specifies a list of forks that can be taken depending on a particular field value or conditional function - See  [handling forking journeys](https://github.com/UKHomeOffice/passports-form-controller#handles-journey-forking) in hmpo-form-controller.
 
 ### Additional field options
 
