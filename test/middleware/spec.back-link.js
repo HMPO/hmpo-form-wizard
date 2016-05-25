@@ -81,7 +81,7 @@ describe('Back Links', function () {
     });
 
     it('adds the previous step to res.locals.backLink', function () {
-        req.get.withArgs('referrer').returns('http://example.com/referrer');
+        req.get.withArgs('referrer').returns('http://example.com/referrer/step2');
         req.baseUrl = '/referrer';
         req.sessionModel.set('steps', ['/step1']);
         helpers.getRouteSteps.returns(['/step1']);
@@ -148,7 +148,7 @@ describe('Back Links', function () {
 
     it('supports absolute paths in whitelist', function () {
         req.get.withArgs('referrer').returns('http://example.com/whitelist');
-        req.baseUrl = '/whitelist';
+        req.baseUrl = '/base';
         req.sessionModel.set('steps', ['/step1', '/step2']);
         controller.options.backLinks = ['/whitelist'];
         backLinks('/step3', controller, steps)(req, res, next);
@@ -175,7 +175,6 @@ describe('Back Links', function () {
 
     it('returns undefined if referrer header is not on whitelist', function () {
         req.get.withArgs('referrer').returns('http://example.com/not-whitelisted');
-        req.baseUrl = '/not-whitelisted';
         req.sessionModel.set('steps', ['/step1', '/step2']);
         controller.options.backLinks = ['whitelist'];
         backLinks('/', controller, steps)(req, res, next);
@@ -184,7 +183,7 @@ describe('Back Links', function () {
 
     it('permits whitelisting of steps from a separate form instance', function () {
         req.get.withArgs('referrer').returns('http://example.com/referrer');
-        req.baseUrl = '/referrer';
+        req.baseUrl = '/other';
         req.sessionModel.set('steps', ['/step1', '/step2', '/step3', '/step4']);
         req.session['hmpo-wizard-test-form'] = { steps: ['/history1', '/history2']};
         controller.options.backLinks = ['./history1'];
