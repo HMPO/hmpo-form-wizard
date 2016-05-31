@@ -2,7 +2,7 @@ var checkSession = require('../../lib/middleware/check-session');
 
 describe('middleware/check-session', function () {
 
-    var req, res, next;
+    var req, res;
 
     beforeEach(function () {
         req = {
@@ -16,14 +16,13 @@ describe('middleware/check-session', function () {
         res = {
             cookie: sinon.stub()
         };
-        next = sinon.stub();
     });
 
     it('throws session error if cookie exists, but session flag does not', function () {
         var middleware = checkSession('/route', { options: {} }, {}, '/first');
         middleware(req, res, function (err) {
             err.should.be.an.instanceOf(Error);
-            err.code.should.equal('SESSION_TIMEOUT')
+            err.code.should.equal('SESSION_TIMEOUT');
         });
     });
 

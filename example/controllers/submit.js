@@ -6,14 +6,14 @@ var Controller = require('hmpo-form-wizard').Controller,
 
 var Submit = function () {
     Controller.apply(this, arguments);
-}
+};
 
 util.inherits(Submit, Controller);
 
 Submit.prototype.saveValues = function (req, res, callback) {
     var data = _.pick(req.sessionModel.toJSON(), Object.keys(require('../routes/fields'))),
         model = new Model(data);
-        model.save(callback);
-}
+    model.save(callback);
+};
 
 module.exports = Submit;

@@ -5,13 +5,12 @@ var checkProgress = require('../../lib/middleware/check-progress'),
 
 describe('middleware/check-session', function () {
 
-    var req, res, next, controller, steps;
+    var req, res, controller, steps;
 
     beforeEach(function () {
         req = request();
         req.sessionModel = new Model({}, { session: req.session, key: 'test' });
         res = response();
-        next = sinon.stub();
         controller = new Controller({ template: 'index' });
         steps = {
             '/one': { next: '/two' },

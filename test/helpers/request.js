@@ -1,5 +1,4 @@
-var _ = require('underscore'),
-    reqres = require('reqres'),
+var reqres = require('reqres'),
     SessionModel = require('../../lib/model');
 
 module.exports = function (settings) {

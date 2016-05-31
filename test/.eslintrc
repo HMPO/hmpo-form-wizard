@@ -1,0 +1,14 @@
+{
+    "env": {
+        "node": true,
+        "mocha": true
+    },
+    "globals": {
+        "sinon": true,
+        "should": true,
+        "expect": true,
+        "request": true,
+        "response": true,
+        "StubController": true
+    }
+}

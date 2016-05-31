@@ -14,16 +14,18 @@
     "express": "^4.12.3",
     "express-partial-templates": "^0.1.0",
     "express-session": "^1.13.0",
-    "hmpo-form-controller": "0.0.6",
-    "hmpo-form-wizard": "0.2.10",
-    "hmpo-frontend-toolkit": "^1.0.3",
+    "hmpo-form-controller": "^0.7.0",
+    "hmpo-form-wizard": "file:..",
+    "hmpo-frontend-toolkit": "^4.0.0",
     "hmpo-govuk-template": "0.0.3",
-    "hmpo-model": "^0.1.1",
-    "hmpo-template-mixins": "^0.1.9",
+    "hmpo-model": "^0.5.0",
+    "hmpo-template-mixins": "^4.1.0",
     "hogan-express-strict": "^0.5.3",
+    "i18n-future": "^0.2.0",
     "i18n-lookup": "^0.1.0",
-    "i18next": "^1.7.10",
-    "node-sass": "^2.1.1",
     "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "node-sass": "^3.4.2"
   }
 }

@@ -56,7 +56,7 @@ describe('Form Controller', function () {
         });
 
         it('does not return errors with a redirect property', function () {
-           req.sessionModel.set('errors', {
+            req.sessionModel.set('errors', {
                 field1: {
                     redirect: '/exit-page'
                 },

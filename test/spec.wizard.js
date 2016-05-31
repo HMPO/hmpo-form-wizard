@@ -128,7 +128,7 @@ describe('Form Wizard', function () {
                 '/two': {
                     next: '/three'
                 },
-                '/three': {},
+                '/three': {}
             }, {}, { name: 'test', csrf: false });
         });
 
