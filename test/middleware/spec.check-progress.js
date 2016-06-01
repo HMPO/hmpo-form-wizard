@@ -151,6 +151,11 @@ describe('middleware/check-session', function () {
                     'fork-field-2'
                 );
             });
+
+            it('ignores /edit if appended to nextStep', function () {
+                controller.getNextStep = sinon.stub().returns('/fork1/edit');
+                req.sessionModel.get('steps').should.be.eql(sessionSteps);
+            });
         });
 
         describe('when a step is skipped', function () {
