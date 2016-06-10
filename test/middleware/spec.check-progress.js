@@ -19,10 +19,12 @@ describe('middleware/check-session', function () {
             '/four': {}
         };
         sinon.stub(helpers, 'getRouteSteps').returns(['/one', '/two']);
+        sinon.stub(Controller.prototype, 'getForkTarget');
     });
 
     afterEach(function () {
         helpers.getRouteSteps.restore();
+        Controller.prototype.getForkTarget.restore();
     });
 
     it('calls getRouteSteps helper with route and steps', function () {
@@ -129,7 +131,7 @@ describe('middleware/check-session', function () {
 
         describe('when all steps are still reachable after forking', function () {
             beforeEach(function () {
-                controller.getNextStep = sinon.stub().returns('/fork1');
+                Controller.prototype.getForkTarget.returns('/fork1');
                 controller.emit('complete', req, res);
             });
 
@@ -151,17 +153,12 @@ describe('middleware/check-session', function () {
                     'fork-field-2'
                 );
             });
-
-            it('ignores /edit if appended to nextStep', function () {
-                controller.getNextStep = sinon.stub().returns('/fork1/edit');
-                req.sessionModel.get('steps').should.be.eql(sessionSteps);
-            });
         });
 
         describe('when a step is skipped', function () {
 
             beforeEach(function () {
-                controller.getNextStep = sinon.stub().returns('/step2');
+                Controller.prototype.getForkTarget.returns('/step2');
                 controller.emit('complete', req, res);
             });
 
@@ -188,7 +185,7 @@ describe('middleware/check-session', function () {
         describe('when the result of forking skips multiple steps', function () {
 
             beforeEach(function () {
-                controller.getNextStep = sinon.stub().returns('/step4');
+                Controller.prototype.getForkTarget.returns('/step4');
                 controller.emit('complete', req, res);
             });
 
