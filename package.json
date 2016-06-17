@@ -25,7 +25,7 @@
     "csrf": "^3.0.2",
     "debug": "^2.1.2",
     "express": "^4.12.2",
-    "hmpo-form-controller": "^0.8.1",
+    "hmpo-form-controller": "^0.8.3",
     "hmpo-model": "^0.6.0",
     "hogan.js": "^3.0.2",
     "i18n-lookup": "^0.1.0",
