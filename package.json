@@ -9,7 +9,8 @@
     "unit": "mocha test/. --recursive --require test/helpers",
     "cover": "istanbul cover _mocha -- -R dot test/. --recursive --require test/helpers",
     "check-coverage": "istanbul check-coverage --statement 85.53 --branch 81.58 --function 79.17 --line 86.21",
-    "snyk": "snyk test --dev"
+    "snyk": "snyk test",
+    "snyk:dev": "snyk test --dev"
   },
   "repository": {
     "type": "git",
@@ -25,7 +26,7 @@
     "csrf": "^3.0.2",
     "debug": "^2.1.2",
     "express": "^4.12.2",
-    "hmpo-form-controller": "^0.8.3",
+    "hmpo-form-controller": "^0.9.0",
     "hmpo-model": "^0.6.0",
     "hogan.js": "^3.0.2",
     "i18n-lookup": "^0.1.0",
