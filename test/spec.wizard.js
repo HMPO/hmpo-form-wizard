@@ -4,7 +4,47 @@ describe('Form Wizard', function () {
 
     var wizard,
         requestHandler,
-        req, res, next;
+        req, res, next,
+        obj;
+
+    describe('settings', function () {
+
+        beforeEach(function () {
+            obj = {
+                controller: StubController()
+            };
+            sinon.spy(obj, 'controller');
+            wizard = Wizard({
+                '/': {
+                    template: 'template',
+                    controller: obj.controller
+                }
+            }, {}, { templatePath: '/a/path' });
+        });
+
+        it('initialises a new controller', function () {
+            obj.controller.should.have.been.calledOnce;
+        });
+
+        it('prepends templatePath to the tempate', function () {
+            obj.controller.should.have.been.calledWithMatch({
+                template: '/a/path/template'
+            });
+        });
+
+        it('doesn\'t prepend template path if omitted', function () {
+            wizard = Wizard({
+                '/': {
+                    template: 'template',
+                    controller: obj.controller
+                }
+            }, {}, {});
+            obj.controller.should.have.been.calledWithMatch({
+                template: 'template'
+            });
+        });
+
+    });
 
     describe('session', function () {
 
