@@ -158,6 +158,7 @@ describe('middleware/check-session', function () {
         describe('when a step is skipped', function () {
 
             beforeEach(function () {
+                req.method = 'POST';
                 Controller.prototype.getForkTarget.returns('/step2');
                 controller.emit('complete', req, res);
             });
@@ -185,6 +186,7 @@ describe('middleware/check-session', function () {
         describe('when the result of forking skips multiple steps', function () {
 
             beforeEach(function () {
+                req.method = 'POST';
                 Controller.prototype.getForkTarget.returns('/step4');
                 controller.emit('complete', req, res);
             });
@@ -206,6 +208,30 @@ describe('middleware/check-session', function () {
                     'fork-field-1',
                     'fork-field-2'
                 );
+            });
+        });
+
+        describe('intertwined steps', function () {
+            it('doesn\'t timeout when recursive route is possible', function () {
+                steps = {
+                    '/step1': {
+                        next: '/step2',
+                        forks: [{
+                            target: '/step3'
+                        }]
+                    },
+                    '/step2': {
+                        next: '/step3',
+                        forks: [{
+                            target: '/step1'
+                        }]
+                    },
+                    '/step3': {}
+                };
+                checkProgress('/step1', controller, steps, '/');
+                req.method = 'POST';
+                Controller.prototype.getForkTarget.returns('/step2');
+                controller.emit('complete', req, res).should.not.throw;
             });
         });
 
