@@ -1,6 +1,6 @@
 {
   "name": "hmpo-form-wizard",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "description": "routing and request handling for a multi-step form processes",
   "main": "index.js",
   "scripts": {
@@ -36,7 +36,7 @@
     "chai": "^3.5.0",
     "eslint": "^2.10.2",
     "istanbul": "^0.4.3",
-    "mocha": "^2.5.3",
+    "mocha": "^3.1.2",
     "reqres": "^1.2.0",
     "sinon": "^1.14.1",
     "sinon-chai": "^2.7.0",

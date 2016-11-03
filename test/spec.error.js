@@ -44,6 +44,13 @@ describe('Error', function () {
             error.message.should.equal('Your field label is required');
         });
 
+        it('populates messages with legend', function () {
+            req.translate.withArgs('validation.key.required').returns('Your {{legend}} is required');
+            req.translate.withArgs('fields.key.legend').returns('date');
+            var error = new ErrorClass('key', { type: 'required' }, req);
+            error.message.should.equal('Your date is required');
+        });
+
         it('populates maxlength messages with the maximum length', function () {
             req.translate.withArgs('validation.key.maxlength').returns('This must be less than {{maxlength}} characters');
             var error = new ErrorClass('key', { type: 'maxlength', arguments: [10] }, req);

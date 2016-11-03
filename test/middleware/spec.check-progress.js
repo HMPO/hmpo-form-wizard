@@ -239,7 +239,9 @@ describe('middleware/check-session', function () {
                 checkProgress('/step1', controller, steps, '/');
                 req.method = 'POST';
                 Controller.prototype.getForkTarget.returns('/step2');
-                controller.emit('complete', req, res).should.not.throw;
+                expect(function () {
+                    controller.emit('complete', req, res);
+                }).to.not.throw();
             });
         });
 
