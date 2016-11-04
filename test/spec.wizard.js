@@ -32,6 +32,12 @@ describe('Form Wizard', function () {
             });
         });
 
+        it('passes the route to the controller', function () {
+            obj.controller.should.have.been.calledWithMatch({
+                route: '/'
+            });
+        });
+
         it('doesn\'t prepend template path if omitted', function () {
             wizard = Wizard({
                 '/': {
