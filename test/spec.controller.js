@@ -1,6 +1,6 @@
 var Controller = require('../lib/controller'),
     ErrorClass = require('../lib/error'),
-    Form = require('hmpo-form-controller');
+    Form = require('hof-form-controller');
 
 describe('Form Controller', function () {
 

@@ -185,7 +185,7 @@ describe('Back Links', function () {
         req.get.withArgs('referrer').returns('http://example.com/referrer');
         req.baseUrl = '/other';
         req.sessionModel.set('steps', ['/step1', '/step2', '/step3', '/step4']);
-        req.session['hmpo-wizard-test-form'] = { steps: ['/history1', '/history2']};
+        req.session['hof-wizard-test-form'] = { steps: ['/history1', '/history2']};
         controller.options.backLinks = ['./history1'];
         backLinks('/step3', controller, steps)(req, res, next);
         res.locals.backLink.should.equal('history1');

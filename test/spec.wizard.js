@@ -68,7 +68,7 @@ describe('Form Wizard', function () {
 
         it('creates a namespace on the session', function (done) {
             wizard(req, res, function (err) {
-                req.session['hmpo-wizard-test'].should.eql({});
+                req.session['hof-wizard-test'].should.eql({});
                 done(err);
             });
         });
@@ -81,7 +81,7 @@ describe('Form Wizard', function () {
         });
 
         it('initialises model with data from session', function (done) {
-            req.session['hmpo-wizard-test'] = {
+            req.session['hof-wizard-test'] = {
                 name: 'John'
             };
             wizard(req, res, function (err) {
@@ -198,7 +198,7 @@ describe('Form Wizard', function () {
 
             it('catches missing session errors at the controller error handler', function () {
                 req.url = '/two';
-                req.cookies['hmpo-wizard-sc'] = 1;
+                req.cookies['hof-wizard-sc'] = 1;
                 req.session.exists = false;
                 wizard.handle(req, res, next);
                 Wizard.Controller.prototype.errorHandler.should.have.been.calledOnce;
