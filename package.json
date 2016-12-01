@@ -1,6 +1,6 @@
 {
-  "name": "hmpo-form-wizard",
-  "version": "5.2.0",
+  "name": "hof-form-wizard",
+  "version": "1.0.2",
   "description": "routing and request handling for a multi-step form processes",
   "main": "index.js",
   "scripts": {
@@ -14,19 +14,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/UKHomeOffice/passports-form-wizard.git"
+    "url": "https://github.com/UKHomeOfficeForms/hof-form-wizard.git"
   },
   "author": "Leonard Martin <hello@lennym.co.uk>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/UKHomeOffice/passports-form-wizard/issues"
+    "url": "https://github.com/UKHomeOfficeForms/hof-form-wizard/issues"
   },
-  "homepage": "https://github.com/UKHomeOffice/passports-form-wizard",
+  "homepage": "https://github.com/UKHomeOfficeForms/hof-form-wizard",
   "dependencies": {
     "csrf": "^3.0.2",
     "debug": "^2.1.2",
     "express": "^4.12.2",
-    "hmpo-form-controller": "^0.11.0",
+    "hof-form-controller": "^1.0.0",
     "hmpo-model": "^0.7.0",
     "hogan.js": "^3.0.2",
     "i18n-lookup": "^0.1.0",

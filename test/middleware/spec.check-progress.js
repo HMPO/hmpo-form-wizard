@@ -224,6 +224,14 @@ describe('middleware/check-session', function () {
                         next: '/step3',
                         forks: [{
                             target: '/step1'
+                        }, {
+                            target: '/step3a'
+                        }]
+                    },
+                    '/step3a': {
+                        next: '/step1',
+                        forks: [{
+                            target: '/step3'
                         }]
                     },
                     '/step3': {}

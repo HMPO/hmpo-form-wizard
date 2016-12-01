@@ -10,7 +10,7 @@ describe('middleware/check-session', function () {
             method: 'GET',
             session: {},
             cookies: {
-                'hmpo-wizard-sc': 1
+                'hof-wizard-sc': 1
             }
         };
         res = {
