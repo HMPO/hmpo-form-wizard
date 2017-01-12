@@ -12,20 +12,16 @@
     "body-parser": "^1.12.2",
     "cookie-parser": "^1.4.1",
     "express": "^4.12.3",
-    "express-partial-templates": "^0.1.0",
+    "express-partial-templates": "^0.2.0",
     "express-session": "^1.13.0",
-    "hmpo-form-controller": "^0.7.0",
     "hmpo-form-wizard": "file:..",
-    "hmpo-frontend-toolkit": "^4.0.0",
-    "hmpo-govuk-template": "0.0.3",
-    "hmpo-model": "^0.5.0",
-    "hmpo-template-mixins": "^4.1.0",
+    "hmpo-frontend-toolkit": "^7.0.2",
+    "hmpo-govuk-template": "^0.2.0",
+    "hmpo-model": "^0.7.0",
+    "hmpo-template-mixins": "^4.6.0",
     "hogan-express-strict": "^0.5.3",
-    "i18n-future": "^0.2.0",
-    "i18n-lookup": "^0.1.0",
+    "i18n-future": "^1.0.0",
+    "node-sass": "^4.2.0",
     "underscore": "^1.8.3"
-  },
-  "devDependencies": {
-    "node-sass": "^3.4.2"
   }
 }
