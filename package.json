@@ -1,16 +1,14 @@
 {
   "name": "hmpo-form-wizard",
   "version": "5.2.0",
-  "description": "routing and request handling for a multi-step form processes",
+  "description": "Routing and request handling for a multi-step form processes",
   "main": "index.js",
   "scripts": {
-    "test": "npm run lint && npm run unit && npm run cover && npm run check-coverage && npm run snyk",
+    "test": "npm run lint && npm run unit && npm run cover && npm run check-coverage",
     "lint": "eslint .",
     "unit": "mocha test/. --recursive --require test/helpers",
     "cover": "istanbul cover _mocha -- -R dot test/. --recursive --require test/helpers",
-    "check-coverage": "istanbul check-coverage --statement 85.53 --branch 81.58 --function 79.17 --line 86.21",
-    "snyk": "snyk test",
-    "snyk:dev": "snyk test --dev"
+    "check-coverage": "istanbul check-coverage --statement 85.53 --branch 81.58 --function 79.17 --line 86.21"
   },
   "repository": {
     "type": "git",
@@ -18,6 +16,9 @@
   },
   "author": "Leonard Martin <hello@lennym.co.uk>",
   "license": "MIT",
+  "engines": {
+    "node": ">=4"
+  },
   "bugs": {
     "url": "https://github.com/UKHomeOffice/passports-form-wizard/issues"
   },
@@ -26,7 +27,7 @@
     "csrf": "^3.0.2",
     "debug": "^2.1.2",
     "express": "^4.12.2",
-    "hmpo-form-controller": "^0.11.0",
+    "hmpo-form-controller": "^0.12.0",
     "hmpo-model": "^0.7.0",
     "hogan.js": "^3.0.2",
     "i18n-lookup": "^0.1.0",
@@ -34,12 +35,11 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "eslint": "^2.10.2",
+    "eslint": "^3.13.1",
     "istanbul": "^0.4.3",
     "mocha": "^3.1.2",
     "reqres": "^1.2.0",
     "sinon": "^1.14.1",
-    "sinon-chai": "^2.7.0",
-    "snyk": "^1.14.3"
+    "sinon-chai": "^2.7.0"
   }
 }
