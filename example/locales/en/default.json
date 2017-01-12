@@ -9,6 +9,9 @@
         "gender": {
             "label": "Your gender"
         },
+        "direction": {
+            "legend": "direction"
+        },
         "left-only": {
             "label": "This field is only shown if you selected Left"
         },
