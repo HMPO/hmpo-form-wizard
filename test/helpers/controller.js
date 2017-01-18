@@ -1,25 +1,23 @@
-var util = require('util'),
-    EventEmitter = require('events').EventEmitter;
+'use strict';
 
-module.exports = function (options) {
+module.exports = () => {
+    class Controller {
+        constructor(options) {
+            this.options = options || {};
+            Controller.constructor.apply(null, arguments);
+        }
+    }
 
-    options = options || {};
-    options.constructor = options.constructor || function () {};
-    options.requestHandler = options.requestHandler || function () {};
+    Controller.constructor = sinon.stub();
 
-    var Controller = function () {
-        this.options = {};
-        options.constructor.apply(null, arguments);
-    };
-
-    util.inherits(Controller, EventEmitter);
-
-    Controller.prototype.requestHandler = function () {
-        return options.requestHandler;
-    };
-
+    Controller.prototype.on = sinon.stub();
+    Controller.prototype.emit = sinon.stub();
     Controller.prototype.use = sinon.stub();
+    Controller.prototype.requestHandler = sinon.stub();
+    Controller.prototype.middlewareSetup = sinon.stub();
+    Controller.prototype.middlewareChecks = sinon.stub();
+    Controller.prototype.middlewareActions = sinon.stub();
+    Controller.prototype.middlewareLocals = sinon.stub();
 
     return Controller;
-
 };

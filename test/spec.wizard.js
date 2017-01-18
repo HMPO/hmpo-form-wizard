@@ -1,235 +1,137 @@
-var Wizard = require('../lib/wizard');
+'use strict';
 
-describe('Form Wizard', function () {
+const stubController = require('./helpers/controller');
+const express = require('express');
+const proxyquire = require('proxyquire');
 
-    var wizard,
-        requestHandler,
-        req, res, next,
-        obj;
+describe('Form Wizard', () => {
 
-    describe('settings', function () {
+    let steps, fields, options, routerStub, ControllerClass, wizard;
 
-        beforeEach(function () {
-            obj = {
-                controller: StubController()
-            };
-            sinon.spy(obj, 'controller');
-            wizard = Wizard({
-                '/': {
-                    template: 'template',
-                    controller: obj.controller
-                }
-            }, {}, { templatePath: '/a/path' });
+    beforeEach(() => {
+        routerStub = {
+            all: sinon.stub()
+        };
+        sinon.stub(express, 'Router').returns(routerStub);
+
+        ControllerClass = stubController();
+
+        wizard = proxyquire('../lib/wizard', {
+            './controller': ControllerClass
         });
 
-        it('initialises a new controller', function () {
-            obj.controller.should.have.been.calledOnce;
-        });
+        steps = {
+            '/first': {
+                template: 'template',
+                fields: [ 'f1', 'f2', 'f5' ],
+                anOption: 'override'
+            }
+        };
 
-        it('prepends templatePath to the tempate', function () {
-            obj.controller.should.have.been.calledWithMatch({
-                template: '/a/path/template'
-            });
-        });
+        fields = {
+            f1: { field: 1 },
+            f2: { field: 2 },
+            f3: { field: 3 },
+            f4: { field: 4 }
+        };
 
-        it('doesn\'t prepend template path if omitted', function () {
-            wizard = Wizard({
-                '/': {
-                    template: 'template',
-                    controller: obj.controller
-                }
-            }, {}, {});
-            obj.controller.should.have.been.calledWithMatch({
-                template: 'template'
-            });
-        });
-
+        options = {
+            name: 'test',
+            templatePath: 'template/path',
+            anOption: 'original'
+        };
     });
 
-    describe('session', function () {
-
-        beforeEach(function () {
-            req = request();
-            res = response();
-            next = sinon.stub();
-            requestHandler = sinon.stub().yields();
-            wizard = Wizard({
-                '/': {
-                    controller: StubController({ requestHandler: requestHandler })
-                }
-            }, {}, { name: 'test', csrf: false });
-        });
-
-        it('creates a namespace on the session', function (done) {
-            wizard(req, res, function (err) {
-                req.session['hmpo-wizard-test'].should.eql({});
-                done(err);
-            });
-        });
-
-        it('creates a session model', function (done) {
-            wizard(req, res, function (err) {
-                req.sessionModel.should.be.an.instanceOf(require('hmpo-model'));
-                done(err);
-            });
-        });
-
-        it('initialises model with data from session', function (done) {
-            req.session['hmpo-wizard-test'] = {
-                name: 'John'
-            };
-            wizard(req, res, function (err) {
-                req.sessionModel.toJSON().should.eql({ name: 'John' });
-                done(err);
-            });
-        });
-
+    afterEach(() => {
+        express.Router.restore();
     });
 
-    describe('fields', function () {
 
-        it('includes all fields in fields option', function () {
-            var constructor = sinon.stub();
-            wizard = Wizard({
-                '/': {
-                    controller: StubController({ constructor: constructor }),
-                    fields: ['field1', 'field2']
-                }
-            }, { field1: { validate: 'required' } }, { name: 'test-wizard' });
-
-            constructor.args[0][0].fields.should.eql({
-                field1: { validate: 'required' },
-                field2: {}
-            });
-
-        });
-
+    it('should be a function', () => {
+        wizard.should.be.a.function;
     });
 
-    describe('router params', function () {
-
-        beforeEach(function () {
-            res = response();
-            next = sinon.stub();
-        });
-
-        it('binds additional params onto route', function (done) {
-            req = request({
-                url: '/step/edit'
-            });
-            requestHandler = function (req, res, next) {
-                req.params.action.should.equal('edit');
-                next();
-            };
-            wizard = Wizard({
-                '/step': {
-                    controller: StubController({ requestHandler: requestHandler })
-                }
-            }, {}, { name: 'test-wizard', params: '/:action?' });
-            wizard(req, res, function (err) {
-                expect(err).not.to.be.ok;
-                done(err);
-            });
-        });
-
-        it('handles parameterless routes', function (done) {
-            req = request({
-                url: '/step'
-            });
-            requestHandler = function (req, res, next) {
-                expect(req.params.action).to.be.undefined;
-                next();
-            };
-            wizard = Wizard({
-                '/step': {
-                    controller: StubController({ requestHandler: requestHandler })
-                }
-            }, {}, { name: 'test-wizard', params: '/:action?' });
-            wizard(req, res, function (err) {
-                expect(err).not.to.be.ok;
-                done(err);
-            });
-        });
-
+    it('should return an express router', () => {
+        let app = wizard({}, {}, { name: 'test' });
+        app.should.equal(routerStub);
     });
 
-    describe('middleware error handling', function () {
+    it('should create a controller with merged wizard and controller options', () => {
+        wizard(steps, fields, options);
 
-        beforeEach(function () {
-            req = request();
-            res = response();
-            next = sinon.stub();
-            requestHandler = sinon.stub().yields();
-            sinon.stub(Wizard.Controller.prototype, 'errorHandler');
-            wizard = Wizard({
-                '/one': {
-                    next: '/two'
-                },
-                '/two': {
-                    next: '/three'
-                },
-                '/three': {}
-            }, {}, { name: 'test', csrf: false });
-        });
-
-        afterEach(function () {
-            Wizard.Controller.prototype.errorHandler.restore();
-        });
-
-        describe('check progress', function () {
-
-            it('catches pre-requisite errors at the controller error handler', function () {
-                req.url = '/three';
-                wizard.handle(req, res, next);
-                Wizard.Controller.prototype.errorHandler.should.have.been.calledOnce;
-                Wizard.Controller.prototype.errorHandler.args[0][0].should.have.property('code');
-                Wizard.Controller.prototype.errorHandler.args[0][0].code.should.equal('MISSING_PREREQ');
-            });
-
-        });
-
-        describe('check session', function () {
-
-            it('catches missing session errors at the controller error handler', function () {
-                req.url = '/two';
-                req.cookies['hmpo-wizard-sc'] = 1;
-                req.session.exists = false;
-                wizard.handle(req, res, next);
-                Wizard.Controller.prototype.errorHandler.should.have.been.calledOnce;
-                Wizard.Controller.prototype.errorHandler.args[0][0].should.have.property('code');
-                Wizard.Controller.prototype.errorHandler.args[0][0].code.should.equal('SESSION_TIMEOUT');
-            });
-
-        });
-
-
+        ControllerClass.constructor.should.have.been.calledOnce;
+        let opts = ControllerClass.constructor.args[0][0];
+        opts.name.should.equal('test');
+        opts.route.should.equal('/first');
+        opts.params.should.equal('');
+        opts.templatePath.should.equal('template/path');
+        opts.template.should.equal('template');
+        opts.anOption.should.equal('override');
+        // steps should contain the processed step options for this step
+        opts.steps['/first'].should.equal(opts);
     });
 
-    describe('app middlewares', function () {
-        beforeEach(function () {
-            req = request();
-            res = response();
-            next = sinon.stub();
-            requestHandler = sinon.stub().yields();
-            wizard = Wizard({
-                '/': {
-                    controller: StubController({ requestHandler: requestHandler })
-                }
-            }, {}, { name: 'test', csrf: false, translate: 'i18ntranslator' });
-        });
+    it('should replace field list with field objects', () =>{
+        wizard(steps, fields, options);
 
-        describe('applying a translate', function () {
-
-            it('sets translate to the req when defined in settings', function (done) {
-                should.equal(req.translate, undefined);
-                wizard(req, res, function (err) {
-                    req.translate.should.equal('i18ntranslator');
-                    done(err);
-                });
-
-            });
-
+        let opts = ControllerClass.constructor.args[0][0];
+        opts.fields.should.deep.equal({
+            f1: { field: 1 },
+            f2: { field: 2 },
+            f5: {}
         });
     });
 
+    it('should leave field objects if specified in options', () => {
+        steps['/first'].fields = {
+            f5: { field: 5 },
+        };
+        wizard(steps, fields, options);
+
+        let opts = ControllerClass.constructor.args[0][0];
+        opts.fields.should.deep.equal({
+            f5: { field: 5 }
+        });
+    });
+
+    // TODO: order of object is not defined
+    it('should set the firstStep option to the name of the first step', () =>{
+        steps['/second'] = {};
+        steps['/third'] = {};
+
+        wizard(steps, fields, options);
+
+        let opts = ControllerClass.constructor.args[2][0];
+        opts.firstStep.should.equal('/first');
+    });
+
+    it('should use a auto-generated name if none is supplied', () => {
+        delete options.name;
+        wizard(steps, fields, options);
+
+        let opts = ControllerClass.constructor.args[0][0];
+        opts.name.should.equal('0');
+
+        ControllerClass.constructor.reset();
+        delete options.name;
+        wizard(steps, fields, options);
+
+        opts = ControllerClass.constructor.args[0][0];
+        opts.name.should.equal('1');
+    });
+
+    it('should use an auto-generated name if no options are supplied', () => {
+        wizard(steps, fields);
+
+        let opts = ControllerClass.constructor.args[0][0];
+        opts.name.should.equal('0');
+    });
+
+    it('should call the controller\'s requestHandler', () => {
+        ControllerClass.prototype.requestHandler.returns('Request Handler');
+        wizard(steps, fields, options);
+        ControllerClass.prototype.requestHandler.should.have.been.calledOnce;
+        routerStub.all.should.have.been.calledOnce;
+        routerStub.all.should.have.been.calledWithExactly('/first', 'Request Handler');
+    });
 });

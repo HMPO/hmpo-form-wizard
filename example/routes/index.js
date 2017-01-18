@@ -1,10 +1,12 @@
-var express = require('express'),
-    templateMixins = require('hmpo-template-mixins'),
-    wizard = require('../../'),
-    steps = require('./steps'),
-    fields = require('./fields');
+'use strict';
 
-var app = express.Router();
+const express = require('express');
+const templateMixins = require('hmpo-template-mixins');
+const wizard = require('../../');
+const steps = require('./steps');
+const fields = require('./fields');
+
+let app = express.Router();
 
 app.use(templateMixins(fields));
 

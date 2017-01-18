@@ -1,16 +1,12 @@
-var util = require('util');
+'use strict';
 
-var Controller = require('hmpo-form-wizard').Controller;
+const Controller = require('hmpo-form-wizard').Controller;
 
-var Start = function () {
-    Controller.apply(this, arguments);
-};
-
-util.inherits(Start, Controller);
-
-Start.prototype.saveValues = function (req, res, callback) {
-    req.sessionModel.reset();
-    callback();
-};
+class Start extends Controller {
+    saveValues(req, res, callback) {
+        req.sessionModel.reset();
+        callback();
+    }
+}
 
 module.exports = Start;

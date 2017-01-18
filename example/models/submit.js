@@ -1,22 +1,19 @@
+'use strict';
+
 /* eslint no-console: 0 */
 
-var util = require('util'),
-    Model = require('hmpo-model');
+const Model = require('hmpo-model');
 
-var Submit = function (attrs, options) {
-    Model.call(this, attrs, options);
-};
+class Submit extends Model {
+    url() {
+        return require('../config').API_URL;
+    }
 
-util.inherits(Submit, Model);
-
-Submit.prototype.url = function () {
-    return require('../config').API_URL;
-};
-
-Submit.prototype.save = function (callback) {
-    console.log('Saving model data to ' + this.url() + ':');
-    console.log(this.toJSON());
-    Model.prototype.save.call(this, callback);
-};
+    save(callback) {
+        console.log('Saving model data to ' + this.url() + ':');
+        console.log(this.toJSON());
+        super.save(callback);
+    }
+}
 
 module.exports = Submit;
