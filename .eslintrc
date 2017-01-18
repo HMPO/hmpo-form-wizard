@@ -19,7 +19,7 @@
         "no-mixed-spaces-and-tabs": "error",
         "comma-spacing": ["error", {"before": false, "after": true}],
         "key-spacing": ["error", {"beforeColon": false, "afterColon": true}],
-        "one-var": ["off", { "initialized": "never" }],
-        "no-var": "off"
+        "one-var": ["error", { "initialized": "never" }],
+        "no-var": "error"
     }
 }

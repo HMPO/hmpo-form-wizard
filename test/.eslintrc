@@ -1,6 +1,7 @@
 {
     "env": {
         "node": true,
+        "es6": true,
         "mocha": true
     },
     "globals": {
@@ -8,7 +9,6 @@
         "should": true,
         "expect": true,
         "request": true,
-        "response": true,
-        "StubController": true
+        "response": true
     }
 }

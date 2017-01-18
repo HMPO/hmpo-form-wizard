@@ -1,99 +1,120 @@
-var ErrorClass = require('../lib/error');
+'use strict';
 
-describe('Error', function () {
+const ErrorClass = require('../lib/error');
 
-    var req, res;
+describe('Error', () => {
+    let req, res;
 
-    beforeEach(function () {
-        req = request({
-            translate: sinon.stub().returnsArg(0)
+    describe('constructor', () => {
+        beforeEach(() => {
+            req = {};
+            res = {};
         });
-        res = response();
+
+        it('should set key and options to the class', () => {
+            let options = { type: 'errortype' };
+            let error = new ErrorClass('key', options, req, res);
+            error.key.should.equal('key');
+            error.type.should.equal('errortype');
+        });
+
+        it('should allow being called with no options', () => {
+            let error = new ErrorClass('key');
+            error.key.should.equal('key');
+            error.type.should.equal('default');
+        });
+
     });
 
-    describe('getMessage', function () {
+    describe('getMessage', () => {
 
-        it('uses the translate method from the initialising request to translate the message', function () {
+        beforeEach(() => {
+            req = request({
+                translate: sinon.stub().returnsArg(0)
+            });
+            res = response();
+        });
+
+        it('uses the translate method from the initialising request to translate the message', () => {
             req.translate.withArgs('validation.key.required').returns('This field is required');
-            var error = new ErrorClass('key', { type: 'required' }, req);
+            let error = new ErrorClass('key', { type: 'required' }, req);
             error.message.should.equal('This field is required');
         });
 
-        it('uses default error message for field if no field and type specific message is defined', function () {
+        it('uses default error message for field if no field and type specific message is defined', () => {
             req.translate.withArgs('validation.key.default').returns('Default field message');
-            var error = new ErrorClass('key', { type: 'required' }, req);
+            let error = new ErrorClass('key', { type: 'required' }, req);
             error.message.should.equal('Default field message');
         });
 
-        it('uses default error message for validation type if no field level message is defined', function () {
+        it('uses default error message for validation type if no field level message is defined', () => {
             req.translate.withArgs('validation.required').returns('Default required message');
-            var error = new ErrorClass('key', { type: 'required' }, req);
+            let error = new ErrorClass('key', { type: 'required' }, req);
             error.message.should.equal('Default required message');
         });
 
-        it('uses global default error message if no type of field level messages are defined', function () {
+        it('uses global default error message if no type of field level messages are defined', () => {
             req.translate.withArgs('validation.default').returns('Global default');
-            var error = new ErrorClass('key', { type: 'required' }, req);
+            let error = new ErrorClass('key', { type: 'required' }, req);
             error.message.should.equal('Global default');
         });
 
-        it('populates messages with field label', function () {
+        it('populates messages with field label', () => {
             req.translate.withArgs('validation.key.required').returns('Your {{label}} is required');
             req.translate.withArgs('fields.key.label').returns('Field label');
-            var error = new ErrorClass('key', { type: 'required' }, req);
+            let error = new ErrorClass('key', { type: 'required' }, req);
             error.message.should.equal('Your field label is required');
         });
 
-        it('populates messages with legend', function () {
+        it('populates messages with legend', () => {
             req.translate.withArgs('validation.key.required').returns('Your {{legend}} is required');
             req.translate.withArgs('fields.key.legend').returns('date');
-            var error = new ErrorClass('key', { type: 'required' }, req);
+            let error = new ErrorClass('key', { type: 'required' }, req);
             error.message.should.equal('Your date is required');
         });
 
-        it('populates maxlength messages with the maximum length', function () {
+        it('populates maxlength messages with the maximum length', () => {
             req.translate.withArgs('validation.key.maxlength').returns('This must be less than {{maxlength}} characters');
-            var error = new ErrorClass('key', { type: 'maxlength', arguments: [10] }, req);
+            let error = new ErrorClass('key', { type: 'maxlength', arguments: [10] }, req);
             error.message.should.equal('This must be less than 10 characters');
         });
 
-        it('populates minlength messages with the minimum length', function () {
+        it('populates minlength messages with the minimum length', () => {
             req.translate.withArgs('validation.key.minlength').returns('This must be no more than {{minlength}} characters');
-            var error = new ErrorClass('key', { type: 'minlength', arguments: [10] }, req);
+            let error = new ErrorClass('key', { type: 'minlength', arguments: [10] }, req);
             error.message.should.equal('This must be no more than 10 characters');
         });
 
-        it('populates exactlength messages with the required length', function () {
+        it('populates exactlength messages with the required length', () => {
             req.translate.withArgs('validation.key.exactlength').returns('This must be {{exactlength}} characters');
-            var error = new ErrorClass('key', { type: 'exactlength', arguments: [10] }, req);
+            let error = new ErrorClass('key', { type: 'exactlength', arguments: [10] }, req);
             error.message.should.equal('This must be 10 characters');
         });
 
-        it('populates past messages with the required difference', function () {
+        it('populates past messages with the required difference', () => {
             req.translate.withArgs('validation.key.past').returns('This must be less than {{age}} ago');
-            var error = new ErrorClass('key', { type: 'past', arguments: [5, 'days'] }, req);
+            let error = new ErrorClass('key', { type: 'past', arguments: [5, 'days'] }, req);
             error.message.should.equal('This must be less than 5 days ago');
         });
 
-        it('populates custom messages with the required variable', function () {
+        it('populates custom messages with the required variable', () => {
             req.translate.withArgs('validation.key.custom').returns('This must be {{custom}}');
-            var error = new ErrorClass('key', { type: 'custom', arguments: ['dynamic'] }, req);
+            let error = new ErrorClass('key', { type: 'custom', arguments: ['dynamic'] }, req);
             error.message.should.equal('This must be dynamic');
         });
 
-        it('populates messages with values from `res.locals` when present', function () {
+        it('populates messages with values from `res.locals` when present', () => {
             req.translate.withArgs('validation.key.required').returns('This must be a {{something}}');
             res.locals.something = 'value';
-            var error = new ErrorClass('key', { type: 'required' }, req, res);
+            let error = new ErrorClass('key', { type: 'required' }, req, res);
             error.message.should.equal('This must be a value');
         });
 
-        it('uses own translate method if no req.translate is defined', function () {
+        it('uses identity function if no req.translate is defined', () => {
             delete req.translate;
-            sinon.stub(ErrorClass.prototype, 'translate').returns('Custom translate');
-            var error = new ErrorClass('key', { type: 'required' }, req);
-            error.message.should.equal('Custom translate');
-            ErrorClass.prototype.translate.restore();
+            let error = new ErrorClass('key', { type: 'required' }, req);
+            error.translate('test').should.equal('test');
+            expect(error.message).to.equal(null);
         });
 
     });

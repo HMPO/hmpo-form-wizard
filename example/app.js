@@ -1,12 +1,14 @@
+'use strict';
+
 /* eslint no-console: 0 */
 
-var express = require('express'),
-    cookieParser = require('cookie-parser'),
-    session = require('express-session'),
-    path = require('path'),
-    i18n = require('i18n-future');
+const express = require('express');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const path = require('path');
+const i18n = require('i18n-future');
 
-var app = express();
+let app = express();
 
 app.use(cookieParser());
 
@@ -19,7 +21,7 @@ app.use(session({
 
 // add routing for static assets if running as a standalone server
 app.use('/public', express.static(path.resolve(__dirname, './assets')));
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
     res.locals.assetPath = '/public';
     next();
 });
@@ -35,18 +37,18 @@ app.use(require('express-partial-templates')(app));
 app.use(require('body-parser').urlencoded({ extended: true }));
 app.use(require('body-parser').json());
 
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
     res.locals.baseUrl = req.baseUrl;
     next();
 });
 
 app.use(require('./routes'));
 
-app.post('/api', function (req, res) {
+app.post('/api', (req, res) => {
     res.json(req.body);
 });
 
-app.use(function (err, req, res, next) {
+app.use((err, req, res, next) => {
     console.log(err);
     res.status(500).render('pages/error', { err: err });
 });
