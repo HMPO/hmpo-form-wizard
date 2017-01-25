@@ -4,7 +4,7 @@
   "description": "Routing and request handling for a multi-step form processes",
   "main": "index.js",
   "scripts": {
-    "test": "npm run lint && npm run unit && npm run cover && npm run check-coverage && npm run snyk",
+    "test": "npm run lint && npm run unit && npm run cover && npm run check-coverage",
     "lint": "eslint .",
     "unit": "mocha test/. --recursive --require test/helpers",
     "cover": "istanbul cover _mocha -- -R dot test/. --recursive --require test/helpers",
@@ -44,6 +44,6 @@
     "reqres": "^1.2.0",
     "sinon": "^1.14.1",
     "sinon-chai": "^2.7.0",
-    "snyk": "1.23.4"
+    "snyk": "^1.24.5"
   }
 }

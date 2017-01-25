@@ -4,6 +4,9 @@ node_js:
   - "5"
   - "6"
   - "7"
+after_success:
+  - snyk auth $SNYK_TOKEN
+  - snyk test
 notifications:
   email: false
 sudo: false
