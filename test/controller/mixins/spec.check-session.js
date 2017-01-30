@@ -24,8 +24,8 @@ describe('mixins/check-session', () => {
         BaseController = baseController();
         StubController = checkSession(BaseController);
         controller = new StubController({
-            route: '/route',
-            firstStep: '/first'
+            checkSession: true,
+            route: '/route'
         });
 
     });
@@ -79,7 +79,7 @@ describe('mixins/check-session', () => {
         });
 
         it('does not throw error on GET to first route', () => {
-            controller.options.route = '/first';
+            controller.options.entryPoint = true;
             controller.checkSession(req, res, next);
             next.should.have.been.calledOnce;
             next.should.have.been.calledWithExactly();
@@ -87,7 +87,7 @@ describe('mixins/check-session', () => {
 
         it('throws session error on POST to first route', () => {
             req.method = 'POST';
-            controller.options.route = '/first';
+            controller.options.entryPoint = true;
             controller.checkSession(req, res, next);
             next.should.have.been.calledOnce;
             next.args[0][0].should.be.an.instanceOf(Error);

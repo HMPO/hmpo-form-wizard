@@ -1,39 +1,36 @@
 module.exports = {
     '/': {
+        entryPoint: true,
         controller: require('../controllers/start'),
         template: 'index',
-        next: '/name'
+        next: 'name'
     },
     '/name': {
         fields: ['name'],
-        next: '/age'
+        next: 'age'
     },
     '/age': {
         fields: ['age'],
-        next: '/direction'
+        next: 'direction'
     },
     '/direction': {
         fields: ['direction'],
-        next: '/left',
-        forks: [{
-            target: '/right',
-            condition: {
-                field: 'direction',
-                value: 'right'
-            }
-        }]
+        next: [
+            { field: 'direction', value: 'right', next: 'right' },
+            'left',
+        ]
     },
     '/right': {
         fields: ['right-only'],
-        next: '/submit'
+        next: 'submit'
     },
     '/left': {
         fields: ['left-only'],
-        next: '/submit'
+        next: 'submit'
     },
     '/submit': {
         controller: require('../controllers/submit'),
-        next: '/done'
+        next: 'done'
     },
     '/done': {
         backLink: null

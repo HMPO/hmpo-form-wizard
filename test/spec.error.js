@@ -7,7 +7,9 @@ describe('Error', () => {
 
     describe('constructor', () => {
         beforeEach(() => {
-            req = {};
+            req = {
+                path: '/url'
+            };
             res = {};
         });
 
@@ -22,6 +24,11 @@ describe('Error', () => {
             let error = new ErrorClass('key');
             error.key.should.equal('key');
             error.type.should.equal('default');
+        });
+
+        it('should set the req url to the error', () => {
+            let error = new ErrorClass('key', {}, req, res);
+            error.url.should.equal('/url');
         });
 
     });
