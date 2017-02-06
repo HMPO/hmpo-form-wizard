@@ -127,6 +127,15 @@ describe('mixins/check-progress', () => {
                 '/two'
             ]);
         });
+
+
+        it('adds custom path step to history if specified', () => {
+            controller.options.route = '/two';
+            controller.setStepComplete(req, res, '/custom/route');
+            req.sessionModel.get('steps').should.deep.equal([
+                '/custom/route'
+            ]);
+        });
     });
 
 });
