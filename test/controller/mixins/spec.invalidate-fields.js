@@ -10,19 +10,6 @@ describe('mixins/invalidate-fields', () => {
     let req, res, next, controller, steps;
 
     beforeEach(() => {
-        req = request({
-            baseUrl: '/base'
-        });
-        res = response();
-        next = sinon.stub();
-
-        req.sessionModel.set({
-            'field1': true,
-            'field2': true,
-            'field3': true,
-            'field4': true
-        });
-
         steps = {
             '/step1': {
                 route: '/step1'
@@ -35,14 +22,30 @@ describe('mixins/invalidate-fields', () => {
             }
         };
 
-        BaseController = baseController();
-        BaseController = resolvePath(BaseController);
-        StubController = invalidateFields(BaseController);
-        controller = new StubController({
+        let options = {
             route: '/step1',
             steps,
             fields: steps['/step1'].fields
+        };
+
+        req = request({
+            form: { options },
+            baseUrl: '/base'
         });
+        res = response();
+        next = sinon.stub();
+
+        req.sessionModel.set({
+            'field1': true,
+            'field2': true,
+            'field3': true,
+            'field4': true
+        });
+
+        BaseController = baseController();
+        BaseController = resolvePath(BaseController);
+        StubController = invalidateFields(BaseController);
+        controller = new StubController(options);
         controller.removeJourneyHistoryStep = sinon.stub();
     });
 

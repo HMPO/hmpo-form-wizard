@@ -10,7 +10,15 @@ describe('mixins/check-progress', () => {
     let req, res, next, controller;
 
     beforeEach(() => {
+        let options = {
+            checkJourney: true,
+            route: '/teststep',
+            template: 'template',
+            next: 'nextstep'
+        };
+
         req = request({
+            form: { options },
             baseUrl: '/base'
         });
         res = response();
@@ -19,12 +27,7 @@ describe('mixins/check-progress', () => {
         BaseController = baseController();
         BaseController = resolvePath(BaseController);
         StubController = checkProgress(BaseController);
-        controller = new StubController({
-            checkJourney: true,
-            route: '/teststep',
-            template: 'template',
-            next: 'nextstep'
-        });
+        controller = new StubController(options);
     });
 
     it('should export a function', () => {

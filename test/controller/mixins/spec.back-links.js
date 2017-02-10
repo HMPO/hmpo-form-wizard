@@ -13,11 +13,12 @@ describe('mixins/back-links', () => {
         BaseController = baseController();
         BaseController = resolvePath(BaseController);
         StubController = backLinks(BaseController);
-        controller = new StubController({
-            route: '/'
-        });
+
+        let options = { route: '/' };
+        controller = new StubController(options);
 
         req = request({
+            form: { options },
             method: 'GET',
             baseUrl: '/base'
         });

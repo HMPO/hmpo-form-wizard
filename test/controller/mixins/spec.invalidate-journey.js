@@ -10,7 +10,12 @@ describe('mixins/invalidate-journey', () => {
     let req, res, next, controller;
 
     beforeEach(() => {
+        let options = {
+            route: '/one'
+        };
+
         req = request({
+            form: { options },
             baseUrl: '/'
         });
         res = response();
@@ -19,9 +24,7 @@ describe('mixins/invalidate-journey', () => {
         BaseController = baseController();
         BaseController = resolvePath(BaseController);
         StubController = invalidateJourney(BaseController);
-        controller = new StubController({
-            route: '/one'
-        });
+        controller = new StubController(options);
 
         req.journeyModel.set('history', [
             { path: '/one' },
