@@ -11,7 +11,9 @@ describe('Form Controller', () => {
 
     beforeEach(() => {
         req = request({
-            baseUrl: '/base'
+            originalUrl: '/base/route',
+            baseUrl: '/base',
+            path: '/route'
         });
         res = response();
         next = sinon.stub();
@@ -20,7 +22,9 @@ describe('Form Controller', () => {
             template: 'template',
             fields: {
                 field1: {},
-                field2: {}
+                field2: {},
+                field8: {},
+                field9: {}
             }
         };
     });
@@ -67,6 +71,143 @@ describe('Form Controller', () => {
             let controller = new Controller(options);
             controller.options.template.should.equal('index');
         });
+
+        it('should remove post method if noPost option is set', () =>{
+            options.noPost  = true;
+            let controller = new Controller(options);
+            expect(controller.post).to.be.null;
+        });
+
+        it('should leave post method if noPost option is not set', () =>{
+            let controller = new Controller(options);
+            controller.post.should.be.a.function;
+        });
+
+    });
+
+    describe('errorHandler', () => {
+        let err;
+        beforeEach(() => {
+            err = new Error();
+            sinon.stub(Controller.prototype, 'isValidationError').returns(true);
+            sinon.stub(Controller.prototype, 'setErrors');
+            sinon.stub(Form.prototype, 'errorHandler');
+        });
+
+        afterEach(() => {
+            Controller.prototype.isValidationError.restore();
+            Controller.prototype.setErrors.restore();
+            Form.prototype.errorHandler.restore();
+        });
+
+        it('should call setErrors and call next if skip is true', () => {
+            options.skip = true;
+            let controller = new Controller(options);
+            controller.errorHandler(err, req, res, next);
+            Controller.prototype.setErrors.should.have.been.calledWithExactly(err, req, res);
+            next.should.have.been.calledWithExactly(err);
+            Form.prototype.errorHandler.should.not.have.been.called;
+        });
+
+        it('should call parent error handler if skip is false', () => {
+            options.skip = false;
+            let controller = new Controller(options);
+            controller.errorHandler(err, req, res, next);
+            next.should.not.have.been.called;
+            Form.prototype.errorHandler.should.have.been.calledWithExactly(err, req, res, next);
+        });
+
+        it('should call parent error handler if err is not a validation error', () => {
+            options.skip = true;
+            Controller.prototype.isValidationError.returns(false);
+            let controller = new Controller(options);
+            controller.errorHandler(err, req, res, next);
+            next.should.not.have.been.called;
+            Form.prototype.errorHandler.should.have.been.calledWithExactly(err, req, res, next);
+        });
+    });
+
+
+    describe('render', () => {
+        beforeEach(() => {
+            sinon.stub(Controller.prototype, 'post');
+            sinon.stub(Controller.prototype, 'setStepComplete');
+            sinon.stub(Form.prototype, 'render');
+        });
+
+        afterEach(() => {
+            Controller.prototype.post.restore();
+            Controller.prototype.setStepComplete.restore();
+            Form.prototype.render.restore();
+        });
+
+        it('should call post if skip is true', () => {
+            options.skip = true;
+            let controller = new Controller(options);
+            controller.render(req, res, next);
+            Form.prototype.render.should.not.have.been.called;
+            Controller.prototype.post.should.have.been.calledWithExactly(req, res, next);
+        });
+
+        it('should call the parent render method if skip is not set', () => {
+            let controller = new Controller(options);
+            controller.render(req, res, next);
+            Controller.prototype.post.should.not.have.been.called;
+            Form.prototype.render.should.have.been.calledWithExactly(req, res, next);
+        });
+
+        it('should call the parent render method if skip is set but there is no post method', () => {
+            let controller = new Controller(options);
+            controller.post = null;
+            controller.render(req, res, next);
+            Form.prototype.render.should.have.been.calledWithExactly(req, res, next);
+        });
+
+        it('should call setStepComplete if the step has a next page and no post method', () => {
+            res.locals.nextPage = '/next/page';
+            let controller = new Controller(options);
+            controller.post = null;
+            controller.render(req, res, next);
+            Controller.prototype.setStepComplete.should.have.been.calledOnce;
+            Controller.prototype.setStepComplete.should.have.been.calledWithExactly(req, res);
+        });
+
+        it('should not call setStepComplete if the next page is the same as the current url', () => {
+            res.locals.nextPage = '/base/route';
+            let controller = new Controller(options);
+            controller.post = null;
+            controller.render(req, res, next);
+            Controller.prototype.setStepComplete.should.not.have.been.calledOnce;
+        });
+    });
+
+    describe('successHandler', () => {
+        let controller;
+
+        beforeEach(() => {
+            sinon.stub(Controller.prototype, 'setStepComplete');
+            sinon.stub(Controller.prototype, 'getNextStep').returns('/next/step');
+            controller = new Controller(options);
+        });
+
+        afterEach(() => {
+            Controller.prototype.setStepComplete.restore();
+            Controller.prototype.getNextStep.restore();
+        });
+
+        it('should call setStepComplete', () => {
+            controller.successHandler(req, res);
+            Controller.prototype.setStepComplete.should.have.been.calledOnce;
+            Controller.prototype.setStepComplete.should.have.been.calledWithExactly(req, res);
+        });
+
+        it('should redirect to the next step', () => {
+            controller.successHandler(req, res);
+            Controller.prototype.getNextStep.should.have.been.calledOnce;
+            Controller.prototype.getNextStep.should.have.been.calledWithExactly(req, res);
+            res.redirect.should.have.been.calledWithExactly('/next/step');
+        });
+
     });
 
     describe('getValues', () => {
@@ -96,6 +237,37 @@ describe('Form Controller', () => {
                     field2: 'error value 2',
                     field3: 'boo',
                     field4: 'baz'
+                }
+            );
+        });
+
+        it('calls callback without error values that are from a different url', () => {
+            req.sessionModel.set({
+                field1: 'foo',
+                field2: 'bar',
+                field3: 'boo',
+                field4: 'baz',
+                errors: {
+                    field2: { },
+                    field8: { url: '/route' },
+                    field9: { url: '/another/url' }
+                },
+                errorValues: {
+                    field1: 'error value 1',
+                    field2: 'error value 2',
+                    field8: 'error value 8',
+                    field9: 'error value 9'
+                }
+            });
+            controller.getValues(req, res, cb);
+            cb.should.have.been.calledWithExactly(
+                null,
+                {
+                    field1: 'error value 1',
+                    field2: 'error value 2',
+                    field3: 'boo',
+                    field4: 'baz',
+                    field8: 'error value 8'
                 }
             );
         });
@@ -155,6 +327,19 @@ describe('Form Controller', () => {
             });
             let errors = controller.getErrors(req, res);
             errors.should.eql({ field1: 'foo' });
+        });
+
+        it('only returns errors from the current url if one is present', () => {
+            req.path = '/url';
+            req.sessionModel.set('errors', {
+                field1: { code: 'foo', url: '/another/url' },
+                field2: { code: 'baz', url: '/url' },
+                field3: 'bar'
+            });
+            let errors = controller.getErrors(req, res);
+            errors.should.eql({
+                field2: { code: 'baz', url: '/url' }
+            });
         });
 
         it('does not return errors with a redirect property', () => {
@@ -223,72 +408,6 @@ describe('Form Controller', () => {
             });
 
         });
-    });
-
-    describe('missingPrereqHandler', () => {
-        let controller;
-
-        beforeEach(() => {
-            options.steps = {
-                '/one': { next: '/two' },
-                '/two': { next: '/three' },
-                '/three': { next: '/four' },
-                '/four': {}
-            };
-            controller = new Controller(options);
-        });
-
-        it('redirects to the step following the most recently completed', () => {
-            req.sessionModel.set('steps', ['/one']);
-            controller.missingPrereqHandler(req, res, next);
-            res.redirect.should.have.been.calledWith('/base/two');
-        });
-
-        it('redirects to the most recently completed if it has no next step', () => {
-            req.sessionModel.set('steps', ['/four']);
-            controller.missingPrereqHandler(req, res, next);
-            res.redirect.should.have.been.calledWith('/base/four');
-        });
-
-        it('redirects to the first step if no steps have been completed', () => {
-            req.sessionModel.set('steps', []);
-            controller.missingPrereqHandler(req, res, next);
-            res.redirect.should.have.been.calledWith('/base/one');
-        });
-
-    });
-
-    describe('errorHandler', () => {
-        let controller;
-
-        beforeEach(() => {
-            controller = new Controller(options);
-        });
-
-        beforeEach(() => {
-            sinon.stub(Form.prototype, 'errorHandler');
-            sinon.stub(Controller.prototype, 'missingPrereqHandler');
-        });
-
-        afterEach(() => {
-            Form.prototype.errorHandler.restore();
-            Controller.prototype.missingPrereqHandler.restore();
-        });
-
-        it('calls missingPrereqHandler for missing prerquisite errors', () => {
-            let err = new Error('foo');
-            err.code = 'MISSING_PREREQ';
-            controller.errorHandler(err, req, res, next);
-            controller.missingPrereqHandler.should.have.been.calledWithExactly(req, res, next);
-        });
-
-        it('passes through to parent errorHandler for all other errors', () => {
-            let err = new Error('foo');
-            controller.errorHandler(err, req, res, next);
-            Form.prototype.errorHandler.should.have.been.calledWithExactly(err, req, res, next);
-            Form.prototype.errorHandler.should.have.been.calledOn(controller);
-        });
-
     });
 
     describe('use', () => {
@@ -402,26 +521,45 @@ describe('Form Controller', () => {
     });
 
     describe('mixins', () => {
-        [
+        const mixins = [
             'resolve-path',
             'base-url',
             'translate',
+            'journey-model',
             'session-model',
             'check-session',
             'check-progress',
             'csrf',
             'invalidate-fields',
-            'back-links'
-        ].forEach(mixin => {
+            'back-links',
+            'next-step',
+            'edit-step'
+        ];
+
+        mixins.forEach(mixin => {
             it('should should run the ' + mixin + ' mixin function', () => {
                 let mixinFunction = sinon.stub().returnsArg(0);
-
                 proxyquire('../../lib/controller', {
                     ['./mixins/' + mixin]: mixinFunction
                 });
 
                 mixinFunction.should.have.been.calledOnce;
                 mixinFunction.should.have.been.calledWithExactly(sinon.match.func);
+            });
+        });
+
+        mixins.slice(1).forEach((mixin, index) => {
+            let previousMixin = mixins[index];
+            it('should should run the ' + mixin + ' mixin function after ' + previousMixin, () => {
+                let mixinFunction = sinon.stub().returnsArg(0);
+                let previousMixinFunction = sinon.stub().returnsArg(0);
+
+                proxyquire('../../lib/controller', {
+                    ['./mixins/' + mixin]: mixinFunction,
+                    ['./mixins/' + previousMixin]: previousMixinFunction
+                });
+
+                mixinFunction.should.have.been.calledAfter(previousMixinFunction);
             });
         });
 

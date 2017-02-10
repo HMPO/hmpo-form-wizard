@@ -1,8 +1,6 @@
 module.exports = {
     name: {
-        validate: [
-            'required'
-        ]
+        validate: 'required'
     },
     age: {
         validate: [
@@ -11,22 +9,16 @@ module.exports = {
         ]
     },
     direction: {
-        validate: [
-            'required'
-        ],
+        validate: 'required',
         options: [
             { value: 'left', label: 'Left' },
             { value: 'right', label: 'Right' }
         ]
     },
     'left-only': {
-        validate: [
-            'required'
-        ]
+        validate: 'required'
     },
     'right-only': {
-        validate: [
-            'required'
-        ]
+        validate: 'required'
     }
 };

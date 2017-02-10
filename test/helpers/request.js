@@ -9,5 +9,9 @@ module.exports = settings => {
         session: req.session,
         key: 'hmpo-wizard-test'
     });
+    req.journeyModel = new SessionModel(null, {
+        session: req.session,
+        key: 'hmpo-journey-test'
+    });
     return req;
 };

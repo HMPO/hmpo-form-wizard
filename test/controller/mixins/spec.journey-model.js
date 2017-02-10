@@ -2,29 +2,30 @@
 
 const baseController = require('../../helpers/controller');
 const WizardSessionModel = require('../../../lib/model');
-const sessionModel = require('../../../lib/controller/mixins/session-model');
+const journeyModel = require('../../../lib/controller/mixins/journey-model');
 
-describe('mixins/session-model', () => {
+describe('mixins/journey-model', () => {
 
     let BaseController, StubController;
     let req, res, next, controller;
 
     beforeEach(() => {
         req = request();
-        delete req.sessionModel;
+        delete req.journeyModel;
         res = response();
         next = sinon.stub();
 
         BaseController = baseController();
-        StubController = sessionModel(BaseController);
+        StubController = journeyModel(BaseController);
         controller = new StubController({
-            name: 'Wizard-Name'
+            name: 'Wizard-Name',
+            journeyName: 'Journey-Name'
         });
     });
 
     it('should export a function', () => {
-        sessionModel.should.be.a.function;
-        sessionModel.length.should.equal(1);
+        journeyModel.should.be.a.function;
+        journeyModel.length.should.equal(1);
     });
 
     it('should extend a passed controller', () => {
@@ -37,46 +38,46 @@ describe('mixins/session-model', () => {
             BaseController.prototype.middlewareSetup.should.have.been.calledOnce;
         });
 
-        it('uses the createSessionModel middleware', () => {
+        it('uses the createJourneyModel middleware', () => {
             controller.middlewareSetup();
             BaseController.prototype.use.should.have.been.calledOnce;
             BaseController.prototype.use.should.have.been.calledWithExactly(
-                controller.createSessionModel
+                controller.createJourneyModel
             );
         });
     });
 
-    describe('createSessionModel', () => {
+    describe('createJourneyModel', () => {
         it('throws an error if there is no req.session', () => {
             delete req.session;
-            expect(() => controller.createSessionModel(req, res, next) ).to.throw();
+            expect(() => controller.createJourneyModel(req, res, next) ).to.throw();
         });
 
         it('creates a new session model on the request and session', () => {
-            controller.createSessionModel(req, res, next);
-            req.sessionModel.should.be.an.object;
-            req.sessionModel.should.be.an.instanceOf(WizardSessionModel);
-            req.session['hmpo-wizard-Wizard-Name'].should.be.an.object;
+            controller.createJourneyModel(req, res, next);
+            req.journeyModel.should.be.an.object;
+            req.journeyModel.should.be.an.instanceOf(WizardSessionModel);
+            req.session['hmpo-journey-Journey-Name'].should.be.an.object;
         });
 
         it('destroys an existing session model before creating a new one', () => {
             let destroy = sinon.stub();
-            req.sessionModel = {
+            req.journeyModel = {
                 destroy
             };
-            controller.createSessionModel(req, res, next);
+            controller.createJourneyModel(req, res, next);
             destroy.should.have.been.calledOnce;
         });
 
         it('resets the session if the reset option is set', () => {
-            controller.options.reset = true;
-            req.session['hmpo-wizard-Wizard-Name'] = { existing: true };
-            controller.createSessionModel(req, res, next);
-            req.sessionModel.toJSON().should.deep.equal({});
+            controller.options.resetJourney = true;
+            req.session['hmpo-journey-Journey-Name'] = { existing: true };
+            controller.createJourneyModel(req, res, next);
+            req.journeyModel.toJSON().should.deep.equal({});
         });
 
         it('calls the next callback', () => {
-            controller.createSessionModel(req, res, next);
+            controller.createJourneyModel(req, res, next);
             next.should.have.been.calledOnce;
             next.should.have.been.calledWithExactly();
         });

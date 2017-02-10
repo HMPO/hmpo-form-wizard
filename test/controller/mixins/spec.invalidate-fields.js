@@ -1,6 +1,7 @@
 'use strict';
 
 const baseController = require('../../helpers/controller');
+const resolvePath = require('../../../lib/controller/mixins/resolve-path');
 const invalidateFields = require('../../../lib/controller/mixins/invalidate-fields');
 
 describe('mixins/invalidate-fields', () => {
@@ -9,7 +10,9 @@ describe('mixins/invalidate-fields', () => {
     let req, res, next, controller, steps;
 
     beforeEach(() => {
-        req = request();
+        req = request({
+            baseUrl: '/base'
+        });
         res = response();
         next = sinon.stub();
 
@@ -33,13 +36,14 @@ describe('mixins/invalidate-fields', () => {
         };
 
         BaseController = baseController();
+        BaseController = resolvePath(BaseController);
         StubController = invalidateFields(BaseController);
         controller = new StubController({
             route: '/step1',
             steps,
             fields: steps['/step1'].fields
         });
-
+        controller.removeJourneyHistoryStep = sinon.stub();
     });
 
     it('should export a function', () => {
@@ -125,13 +129,7 @@ describe('mixins/invalidate-fields', () => {
             );
         });
 
-        it('invalidates step and following steps when value is changed', () => {
-            req.sessionModel.set('steps', [
-                '/step1',
-                '/step2',
-                '/step3',
-                '/step4',
-            ]);
+        it('invalidates step when value is changed', () => {
             controller.options.fields = {
                 field2: {
                     invalidates: [ 'field1', 'field3' ]
@@ -144,41 +142,12 @@ describe('mixins/invalidate-fields', () => {
             controller.invalidateFields(req, res, next);
             req.sessionModel.set('field2', 'changed');
 
-            req.sessionModel.get('steps').should.deep.equal([
-                '/step1'
-            ]);
-        });
-
-        it('does not invalidate steps if no visited step uses invalidated field', () => {
-            req.sessionModel.set('steps', [
-                '/step1',
-                '/step3',
-                '/step4',
-            ]);
-            controller.options.fields = {
-                field2: {
-                    invalidates: [ 'field1', 'field3' ]
-                }
-            };
-            controller.options.steps['/step2'].fields = {
-                field1: {}
-            };
-
-            controller.invalidateFields(req, res, next);
-            req.sessionModel.set('field2', 'changed');
-
-            req.sessionModel.get('steps').should.deep.equal([
-                '/step1',
-                '/step3',
-                '/step4',
-            ]);
-        });
-
-
-        it('calls the next callback', () => {
-            controller.invalidateFields(req, res, next);
-            next.should.have.been.calledOnce;
-            next.should.have.been.calledWithExactly();
+            controller.removeJourneyHistoryStep.should.have.been.calledOnce;
+            controller.removeJourneyHistoryStep.should.have.been.calledWithExactly(
+                req,
+                res,
+                '/base/step2'
+            );
         });
 
     });
