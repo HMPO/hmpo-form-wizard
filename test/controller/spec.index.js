@@ -10,13 +10,6 @@ describe('Form Controller', () => {
     let req, res, next, options;
 
     beforeEach(() => {
-        req = request({
-            originalUrl: '/base/route',
-            baseUrl: '/base',
-            path: '/route'
-        });
-        res = response();
-        next = sinon.stub();
         options = {
             route: '/route',
             template: 'template',
@@ -27,6 +20,14 @@ describe('Form Controller', () => {
                 field9: {}
             }
         };
+        req = request({
+            form: { options },
+            originalUrl: '/base/route',
+            baseUrl: '/base',
+            path: '/route'
+        });
+        res = response();
+        next = sinon.stub();
     });
 
     it('exposes validators', () => {
@@ -128,56 +129,60 @@ describe('Form Controller', () => {
     });
 
 
-    describe('render', () => {
+    describe('_checkStatus', () => {
         beforeEach(() => {
             sinon.stub(Controller.prototype, 'post');
             sinon.stub(Controller.prototype, 'setStepComplete');
-            sinon.stub(Form.prototype, 'render');
+            sinon.stub(Controller.prototype, 'successHandler');
         });
 
         afterEach(() => {
             Controller.prototype.post.restore();
             Controller.prototype.setStepComplete.restore();
-            Form.prototype.render.restore();
+            Controller.prototype.successHandler.restore();
         });
 
         it('should call post if skip is true', () => {
             options.skip = true;
             let controller = new Controller(options);
-            controller.render(req, res, next);
-            Form.prototype.render.should.not.have.been.called;
+            controller._checkStatus(req, res, next);
+            next.should.not.have.been.called;
             Controller.prototype.post.should.have.been.calledWithExactly(req, res, next);
         });
 
-        it('should call the parent render method if skip is not set', () => {
+        it('should call the next callback if skip is not set', () => {
             let controller = new Controller(options);
-            controller.render(req, res, next);
+            controller._checkStatus(req, res, next);
             Controller.prototype.post.should.not.have.been.called;
-            Form.prototype.render.should.have.been.calledWithExactly(req, res, next);
+            next.should.have.been.calledWithExactly();
         });
 
-        it('should call the parent render method if skip is set but there is no post method', () => {
+        it('should call the successHandler if skip is set but there is no post method', () => {
+            options.skip = true;
             let controller = new Controller(options);
             controller.post = null;
-            controller.render(req, res, next);
-            Form.prototype.render.should.have.been.calledWithExactly(req, res, next);
+            controller._checkStatus(req, res, next);
+            next.should.not.have.been.called;
+            Controller.prototype.successHandler.should.have.been.calledWithExactly(req, res, next);
         });
 
         it('should call setStepComplete if the step has a next page and no post method', () => {
             res.locals.nextPage = '/next/page';
             let controller = new Controller(options);
             controller.post = null;
-            controller.render(req, res, next);
+            controller._checkStatus(req, res, next);
             Controller.prototype.setStepComplete.should.have.been.calledOnce;
             Controller.prototype.setStepComplete.should.have.been.calledWithExactly(req, res);
+            next.should.have.been.calledWithExactly();
         });
 
         it('should not call setStepComplete if the next page is the same as the current url', () => {
             res.locals.nextPage = '/base/route';
             let controller = new Controller(options);
             controller.post = null;
-            controller.render(req, res, next);
+            controller._checkStatus(req, res, next);
             Controller.prototype.setStepComplete.should.not.have.been.calledOnce;
+            next.should.have.been.calledWithExactly();
         });
     });
 
@@ -196,13 +201,13 @@ describe('Form Controller', () => {
         });
 
         it('should call setStepComplete', () => {
-            controller.successHandler(req, res);
+            controller.successHandler(req, res, next);
             Controller.prototype.setStepComplete.should.have.been.calledOnce;
             Controller.prototype.setStepComplete.should.have.been.calledWithExactly(req, res);
         });
 
         it('should redirect to the next step', () => {
-            controller.successHandler(req, res);
+            controller.successHandler(req, res, next);
             Controller.prototype.getNextStep.should.have.been.calledOnce;
             Controller.prototype.getNextStep.should.have.been.calledWithExactly(req, res);
             res.redirect.should.have.been.calledWithExactly('/next/step');
@@ -443,12 +448,11 @@ describe('Form Controller', () => {
     });
 
 
-    describe('requestHandler', () => {
+    describe('middlewareMixins', () => {
         let controller;
 
         beforeEach(() => {
             controller = new Controller(options);
-            sinon.stub(Form.prototype, 'requestHandler');
             sinon.stub(Controller.prototype, 'middlewareSetup');
             sinon.stub(Controller.prototype, 'middlewareChecks');
             sinon.stub(Controller.prototype, 'middlewareActions');
@@ -456,7 +460,6 @@ describe('Form Controller', () => {
         });
 
         afterEach(() => {
-            Form.prototype.requestHandler.restore();
             Controller.prototype.middlewareSetup.restore();
             Controller.prototype.middlewareChecks.restore();
             Controller.prototype.middlewareActions.restore();
@@ -464,23 +467,12 @@ describe('Form Controller', () => {
         });
 
         it('should call the middleware setup methods', () => {
-            controller.requestHandler();
+            controller.middlewareMixins();
             Controller.prototype.middlewareSetup.should.have.been.calledOnce;
             Controller.prototype.middlewareChecks.should.have.been.calledOnce;
             Controller.prototype.middlewareActions.should.have.been.calledOnce;
             Controller.prototype.middlewareLocals.should.have.been.calledOnce;
         });
-
-        it('should call form-controllers requestHandler method', () => {
-            controller.requestHandler();
-            Form.prototype.requestHandler.should.have.been.calledOnce;
-        });
-
-        it('should return the router from the form-controllers requestHandler', () => {
-            Form.prototype.requestHandler.returns('A Router');
-            controller.requestHandler().should.equal('A Router');
-        });
-
     });
 
     describe('middleware setup functions', () => {

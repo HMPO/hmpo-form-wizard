@@ -10,16 +10,19 @@ describe('mixins/session-model', () => {
     let req, res, next, controller;
 
     beforeEach(() => {
-        req = request();
+        let options = {
+            name: 'Wizard-Name'
+        };
+        req = request({
+            form: { options }
+        });
         delete req.sessionModel;
         res = response();
         next = sinon.stub();
 
         BaseController = baseController();
         StubController = sessionModel(BaseController);
-        controller = new StubController({
-            name: 'Wizard-Name'
-        });
+        controller = new StubController(options);
     });
 
     it('should export a function', () => {

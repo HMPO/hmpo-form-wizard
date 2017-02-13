@@ -10,17 +10,20 @@ describe('mixins/journey-model', () => {
     let req, res, next, controller;
 
     beforeEach(() => {
-        req = request();
+        let  options = {
+            name: 'Wizard-Name',
+            journeyName: 'Journey-Name'
+        };
+        req = request({
+            form: { options }
+        });
         delete req.journeyModel;
         res = response();
         next = sinon.stub();
 
         BaseController = baseController();
         StubController = journeyModel(BaseController);
-        controller = new StubController({
-            name: 'Wizard-Name',
-            journeyName: 'Journey-Name'
-        });
+        controller = new StubController(options);
     });
 
     it('should export a function', () => {

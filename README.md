@@ -132,6 +132,8 @@ Examples of custom controllers can be found in the [example app](./example/contr
 These controllers can be overridden in a custom controller to provide additional behaviour to a standard controller
 
 ### GET lifecycle
+> #### - `configure(req, res, next)`
+> Allows changing of the `req.form.options` controller options for this request.
 > #### - `get(req, res, next)`
 >> #### - `errors = getErrors(req, res)`
 >> Returns an `Object` of `Controller.Error` validation errors indexed by the field name.
@@ -143,6 +145,8 @@ These controllers can be overridden in a custom controller to provide additional
 >> Renders the template to the user.
 
 ### POST lifecycle
+> #### - `configure(req, res, next)`
+> Allows changing of the `req.form.options` controller options for this request.
 > #### - `post(req, res, next)`
 >> #### - `process(req, res, next)`
 >> Allows for processing the `req.form.values` before validation.
@@ -184,3 +188,7 @@ An example application can be found in [the ./example directory](./example). To 
 * `next` links and error redirects are  now relative to the `baseUrl`.
 * Branching is now supported by `next`. See the Example app for details.
 * The app should provide error middleware that redirects to the location specified by the `redirect` property of the error. This is to allow any error to be intercepted before redirection occurs.
+
+## Migrating to wizard v8
+* Options are deep cloned to `req.form.options` on every request. These can be mutated by overriding the `configure(req, res, next)` method. Tests may need to be updated to make sure `req.form.options` is set to the same object as the controller options when not running the whole request lifecycle.
+* The `noPost` option will now set the step as complete if the `render` method is overridden. Previously this was done by `render`.

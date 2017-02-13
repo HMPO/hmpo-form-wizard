@@ -8,6 +8,8 @@ describe('mixins/csrf', () => {
     let req, res, next, controller, csrfStub, csrfMixin;
 
     beforeEach(() => {
+        let options = {};
+
         csrfStub = {
             secret: sinon.stub().yields(null, 'A New Secret'),
             create: sinon.stub().returns('A New Token'),
@@ -19,9 +21,10 @@ describe('mixins/csrf', () => {
 
         BaseController = baseController();
         StubController = csrfMixin(BaseController);
-        controller = new StubController();
+        controller = new StubController(options);
 
         req = request({
+            form: { options },
             method: 'GET'
         });
         res = {
@@ -67,12 +70,6 @@ describe('mixins/csrf', () => {
                 controller.csrfCheckToken
             );
         });
-
-        it('should not use the csrfCheckToken middleware if disabled in options', () => {
-            controller.options.csrf = false;
-            controller.middlewareChecks();
-            BaseController.prototype.use.should.not.have.been.called;
-        });
     });
 
     describe('middlewareLocals override', () => {
@@ -116,6 +113,15 @@ describe('mixins/csrf', () => {
     });
 
     describe('csrfCheckToken middleware', () => {
+        it('should only call next if it is disabled in options', () => {
+            req.method = 'POST';
+            controller.options.csrf = false;
+            controller.csrfCheckToken(req, res, next);
+            next.should.have.been.calledOnce;
+            next.should.have.been.calledWithExactly();
+            csrfStub.verify.should.not.have.been.called;
+        });
+
         ['GET', 'HEAD', 'OPTIONS'].forEach(method => {
             it(`accepts ${method} requests without a token`, () => {
                 req.method = method;

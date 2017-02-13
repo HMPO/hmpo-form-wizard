@@ -9,13 +9,16 @@ describe('mixins/translate', () => {
     let req, res, next, controller;
 
     beforeEach(() => {
-        req = request();
+        let options = {};
+        req = request({
+            form: { options }
+        });
         res = response();
         next = sinon.stub();
 
         BaseController = baseController();
         StubController = translate(BaseController);
-        controller = new StubController();
+        controller = new StubController(options);
     });
 
     it('should export a function', () => {

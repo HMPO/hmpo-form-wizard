@@ -10,7 +10,13 @@ describe('mixins/next-step', () => {
     let req, res, controller;
 
     beforeEach(() => {
+        let options = {
+            route: '/step1',
+            next: 'nextstep'
+        };
+
         req = request({
+            form: { options },
             baseUrl: '/base',
             path: '/request/path'
         });
@@ -19,10 +25,7 @@ describe('mixins/next-step', () => {
         BaseController = baseController();
         BaseController = resolvePath(BaseController);
         StubController = nextStepMixin(BaseController);
-        controller = new StubController({
-            route: '/step1',
-            next: 'nextstep'
-        });
+        controller = new StubController(options);
     });
 
     it('should export a function', () => {

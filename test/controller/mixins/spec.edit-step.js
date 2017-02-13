@@ -10,7 +10,13 @@ describe('mixins/edit-step', () => {
     let req, res, next, controller;
 
     beforeEach(() => {
+        let options = {
+            editSuffix: '/editsuffix',
+            editBackStep: 'backstep'
+        };
+
         req = request({
+            form: { options },
             baseUrl: '/base/url'
         });
         res = response();
@@ -19,10 +25,7 @@ describe('mixins/edit-step', () => {
         BaseController = baseController();
         BaseController = resolvePath(BaseController);
         StubController = editStep(BaseController);
-        controller = new StubController({
-            editSuffix: '/editsuffix',
-            editBackStep: 'backstep',
-        });
+        controller = new StubController(options);
 
         BaseController.prototype.getNextStep = sinon.stub().returns('/base/nextstep');
         BaseController.prototype.getBackLink = sinon.stub().returns('/base/backlink');

@@ -8,7 +8,13 @@ describe('mixins/check-session', () => {
     let req, res, next, controller;
 
     beforeEach(() => {
+        let options = {
+            checkSession: true,
+            route: '/route'
+        };
+
         req = request({
+            form: { options },
             path: '/test',
             method: 'GET',
             cookies: {
@@ -23,11 +29,7 @@ describe('mixins/check-session', () => {
 
         BaseController = baseController();
         StubController = checkSession(BaseController);
-        controller = new StubController({
-            checkSession: true,
-            route: '/route'
-        });
-
+        controller = new StubController(options);
     });
 
     it('should export a function', () => {
