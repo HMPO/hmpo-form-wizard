@@ -180,6 +180,17 @@ describe('mixins/next-step', () => {
             });
         });
 
+        it('should return the next step when next is a function', () => {
+            let nextStep = sinon.stub().returns('nextStep');
+            controller.decodeConditions(req, res, nextStep).should.deep.equal({
+                url: 'nextStep',
+                condition: null,
+                fields: []
+            });
+            nextStep.should.have.been.calledWithExactly(req, res);
+            nextStep.should.have.been.calledOn(controller);
+        });
+
         it('should return the next step of a matched condition', () => {
             let nextStep = [
                 { field: 'field1', value: 99, next: 'nextstep' },
@@ -242,6 +253,24 @@ describe('mixins/next-step', () => {
             fn.should.have.been.calledOnce;
             fn.should.have.been.calledWithExactly(req, res, nextStep[0]);
             fn.should.have.been.calledOn(controller);
+        });
+
+        it('should return the next step of a matched function when next is a function', () => {
+            let next = sinon.stub().returns('nextStep');
+            let nextStep = [
+                {
+                    fn: () => true,
+                    next
+                },
+                'otherstep'
+            ];
+            controller.decodeConditions(req, res, nextStep).should.deep.equal({
+                url: 'nextStep',
+                condition: nextStep[0],
+                fields: []
+            });
+            next.should.have.been.calledWithExactly(req, res);
+            next.should.have.been.calledOn(controller);
         });
 
         it('should return the flattened unique fields used if a custom function is used', () => {
