@@ -56,14 +56,14 @@ describe('mixins/journey-model', () => {
             expect(() => controller.createJourneyModel(req, res, next) ).to.throw();
         });
 
-        it('creates a new session model on the request and session', () => {
+        it('creates a new journey model on the request and session', () => {
             controller.createJourneyModel(req, res, next);
             req.journeyModel.should.be.an.object;
             req.journeyModel.should.be.an.instanceOf(WizardSessionModel);
             req.session['hmpo-journey-Journey-Name'].should.be.an.object;
         });
 
-        it('destroys an existing session model before creating a new one', () => {
+        it('destroys an existing journey model before creating a new one', () => {
             let destroy = sinon.stub();
             req.journeyModel = {
                 destroy
@@ -72,11 +72,20 @@ describe('mixins/journey-model', () => {
             destroy.should.have.been.calledOnce;
         });
 
-        it('resets the session if the reset option is set', () => {
+        it('resets the journey if the reset option is set and the method is GET', () => {
             controller.options.resetJourney = true;
+            req.method = 'GET';
             req.session['hmpo-journey-Journey-Name'] = { existing: true };
             controller.createJourneyModel(req, res, next);
             req.journeyModel.toJSON().should.deep.equal({});
+        });
+
+        it('does not reset the journey if the reset option is set and the method is POST', () => {
+            controller.options.reset = true;
+            req.method = 'POST';
+            req.session['hmpo-journey-Journey-Name'] = { existing: true };
+            controller.createJourneyModel(req, res, next);
+            req.journeyModel.toJSON().should.deep.equal({ existing: true });
         });
 
         it('calls the next callback', () => {

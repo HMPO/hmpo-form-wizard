@@ -71,11 +71,20 @@ describe('mixins/session-model', () => {
             destroy.should.have.been.calledOnce;
         });
 
-        it('resets the session if the reset option is set', () => {
+        it('resets the session if the reset option is set and the method is GET', () => {
             controller.options.reset = true;
+            req.method = 'GET';
             req.session['hmpo-wizard-Wizard-Name'] = { existing: true };
             controller.createSessionModel(req, res, next);
             req.sessionModel.toJSON().should.deep.equal({});
+        });
+
+        it('does not reset the session if the reset option is set and the method is POST', () => {
+            controller.options.reset = true;
+            req.method = 'POST';
+            req.session['hmpo-wizard-Wizard-Name'] = { existing: true };
+            controller.createSessionModel(req, res, next);
+            req.sessionModel.toJSON().should.deep.equal({ existing: true });
         });
 
         it('calls the next callback', () => {
