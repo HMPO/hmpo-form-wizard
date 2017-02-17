@@ -7,16 +7,15 @@ const editStep = require('../../../lib/controller/mixins/edit-step');
 describe('mixins/edit-step', () => {
 
     let BaseController, StubController;
-    let req, res, next, controller;
+    let options, req, res, next, controller;
 
     beforeEach(() => {
-        let options = {
+        options = {
             editSuffix: '/editsuffix',
             editBackStep: 'backstep'
         };
 
         req = request({
-            form: { options },
             baseUrl: '/base/url'
         });
         res = response();
@@ -56,6 +55,10 @@ describe('mixins/edit-step', () => {
     });
 
     describe('getBackLink override', () => {
+        beforeEach(() => {
+            req.form = { options };
+        });
+
         it('calls the super method', () => {
             controller.getBackLink(req, res);
             BaseController.prototype.getBackLink.should.have.been.calledOnce;
@@ -87,6 +90,7 @@ describe('mixins/edit-step', () => {
 
     describe('getNextStep override', () => {
         beforeEach(() => {
+            req.form = { options };
             controller.getNextStepObject = sinon.stub().returns({});
         });
 
