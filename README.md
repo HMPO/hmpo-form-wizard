@@ -128,6 +128,9 @@ The next step for each step can be a relative path, an external URL, or an array
     // a condition can be a controller method
     { fn: Controller.prototype.conditionMethod, next: 'functional-condition' },
 
+    // a condition can be a controller method specified by name
+    { fn: 'conditionMethod', next: 'functional-condition' },
+
     // the next option can be a function to return a dynamic next step
     { field: 'field1', value: true, next: (req, res, con) => 'functional-next' },
 
