@@ -187,7 +187,7 @@ describe('mixins/next-step', () => {
                 condition: null,
                 fields: []
             });
-            nextStep.should.have.been.calledWithExactly(req, res);
+            nextStep.should.have.been.calledWithExactly(req, res, null);
             nextStep.should.have.been.calledOn(controller);
         });
 
@@ -269,8 +269,28 @@ describe('mixins/next-step', () => {
                 condition: nextStep[0],
                 fields: []
             });
-            next.should.have.been.calledWithExactly(req, res);
+            next.should.have.been.calledWithExactly(req, res, nextStep[0]);
             next.should.have.been.calledOn(controller);
+        });
+
+        it('should pass the condition object to the next function', () => {
+            let nextFn = function (req, res, con) {
+                return 'goto/' + con.conditionOption + '/' + req.sessionModel.get(con.field);
+            };
+            let nextStep = [
+                {
+                    fn: () => true,
+                    field: 'field1',
+                    conditionOption: 'foobar',
+                    next: nextFn
+                },
+                'otherstep'
+            ];
+            controller.decodeConditions(req, res, nextStep).should.deep.equal({
+                url: 'goto/foobar/99',
+                condition: nextStep[0],
+                fields: [ 'field1' ]
+            });
         });
 
         it('should return the flattened unique fields used if a custom function is used', () => {

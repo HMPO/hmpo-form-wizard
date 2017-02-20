@@ -14,17 +14,21 @@ Define a set of steps:
 // steps.js
 module.exports = {
   '/step1': {
-    next: '/step2'
+    next: 'step2'
   },
   '/step2': {
-    next: '/step3',
-    fields: ['name']
+    fields: ['name'],
+    next: 'step3'
   },
   '/step3': {
-    next: '/step4',
-    fields: ['age']
+    fields: ['age'],
+    next: [
+      { field: 'age', op: '<', value: 18, next: 'not-old-enough' },
+      next: 'step4'
+    ]
   },
-  '/step4': {}
+  '/step4': {},
+  '/not-old-enough': {}
 }
 ```
 
@@ -96,6 +100,43 @@ Any of these options can also be provided as a third argument to the wizard to c
 * `params` - Define express parameters for the route for supporting additional URL parameters.
 
 Remaining field options documentation can be found in the hmpo-template-mixins [README](https://github.com/UKHomeOffice/passports-template-mixins#options-1).
+
+## Next steps
+
+The next step for each step can be a relative path, an external URL, or an array of conditional next steps. Each condition next step can contain a next location, a field name, operator and value, or a custom condition function:
+
+```javascript
+'/step1': {
+  // next can be a relative string path
+  next: 'step2'
+},
+'/step2': {
+  // next can be an array of conditions
+  next: [
+    // field, op and value. op defaults to '==='
+    { field: 'field1', op: '===', 'foobar', next: 'conditional-next' },
+
+    // next can be an array of conditions
+    { field: 'field1', value: 'boobaz', next: [
+        { field: 'field2', op: '=', 'foobar', next: 'sub-condition-next' },
+        'sub-condition-default-next'
+    ] },
+
+    // a condition can be a function specified by fn
+    { fn: (req, res, con) => true, next: 'functional-condition' },
+
+    // a condition can be a controller method
+    { fn: Controller.prototype.conditionMethod, next: 'functional-condition' },
+
+    // the next option can be a function to return a dynamic next step
+    { field: 'field1', value: true, next: (req, res, con) => 'functional-next' },
+
+    // use a string as a default next step
+    'default-next'
+  ]
+}
+```
+
 
 ## Custom Controllers
 
