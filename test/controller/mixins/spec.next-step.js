@@ -255,6 +255,36 @@ describe('mixins/next-step', () => {
             fn.should.have.been.calledOn(controller);
         });
 
+        it('should return the next step of a matched function specified by name', () => {
+            controller.func = sinon.stub().returns(true);
+            let nextStep = [
+                {
+                    fn: 'func',
+                    next: 'nextstep'
+                },
+                'otherstep'
+            ];
+            controller.decodeConditions(req, res, nextStep).should.deep.equal({
+                url: 'nextstep',
+                condition: nextStep[0],
+                fields: []
+            });
+            controller.func.should.have.been.calledOnce;
+            controller.func.should.have.been.calledWithExactly(req, res, nextStep[0]);
+            controller.func.should.have.been.calledOn(controller);
+        });
+
+        it('should throw an error if a named condition function does not exist', () => {
+            let nextStep = [
+                {
+                    fn: 'func',
+                    next: 'nextstep'
+                },
+                'otherstep'
+            ];
+            expect(() => controller.decodeConditions(req, res, nextStep)).to.throw();
+        });
+
         it('should return the next step of a matched function when next is a function', () => {
             let next = sinon.stub().returns('nextStep');
             let nextStep = [
