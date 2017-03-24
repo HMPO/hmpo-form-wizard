@@ -150,6 +150,35 @@ describe('mixins/next-step', () => {
             fn(req, res, { field: 'field1', op: 'after', value: '2 months' }).should.equal(false);
         });
 
+        it('should run op function if it is a function', () => {
+            let opFn = sinon.stub().returns(true);
+            let obj = { field: 'field1', op: opFn, value: 99 };
+            fn(req, res, obj).should.equal(true);
+            opFn.should.have.been.calledWithExactly(100, req, res, obj);
+        });
+
+        it('should run op function with a list of fields', () => {
+            req.sessionModel.set('field2', 200);
+            let opFn = sinon.stub().returns(true);
+            let obj = { field: ['field1', 'field2'], op: opFn, value: 99 };
+            fn(req, res, obj).should.equal(true);
+            opFn.should.have.been.calledWithExactly({field1: 100, field2: 200}, req, res, obj);
+        });
+
+        it('should run op function with an object of fields', () => {
+            req.sessionModel.set('field2', 200);
+            let opFn = sinon.stub().returns(false);
+            let obj = { field: {f1: 'field1', f2: 'field2'}, op: opFn, value: 99 };
+            fn(req, res, obj).should.equal(false);
+            opFn.should.have.been.calledWithExactly({f1: 100, f2: 200}, req, res, obj);
+        });
+
+        it('should run op function with no field specified', () => {
+            let opFn = sinon.stub().returns(false);
+            let obj = {op: opFn, value: 99 };
+            fn(req, res, obj).should.equal(false);
+            opFn.should.have.been.calledWithExactly(undefined, req, res, obj);
+        });
     });
 
     describe('decodeConditions', () => {
@@ -329,6 +358,40 @@ describe('mixins/next-step', () => {
                 {
                     field: [ 'field1', 'field4', 'field4' ],
                     fn: fn,
+                    next: 'nextstep'
+                },
+                'otherstep'
+            ];
+            controller.decodeConditions(req, res, nextStep).should.deep.equal({
+                url: 'nextstep',
+                condition: nextStep[0],
+                fields: [ 'field1', 'field4' ]
+            });
+        });
+
+        it('should return the flattened unique fields from an array if a custom operator is used', () => {
+            let fn = sinon.stub().returns(true);
+            let nextStep = [
+                {
+                    field: [ 'field1', 'field4', 'field4' ],
+                    op: fn,
+                    next: 'nextstep'
+                },
+                'otherstep'
+            ];
+            controller.decodeConditions(req, res, nextStep).should.deep.equal({
+                url: 'nextstep',
+                condition: nextStep[0],
+                fields: [ 'field1', 'field4' ]
+            });
+        });
+
+        it('should return the flattened unique fields from an object if a custom operator is used', () => {
+            let fn = sinon.stub().returns(true);
+            let nextStep = [
+                {
+                    field: { f1: 'field1', f2: 'field4', f3: 'field4' },
+                    op: fn,
                     next: 'nextstep'
                 },
                 'otherstep'
