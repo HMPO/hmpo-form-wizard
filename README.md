@@ -98,6 +98,7 @@ Any of these options can also be provided as a third argument to the wizard to c
 * `invalidates` - an array of field names that will be 'invalidated' when this field value is set or changed. Any fields specified in the `invalidates` array will be removed from the `sessionModel`. Further to this any future steps from the invalidating step field will be removed from the `journeyModel` history.
 * `translate` - provide a function for translating validation error codes into usable messages. Previous implementations have used [i18next](https://www.npmjs.com/package/i18next) to do translations.
 * `params` - Define express parameters for the route for supporting additional URL parameters.
+* `import` - Define fields to import from other wizards. Should be an object specifying which fields are required. eg `imports: { age: true, name: false }`
 
 Remaining field options documentation can be found in the hmpo-template-mixins [README](https://github.com/UKHomeOffice/passports-template-mixins#options-1).
 
