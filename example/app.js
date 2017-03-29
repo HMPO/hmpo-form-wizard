@@ -50,6 +50,9 @@ app.post('/api', (req, res) => {
 
 app.use((err, req, res, next) => {
     console.log(err);
+    if (err.redirect) {
+        return res.redirect(err.redirect);
+    }
     res.status(500).render('pages/error', { err: err });
 });
 

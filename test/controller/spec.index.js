@@ -523,6 +523,7 @@ describe('Form Controller', () => {
             'check-progress',
             'csrf',
             'invalidate-fields',
+            'invalidate-journey',
             'back-links',
             'next-step',
             'edit-step'
