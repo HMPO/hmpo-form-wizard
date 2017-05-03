@@ -1,7 +1,7 @@
 'use strict';
 
 const baseController = require('../../helpers/controller');
-const WizardSessionModel = require('../../../lib/model');
+const JourneySessionModel = require('../../../lib/journey-model');
 const journeyModel = require('../../../lib/controller/mixins/journey-model');
 
 describe('mixins/journey-model', () => {
@@ -51,15 +51,17 @@ describe('mixins/journey-model', () => {
     });
 
     describe('createJourneyModel', () => {
-        it('throws an error if there is no req.session', () => {
+        it('calls next with an error if there is no req.session', () => {
             delete req.session;
-            expect(() => controller.createJourneyModel(req, res, next) ).to.throw();
+            controller.createJourneyModel(req, res, next);
+            next.should.have.been.calledOnce;
+            next.should.have.been.calledWithExactly(sinon.match.instanceOf(Error));
         });
 
         it('creates a new journey model on the request and session', () => {
             controller.createJourneyModel(req, res, next);
             req.journeyModel.should.be.an.object;
-            req.journeyModel.should.be.an.instanceOf(WizardSessionModel);
+            req.journeyModel.should.be.an.instanceOf(JourneySessionModel);
             req.session['hmpo-journey-Journey-Name'].should.be.an.object;
         });
 

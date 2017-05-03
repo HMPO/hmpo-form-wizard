@@ -101,6 +101,31 @@ Any of these options can also be provided as a third argument to the wizard to c
 
 Remaining field options documentation can be found in the hmpo-template-mixins [README](https://github.com/UKHomeOffice/passports-template-mixins#options-1).
 
+## Central journey storage
+To facilitate sharing form values between wizards in the same journey a field can be specified to save into the `journeyModel` instead of the `sessionModel` using the `journeyKey` property:
+
+```javascript
+// fields.js
+module.exports = {
+  'localFieldName': {
+    journeyKey: 'centralfieldName',
+  }
+}
+```
+
+## Default field values
+A default value for a field can be specified with the `default` property. This is used if the value loaded from the session is missing or undefined.
+
+```javascript
+// fields.js
+module.exports = {
+  'localFieldName': {
+    default: 'defaultValue'
+  }
+}
+```
+
+
 ## Next steps
 
 The next step for each step can be a relative path, an external URL, or an array of conditional next steps. Each condition next step can contain a next location, a field name, operator and value, or a custom condition function:

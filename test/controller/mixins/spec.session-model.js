@@ -1,8 +1,9 @@
 'use strict';
 
 const baseController = require('../../helpers/controller');
-const WizardSessionModel = require('../../../lib/model');
+const WizardSessionModel = require('../../../lib/wizard-model');
 const sessionModel = require('../../../lib/controller/mixins/session-model');
+const journeyModel = require('../../../lib/controller/mixins/journey-model');
 
 describe('mixins/session-model', () => {
 
@@ -21,7 +22,8 @@ describe('mixins/session-model', () => {
         next = sinon.stub();
 
         BaseController = baseController();
-        StubController = sessionModel(BaseController);
+        StubController = journeyModel(BaseController);
+        StubController = sessionModel(StubController);
         controller = new StubController(options);
     });
 
@@ -42,7 +44,6 @@ describe('mixins/session-model', () => {
 
         it('uses the createSessionModel middleware', () => {
             controller.middlewareSetup();
-            BaseController.prototype.use.should.have.been.calledOnce;
             BaseController.prototype.use.should.have.been.calledWithExactly(
                 controller.createSessionModel
             );
@@ -50,9 +51,11 @@ describe('mixins/session-model', () => {
     });
 
     describe('createSessionModel', () => {
-        it('throws an error if there is no req.session', () => {
+        it('calls next with an error if there is no req.session', () => {
             delete req.session;
-            expect(() => controller.createSessionModel(req, res, next) ).to.throw();
+            controller.createSessionModel(req, res, next);
+            next.should.have.been.calledOnce;
+            next.should.have.been.calledWithExactly(sinon.match.instanceOf(Error));
         });
 
         it('creates a new session model on the request and session', () => {
