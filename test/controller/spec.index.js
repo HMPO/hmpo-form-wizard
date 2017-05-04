@@ -84,6 +84,19 @@ describe('Form Controller', () => {
             controller.post.should.be.a.function;
         });
 
+        it('should default the fields to an empty object', () =>{
+            delete options.fields;
+            let controller = new Controller(options);
+            controller.options.fields.should.deep.equal({});
+        });
+
+        it('should default allFields to the fields object', () =>{
+            options.fields = { 'foo': {} };
+            delete options.allFields;
+            let controller = new Controller(options);
+            controller.options.allFields.should.equal(options.fields);
+        });
+
     });
 
     describe('errorHandler', () => {
@@ -522,8 +535,8 @@ describe('Form Controller', () => {
             'check-session',
             'check-progress',
             'csrf',
-            'invalidate-fields',
             'invalidate-journey',
+            'invalidate-fields',
             'back-links',
             'next-step',
             'edit-step'

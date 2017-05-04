@@ -131,28 +131,6 @@ describe('mixins/invalidate-fields', () => {
                 'field4'
             );
         });
-
-        it('invalidates step when value is changed', () => {
-            controller.options.fields = {
-                field2: {
-                    invalidates: [ 'field1', 'field3' ]
-                }
-            };
-            controller.options.steps['/step2'].fields = {
-                field1: {}
-            };
-
-            controller.invalidateFields(req, res, next);
-            req.sessionModel.set('field2', 'changed');
-
-            controller.removeJourneyHistoryStep.should.have.been.calledOnce;
-            controller.removeJourneyHistoryStep.should.have.been.calledWithExactly(
-                req,
-                res,
-                '/base/step2'
-            );
-        });
-
     });
 
 });
