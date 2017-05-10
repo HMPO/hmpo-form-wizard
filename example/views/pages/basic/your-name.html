@@ -1,14 +1,14 @@
 {{< layout}}
 
-{{$header}}Your name{{/header}}
+{{$header}}<h1>Enter your name</h1>{{/header}}
 
 {{$content}}
-    {{<partials-form}}
+    {{<hmpo-partials-form}}
         {{$form}}
             {{#input-text}}name{{/input-text}}
             {{#input-submit}}{{/input-submit}}
         {{/form}}
-    {{/partials-form}}
+    {{/hmpo-partials-form}}
 {{/content}}
 
 {{/ layout}}

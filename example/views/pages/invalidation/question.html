@@ -1,0 +1,23 @@
+{{< layout}}
+
+{{$header}}<h1>Enter an answer to {{field-name}}</h1>{{/header}}
+
+{{$content}}
+    {{<hmpo-partials-form}}
+        {{$form}}
+            {{#input-number}}{{field-name}}{{/input-number}}
+            {{#input-submit}}{{/input-submit}}
+        {{/form}}
+    {{/hmpo-partials-form}}
+    <p>Shortcuts to steps:</p>
+    <ul class="list list-bullet">
+        <li><a href="question1">question 1</a></li>
+        <li><a href="question2">question 2</a></li>
+        <li><a href="question3">question 3</a></li>
+        <li><a href="question4">question 4</a></li>
+        <li><a href="question5">question 5</a></li>
+        <li><a href="done">done</a></li>
+    </ul>
+{{/content}}
+
+{{/ layout}}
