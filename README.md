@@ -95,7 +95,7 @@ Any of these options can also be provided as a third argument to the wizard to c
 * `backLink` - Specifies the location of the step previous to this one.
 * `backLinks` - Specifies valid referrers that can be used as a back link. If this or `backLink` are not specified then an algorithm is applied which checks the previously visited steps which have the current step set as `next`.
 * `controller` - The constructor for the controller to be used for this step's request handling. The default is an extension of the [hmpo-form-controller](https://www.npmjs.com/package/hmpo-form-controller), which is exported as a `Controller` property of this module. If custom behaviour is required for a particular form step then custom extensions can be defined - see [Custom Controllers](#custom-controllers)
-* `invalidates` - an array of field names that will be 'invalidated' when this field value is set or changed. Any fields specified in the `invalidates` array will be removed from the `sessionModel`. Further to this any future steps from the invalidating step field will be removed from the `journeyModel` history.
+* `invalidates` - an array of field names that will be 'invalidated' when this field value is set or changed. Any fields specified in the `invalidates` array will be removed from the `sessionModel`. Future steps that have used this value to make a branching decision will also be invalidated, making the user go through those steps and decisions again.
 * `translate` - provide a function for translating validation error codes into usable messages. Previous implementations have used [i18next](https://www.npmjs.com/package/i18next) to do translations.
 * `params` - Define express parameters for the route for supporting additional URL parameters.
 

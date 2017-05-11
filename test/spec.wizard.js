@@ -78,6 +78,7 @@ describe('Form Wizard', () => {
             anOption: 'override',
             controller: sinon.match.func,
             fields: sinon.match.object,
+            allFields: fields,
             steps: sinon.match.object
         });
         // steps should contain the processed step options for this step

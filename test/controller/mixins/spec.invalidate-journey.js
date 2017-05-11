@@ -11,7 +11,10 @@ describe('mixins/invalidate-journey', () => {
 
     beforeEach(() => {
         let options = {
-            route: '/one'
+            name: 'w1',
+            route: '/one',
+            fields: {},
+            allFields: {}
         };
 
         req = request({
@@ -27,10 +30,10 @@ describe('mixins/invalidate-journey', () => {
         controller = new StubController(options);
 
         req.journeyModel.set('history', [
-            { path: '/one' },
-            { path: '/two', fields: [ 'field1', 'field2' ] },
-            { path: '/three' },
-            { path: '/four', fields: [ 'field2' ] },
+            { wizard: 'w1', path: '/one' },
+            { wizard: 'w1', path: '/two', fields: [ 'field1', 'field2' ] },
+            { wizard: 'w1', path: '/three' },
+            { wizard: 'w1', path: '/four', fields: [ 'field2' ] },
         ]);
     });
 
@@ -82,10 +85,10 @@ describe('mixins/invalidate-journey', () => {
         it('should not change the step history if there are no changes', () => {
             controller._invalidateJourney(req, res, {});
             req.journeyModel.get('history').should.deep.equal([
-                { path: '/one' },
-                { path: '/two', fields: [ 'field1', 'field2' ] },
-                { path: '/three' },
-                { path: '/four', fields: [ 'field2' ] },
+                { wizard: 'w1', path: '/one' },
+                { wizard: 'w1', path: '/two', fields: [ 'field1', 'field2' ] },
+                { wizard: 'w1', path: '/three' },
+                { wizard: 'w1', path: '/four', fields: [ 'field2' ] },
             ]);
         });
 
@@ -98,27 +101,60 @@ describe('mixins/invalidate-journey', () => {
         it('should not change the step history if no matched fields are changed', () => {
             controller._invalidateJourney(req, res, { field4: 'value' });
             req.journeyModel.get('history').should.deep.equal([
-                { path: '/one' },
-                { path: '/two', fields: [ 'field1', 'field2' ] },
-                { path: '/three' },
-                { path: '/four', fields: [ 'field2' ] },
+                { wizard: 'w1', path: '/one' },
+                { wizard: 'w1', path: '/two', fields: [ 'field1', 'field2' ] },
+                { wizard: 'w1', path: '/three' },
+                { wizard: 'w1', path: '/four', fields: [ 'field2' ] },
             ]);
         });
 
-        it('should truncate the step history if a changed field matches', () => {
+        it('should invalidate all steps in history matching a changed field', () => {
             controller._invalidateJourney(req, res, { field2: 'value' });
             req.journeyModel.get('history').should.deep.equal([
-                { path: '/one' }
+                { wizard: 'w1', path: '/one' },
+                { wizard: 'w1', path: '/two', fields: [ 'field1', 'field2' ], invalid: true },
+                { wizard: 'w1', path: '/three' },
+                { wizard: 'w1', path: '/four', fields: [ 'field2' ], invalid: true },
             ]);
         });
 
-        it('should truncate the step history only after current step', () => {
+        it('should invalidate a step in history only after current step', () => {
             controller.options.route = '/three';
             controller._invalidateJourney(req, res, { field2: 'value' });
             req.journeyModel.get('history').should.deep.equal([
-                { path: '/one' },
-                { path: '/two', fields: [ 'field1', 'field2' ] },
-                { path: '/three' },
+                { wizard: 'w1', path: '/one' },
+                { wizard: 'w1', path: '/two', fields: [ 'field1', 'field2' ] },
+                { wizard: 'w1', path: '/three' },
+                { wizard: 'w1', path: '/four', fields: [ 'field2' ], invalid: true }
+            ]);
+        });
+
+        it('should not invalidate a step from another wizard', () => {
+            req.journeyModel.set('history', [
+                { wizard: 'w1', path: '/one' },
+                { wizard: 'w2', path: '/two', fields: [ 'field1', 'field2' ] },
+                { wizard: 'w2', path: '/three' },
+                { wizard: 'w1', path: '/four', fields: [ 'field2' ] },
+            ]);
+            controller._invalidateJourney(req, res, { field2: 'value' });
+            req.journeyModel.get('history').should.deep.equal([
+                { wizard: 'w1', path: '/one' },
+                { wizard: 'w2', path: '/two', fields: [ 'field1', 'field2' ] },
+                { wizard: 'w2', path: '/three' },
+                { wizard: 'w1', path: '/four', fields: [ 'field2' ], invalid: true },
+            ]);
+        });
+
+        it('should invalidate a step in history from another wizard using the journeyKey', () => {
+            req.journeyModel.set('history', [
+                { wizard: 'w1', path: '/one' },
+                { wizard: 'w2', path: '/two', fields: [ 'field1', 'journey2' ] },
+            ]);
+            req.form.options.allFields = { field2: { journeyKey: 'journey2' }};
+            controller._invalidateJourney(req, res, { field2: 'value' });
+            req.journeyModel.get('history').should.deep.equal([
+                { wizard: 'w1', path: '/one' },
+                { wizard: 'w2', path: '/two', fields: [ 'field1', 'journey2' ], invalid: true },
             ]);
         });
 
@@ -126,10 +162,10 @@ describe('mixins/invalidate-journey', () => {
             controller.options.route = '/seven';
             controller._invalidateJourney(req, res, { field4: 'value' });
             req.journeyModel.get('history').should.deep.equal([
-                { path: '/one' },
-                { path: '/two', fields: [ 'field1', 'field2' ] },
-                { path: '/three' },
-                { path: '/four', fields: [ 'field2' ] },
+                { wizard: 'w1', path: '/one' },
+                { wizard: 'w1', path: '/two', fields: [ 'field1', 'field2' ] },
+                { wizard: 'w1', path: '/three' },
+                { wizard: 'w1', path: '/four', fields: [ 'field2' ] },
             ]);
         });
 
