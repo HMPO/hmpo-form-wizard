@@ -6,17 +6,42 @@
         "age": {
             "label": "Your age"
         },
-        "gender": {
-            "label": "Your gender"
+        "color": {
+            "label": "Pick your favourite colour",
+            "options": {
+                "red": { "label": "Red" },
+                "blue": { "label": "Blue" },
+                "pink": { "label": "Pink" },
+                "green": { "label": "Green" },
+                "purple": { "label": "Purple" }
+            }
         },
         "direction": {
-            "legend": "direction"
+            "legend": "Select a direction"
         },
         "left-only": {
-            "label": "This field is only shown if you selected Left"
+            "label": "Left field",
+            "hint": "This field is only shown if you selected Left"
         },
         "right-only": {
-            "label": "This field is only shown if you selected Right"
+            "label": "Right field",
+            "hint": "This field is only shown if you selected Left"
+        },
+        "question1": {
+            "label": "Question 1"
+        },
+        "question2": {
+            "label": "Question 2",
+            "hint": "Answering this question will invalidate question 3 and question 4"
+        },
+        "question3": {
+            "label": "Question 3"
+        },
+        "question4": {
+            "label": "Question 4"
+        },
+        "question5": {
+            "label": "Question 5"
         }
     },
     "buttons": {

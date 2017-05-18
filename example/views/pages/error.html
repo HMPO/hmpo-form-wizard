@@ -1,14 +1,14 @@
 {{< layout}}
 
-{{$header}}Error{{#err.message}} - {{err.message}}{{/err.message}}{{/header}}
+{{$header}}<h1>Error{{#err.message}} - {{err.message}}{{/err.message}}</h1>{{/header}}
 
 {{$content}}
-    {{<partials-form}}
+    {{<hmpo-partials-form}}
         {{$form}}
             <p>An error occurred</p>
             <a href="/" class="button">Start again</a>
         {{/form}}
-    {{/partials-form}}
+    {{/hmpo-partials-form}}
 {{/content}}
 
 {{/ layout}}

@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "postinstall": "node-sass ./assets/app.scss ./assets/app.css --include-path ./node_modules",
+    "postinstall": "node-sass ./assets/app.scss ./assets/stylesheets/app.css --include-path ./node_modules",
     "start": "node app.js"
   },
   "author": "",
@@ -15,10 +15,11 @@
     "express-partial-templates": "^0.2.0",
     "express-session": "^1.13.0",
     "hmpo-form-wizard": "file:..",
-    "hmpo-frontend-toolkit": "^7.0.2",
+    "hmpo-frontend-toolkit": "^8.0.0",
     "hmpo-govuk-template": "^0.2.0",
-    "hmpo-model": "^0.7.0",
-    "hmpo-template-mixins": "^4.6.0",
+    "hmpo-model": "^1.0.0",
+    "hmpo-template-mixins": "^5.1.0",
+    "hmpo-templates": "^2.0.0",
     "hogan-express-strict": "^0.5.3",
     "i18n-future": "^1.0.0",
     "node-sass": "^4.2.0",

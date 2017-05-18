@@ -1,0 +1,17 @@
+{{< layout}}
+
+{{$header}}<h1>Submit</h1>{{/header}}
+
+{{$content}}
+    {{<hmpo-partials-form}}
+        {{$form}}
+            <p>Name: {{values.name}}</p>
+            <p>Age: {{values.age}}</p>
+            <p>Color: {{values.color}}</p>
+            <p>Submit your completed form?</p>
+            {{#input-submit}}submit{{/input-submit}}
+        {{/form}}
+    {{/hmpo-partials-form}}
+{{/content}}
+
+{{/ layout}}
