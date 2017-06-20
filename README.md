@@ -208,7 +208,9 @@ module.exports = CustomController
 Examples of custom controllers can be found in the [example app](./example/controllers)
 
 ## Controller lifecycle
-These controllers can be overridden in a custom controller to provide additional behaviour to a standard controller
+These controllers can be overridden in a custom controller to provide additional behaviour to a standard controller. 
+
+[This diagram](https://github.com/UKHomeOffice/passports-form-wizard/wiki/HMPO%20Forms%20Flow.pdf) shows the interaction and sequence of these lifecycle events.
 
 ### GET lifecycle
 > #### - `configure(req, res, next)`
