@@ -173,6 +173,14 @@ describe('mixins/next-step', () => {
             opFn.should.have.been.calledWithExactly({f1: 100, f2: 200}, req, res, obj);
         });
 
+        it('should run op function with a mixed array fields', () => {
+            req.sessionModel.set('field2', 200);
+            let opFn = sinon.stub().returns(true);
+            let obj = { field: ['field1', 'field2', { f2: 'field2' }], op: opFn, value: 99 };
+            fn(req, res, obj).should.equal(true);
+            opFn.should.have.been.calledWithExactly({field1: 100, field2: 200, f2: 200}, req, res, obj);
+        });
+
         it('should run op function with no field specified', () => {
             let opFn = sinon.stub().returns(false);
             let obj = {op: opFn, value: 99 };
@@ -400,6 +408,23 @@ describe('mixins/next-step', () => {
                 url: 'nextstep',
                 condition: nextStep[0],
                 fields: [ 'field1', 'field4' ]
+            });
+        });
+
+        it('should return the flattened unique fields from a mixed array if a custom operator is used', () => {
+            let fn = sinon.stub().returns(true);
+            let nextStep = [
+                {
+                    field: [ 'field1', 'field4', { f2: 'field2', f3: 'field4' } ],
+                    op: fn,
+                    next: 'nextstep'
+                },
+                'otherstep'
+            ];
+            controller.decodeConditions(req, res, nextStep).should.deep.equal({
+                url: 'nextstep',
+                condition: nextStep[0],
+                fields: [ 'field1', 'field4', 'field2' ]
             });
         });
 
