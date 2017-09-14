@@ -48,7 +48,7 @@ describe('Form Wizard', () => {
 
 
     it('should be a function', () => {
-        wizard.should.be.a.function;
+        wizard.should.be.a('function');
     });
 
     it('should return an express router', () => {

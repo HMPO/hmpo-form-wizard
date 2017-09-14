@@ -7,6 +7,12 @@
         {{$form}}
             <p>An error occurred</p>
             <a href="/" class="button">Start again</a>
+
+            <div>
+                <pre>
+{{err.stack}}
+                </pre>
+            </div>
         {{/form}}
     {{/hmpo-partials-form}}
 {{/content}}

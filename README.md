@@ -70,6 +70,12 @@ The wizard shares journey step history with other wizards through a journey mode
 
 The app should provide error middleware that redirects to the location specified by the `redirect` property of the error. This is to allow any error to be intercepted before redirection occurs.
 
+```javascript
+app.use((error, req, res, next) => {
+  if (error.redirect) return res.redirect(error.redirect);
+  next(error);
+});
+```
 
 ## Additional step options
 
@@ -188,10 +194,11 @@ class CustomController extends Controller) {
   }
 
   /* Overridden locals lifecycle */
-  locals(req, res) {
-    let locals = super.locals(req, res);
-    locals.newLocal = 'value';
-    return locals;
+  locals(req, res, callback) {
+    let locals = super.locals(req, res (err, locals) => {
+      locals.newLocal = 'value';
+      callback(null, locals);
+    });
   }
 }
 
@@ -206,28 +213,33 @@ These controllers can be overridden in a custom controller to provide additional
 ### GET lifecycle
 > #### - `configure(req, res, next)`
 > Allows changing of the `req.form.options` controller options for this request.
+> #### - Middleware mixins are run.
 > #### - `get(req, res, next)`
 >> #### - `errors = getErrors(req, res)`
 >> Returns an `Object` of `Controller.Error` validation errors indexed by the field name.
 >> #### - `getValues(req, res, callback(err, values))`
 >> Calls `callback` with an error and `Object` of field names and values.
->> #### - `locals = locals(req, res)`
->> Returns an `Object` of locals to be used in the rendered template.
+>> The values will include user-entered values for the current step if validation fails.
+>> #### - `locals(req, res, callback(err, locals))`
+>> Calls `callback` with error and `Object` of locals to be used in the rendered template.
 >> #### - `render(req, res, next)`
 >> Renders the template to the user.
 
 ### POST lifecycle
 > #### - `configure(req, res, next)`
 > Allows changing of the `req.form.options` controller options for this request.
+> #### - Middleware mixins are run.
 > #### - `post(req, res, next)`
 >> #### - `process(req, res, next)`
 >> Allows for processing the `req.form.values` before validation.
+>> #### - `validateFields(req, res, callback)`
+>> Validates each field and calls `callback` with an `Object` of validation errors indexed by field name.
 >> #### - `validate(req, res, next)`
 >> Allows for additional validation of the `req.form.values` after the built-in field validation.
 >> #### - `saveValues(req, res, next)`
 >> Saves the values to the session model.
 >> #### - `successHandler(req, res, next)`
->> Redirects to the next step
+>> Saves the step into the step history and redirects to the next step.
 
 ### Error handling
 > #### - `errorHandler(err, req, res, next)`
@@ -264,3 +276,9 @@ An example application can be found in [the ./example directory](./example). To 
 ## Migrating to wizard v8
 * Options are deep cloned to `req.form.options` on every request. These can be mutated by overriding the `configure(req, res, next)` method. Tests may need to be updated to make sure `req.form.options` is set to the same object as the controller options when not running the whole request lifecycle.
 * The `noPost` option will now set the step as complete if the `render` method is overridden. Previously this was done by `render`.
+
+## Migrating to wizard v9
+* The `hmpo-form-controller` has been merged into the wizard's controller.
+* Dependent fields that are hidden are not set to their formatted defaults in `_process` instead of as part of `_validation`
+* The interface to the validation library has changed.
+* The `locals()` lifecycle event is now called asynchronously if a callback is supplied: `locals(req, res, callback(err, locals))`. The method can still be overwridden synchonrously by only providing a method as `locals(req, res)`.

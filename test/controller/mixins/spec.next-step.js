@@ -29,7 +29,7 @@ describe('mixins/next-step', () => {
     });
 
     it('should export a function', () => {
-        nextStepMixin.should.be.a.function;
+        nextStepMixin.should.be.a('function');
         nextStepMixin.length.should.equal(1);
     });
 

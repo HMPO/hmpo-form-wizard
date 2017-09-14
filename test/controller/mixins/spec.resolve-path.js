@@ -13,7 +13,7 @@ describe('mixins/resolve-path', () => {
     });
 
     it('should export a function', () => {
-        resolvePath.should.be.a.function;
+        resolvePath.should.be.a('function');
         resolvePath.length.should.equal(1);
     });
 

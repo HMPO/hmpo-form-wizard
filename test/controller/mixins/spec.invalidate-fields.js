@@ -50,7 +50,7 @@ describe('mixins/invalidate-fields', () => {
     });
 
     it('should export a function', () => {
-        invalidateFields.should.be.a.function;
+        invalidateFields.should.be.a('function');
         invalidateFields.length.should.equal(1);
     });
 

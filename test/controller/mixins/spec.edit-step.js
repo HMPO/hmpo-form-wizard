@@ -31,7 +31,7 @@ describe('mixins/edit-step', () => {
     });
 
     it('should export a function', () => {
-        editStep.should.be.a.function;
+        editStep.should.be.a('function');
         editStep.length.should.equal(1);
     });
 

@@ -35,7 +35,7 @@ describe('mixins/back-links', () => {
     });
 
     it('should export a function', () => {
-        backLinks.should.be.a.function;
+        backLinks.should.be.a('function');
         backLinks.length.should.equal(1);
     });
 

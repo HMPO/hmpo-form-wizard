@@ -28,7 +28,7 @@ describe('mixins/session-model', () => {
     });
 
     it('should export a function', () => {
-        sessionModel.should.be.a.function;
+        sessionModel.should.be.a('function');
         sessionModel.length.should.equal(1);
     });
 
@@ -60,9 +60,9 @@ describe('mixins/session-model', () => {
 
         it('creates a new session model on the request and session', () => {
             controller.createSessionModel(req, res, next);
-            req.sessionModel.should.be.an.object;
+            req.sessionModel.should.be.an('object');
             req.sessionModel.should.be.an.instanceOf(WizardSessionModel);
-            req.session['hmpo-wizard-Wizard-Name'].should.be.an.object;
+            req.session['hmpo-wizard-Wizard-Name'].should.be.an('object');
         });
 
         it('destroys an existing session model before creating a new one', () => {

@@ -15,7 +15,7 @@ module.exports = () => {
     Controller.prototype.emit = sinon.stub();
     Controller.prototype.use = sinon.stub();
     Controller.prototype.router = sinon.stub();
-    Controller.prototype.requestHandler = sinon.stub();
+    Controller.prototype.requestHandler = sinon.stub().returns(Controller.prototype.router);
     Controller.prototype.editing = sinon.stub();
     Controller.prototype.middlewareSetup = sinon.stub();
     Controller.prototype.middlewareChecks = sinon.stub();

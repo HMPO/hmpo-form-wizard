@@ -5,7 +5,7 @@ const SessionModel = require('../lib/model');
 describe('session model', () => {
 
     it('exports a function', () => {
-        SessionModel.should.be.a.function;
+        SessionModel.should.be.a('function');
     });
 
     describe('constructor', () => {
