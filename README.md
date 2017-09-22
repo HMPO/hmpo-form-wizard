@@ -249,6 +249,40 @@ These controllers can be overridden in a custom controller to provide additional
 
 An example application can be found in [the ./example directory](./example). To run this, follow the instructions in the [README](./example/README.md).
 
+## Session Injection
+
+A helper is provided to aid with session injection:
+
+```javascript
+const SessionInjection = require('hmpo-form-wizard').SessionInjection;
+app.use('/debug/session', new SessionInjection().middleware());
+```
+
+This endpoint `/debug/session` can take a POST of JSON or url encoded data in the format:
+```json
+{
+  "journeyName": "name",
+  "journeyKeys": {
+    "key": "name"
+  },
+  "allowedStep": "/full/path",
+  "prereqStep": "/full/path",
+  "featureFlags": {
+    "flag": true
+  },
+  "wizards": {
+    "wizardName": {
+        "wizardKey": "value"
+    }
+  },
+  "rawSessionValues": {
+    "sessionKey": "value"
+  }
+}
+```
+
+A GET to this endpoint will render a web form that can submit this JSON.
+
 ## Migrating to wizard v6
 
 * The code has been updated to es6 and requires a minimum of Node v4

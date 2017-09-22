@@ -1,0 +1,25 @@
+<html>
+<head><title>Session Injection</title></head>
+<body>
+<form method="POST">
+</br/>
+{{#notice}}
+  <h2 id="notice">{{notice}}</h2>
+{{/notice}}
+<h3>Session Injection JSON:</h3>
+<textarea id="payload" name="payload" rows="20" cols="80">{{payload}}</textarea><br/><br/>
+<input type="submit"/>
+</form>
+</br/>
+{{#journeyKeys}}
+  <h3>Current Journey Keys:</h3>
+  <pre id="journeyKeys">{{journeyKeys}}</pre>
+  </br/>
+{{/journeyKeys}}
+{{#featureFlags}}
+  <h3>Current Feature Flags:</h3>
+  <pre id="featureFlags">{{featureFlags}}</pre>
+  </br/>
+{{/featureFlags}}
+</body>
+</html>
