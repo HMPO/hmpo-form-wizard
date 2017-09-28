@@ -35,7 +35,7 @@ describe('wizard model', () => {
     });
 
     it('exports a function', () => {
-        WizardModel.should.be.a.function;
+        WizardModel.should.be.a('function');
     });
 
     it('should be an instance of SessionModel', () => {

@@ -33,7 +33,7 @@ describe('mixins/check-session', () => {
     });
 
     it('should export a function', () => {
-        checkSession.should.be.a.function;
+        checkSession.should.be.a('function');
         checkSession.length.should.equal(1);
     });
 

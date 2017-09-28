@@ -34,7 +34,7 @@ describe('mixins/check-progress', () => {
     });
 
     it('should export a function', () => {
-        checkProgress.should.be.a.function;
+        checkProgress.should.be.a('function');
         checkProgress.length.should.equal(1);
     });
 

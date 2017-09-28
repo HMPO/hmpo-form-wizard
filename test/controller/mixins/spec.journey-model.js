@@ -27,7 +27,7 @@ describe('mixins/journey-model', () => {
     });
 
     it('should export a function', () => {
-        journeyModel.should.be.a.function;
+        journeyModel.should.be.a('function');
         journeyModel.length.should.equal(1);
     });
 
@@ -60,9 +60,9 @@ describe('mixins/journey-model', () => {
 
         it('creates a new journey model on the request and session', () => {
             controller.createJourneyModel(req, res, next);
-            req.journeyModel.should.be.an.object;
+            req.journeyModel.should.be.an('object');
             req.journeyModel.should.be.an.instanceOf(JourneySessionModel);
-            req.session['hmpo-journey-Journey-Name'].should.be.an.object;
+            req.session['hmpo-journey-Journey-Name'].should.be.an('object');
         });
 
         it('destroys an existing journey model before creating a new one', () => {

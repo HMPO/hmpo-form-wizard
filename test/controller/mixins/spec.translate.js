@@ -22,7 +22,7 @@ describe('mixins/translate', () => {
     });
 
     it('should export a function', () => {
-        translate.should.be.a.function;
+        translate.should.be.a('function');
         translate.length.should.equal(1);
     });
 

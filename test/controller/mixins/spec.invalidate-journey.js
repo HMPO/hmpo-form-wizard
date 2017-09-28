@@ -38,7 +38,7 @@ describe('mixins/invalidate-journey', () => {
     });
 
     it('should export a function', () => {
-        invalidateJourney.should.be.a.function;
+        invalidateJourney.should.be.a('function');
         invalidateJourney.length.should.equal(1);
     });
 

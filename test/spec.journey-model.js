@@ -6,7 +6,7 @@ const SessionModel = require('../lib/model');
 describe('journey model', () => {
 
     it('exports a function', () => {
-        SessionModel.should.be.a.function;
+        SessionModel.should.be.a('function');
     });
 
     it('should be an instance of SessionModel', () => {

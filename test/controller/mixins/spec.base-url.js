@@ -21,7 +21,7 @@ describe('mixins/base-url', () => {
     });
 
     it('should export a function', () => {
-        baseUrl.should.be.a.function;
+        baseUrl.should.be.a('function');
         baseUrl.length.should.equal(1);
     });
 

@@ -28,8 +28,8 @@
   "dependencies": {
     "csrf": "^3.0.2",
     "debug": "^2.1.2",
+    "deep-clone-merge": "^1.2.0",
     "express": "^4.12.2",
-    "hmpo-form-controller": "^1.1.0",
     "hmpo-model": "^1.0.0",
     "hogan.js": "^3.0.2",
     "i18n-lookup": "^0.1.0",
@@ -37,14 +37,17 @@
     "underscore": "^1.8.2"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
+    "chai": "^4.1.2",
+    "concat-stream": "^1.6.0",
+    "csv": "^1.1.1",
     "eslint": "^3.13.1",
     "istanbul": "^0.4.3",
     "mocha": "^3.1.2",
+    "postcode": "0.2.2",
     "proxyquire": "^1.7.10",
     "reqres": "^1.2.0",
-    "sinon": "^1.14.1",
-    "sinon-chai": "^2.7.0",
+    "sinon": "^3.2.1",
+    "sinon-chai": "^2.13.0",
     "snyk": "^1.24.5"
   }
 }

@@ -34,7 +34,7 @@ describe('mixins/csrf', () => {
     });
 
     it('should export a function', () => {
-        csrfMixin.should.be.a.function;
+        csrfMixin.should.be.a('function');
         csrfMixin.length.should.equal(1);
     });
 
