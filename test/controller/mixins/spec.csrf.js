@@ -42,30 +42,21 @@ describe('mixins/csrf', () => {
         controller.should.be.an.instanceOf(BaseController);
     });
 
-    describe('middlewareSetup override', () => {
-        it('calls the super method', () => {
-            controller.middlewareSetup();
-            BaseController.prototype.middlewareSetup.should.have.been.calledOnce;
-        });
-
-        it('uses the csrfGenerateSecret middleware', () => {
-            controller.middlewareSetup();
-            BaseController.prototype.use.should.have.been.calledOnce;
-            BaseController.prototype.use.should.have.been.calledWithExactly(
-                controller.csrfGenerateSecret
-            );
-        });
-    });
-
     describe('middlewareChecks override', () => {
         it('calls the super method', () => {
             controller.middlewareChecks();
             BaseController.prototype.middlewareChecks.should.have.been.calledOnce;
         });
 
+        it('uses the csrfGenerateSecret middleware', () => {
+            controller.middlewareChecks();
+            BaseController.prototype.use.should.have.been.calledWithExactly(
+                controller.csrfGenerateSecret
+            );
+        });
+
         it('uses the csrfCheckToken middleware', () => {
             controller.middlewareChecks();
-            BaseController.prototype.use.should.have.been.calledOnce;
             BaseController.prototype.use.should.have.been.calledWithExactly(
                 controller.csrfCheckToken
             );
@@ -78,9 +69,15 @@ describe('mixins/csrf', () => {
             BaseController.prototype.middlewareLocals.should.have.been.calledOnce;
         });
 
+        it('uses the csrfGenerateSecret middleware', () => {
+            controller.middlewareLocals();
+            BaseController.prototype.use.should.have.been.calledWithExactly(
+                controller.csrfGenerateSecret
+            );
+        });
+
         it('uses the csrfSetToken middleware', () => {
             controller.middlewareLocals();
-            BaseController.prototype.use.should.have.been.calledOnce;
             BaseController.prototype.use.should.have.been.calledWithExactly(
                 controller.csrfSetToken
             );
