@@ -1,6 +1,7 @@
 'use strict';
 
 const SessionModel = require('../lib/model');
+const LocalModel = require('hmpo-model').Local;
 
 describe('session model', () => {
 
@@ -9,6 +10,11 @@ describe('session model', () => {
     });
 
     describe('constructor', () => {
+        it('should extend Local Model', () => {
+            let model = new SessionModel(null, { key: 'test', session: {} });
+            model.should.be.an.instanceOf(LocalModel);
+        });
+
         it('should throw an error if no options are provided', () => {
             expect(() => new SessionModel()).to.throw('session-model - session must be defined');
         });
