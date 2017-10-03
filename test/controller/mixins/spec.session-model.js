@@ -74,11 +74,34 @@ describe('mixins/session-model', () => {
             destroy.should.have.been.calledOnce;
         });
 
+        it('calls the next callback', () => {
+            controller.createSessionModel(req, res, next);
+            next.should.have.been.calledOnce;
+            next.should.have.been.calledWithExactly();
+        });
+    });
+
+    describe('middlewareActions override', () => {
+        it('calls the super method', () => {
+            controller.middlewareActions();
+            BaseController.prototype.middlewareActions.should.have.been.calledOnce;
+        });
+
+        it('uses the resetSessionModel middleware', () => {
+            controller.middlewareActions();
+            BaseController.prototype.use.should.have.been.calledWithExactly(
+                controller.resetSessionModel
+            );
+        });
+    });
+
+    describe('resetSessionModel', () => {
         it('resets the session if the reset option is set and the method is GET', () => {
             controller.options.reset = true;
             req.method = 'GET';
             req.session['hmpo-wizard-Wizard-Name'] = { existing: true };
-            controller.createSessionModel(req, res, next);
+            controller.createSessionModel(req, res, sinon.stub());
+            controller.resetSessionModel(req, res, next);
             req.sessionModel.toJSON().should.deep.equal({});
         });
 
@@ -86,12 +109,13 @@ describe('mixins/session-model', () => {
             controller.options.reset = true;
             req.method = 'POST';
             req.session['hmpo-wizard-Wizard-Name'] = { existing: true };
-            controller.createSessionModel(req, res, next);
+            controller.createSessionModel(req, res, sinon.stub());
+            controller.resetSessionModel(req, res, next);
             req.sessionModel.toJSON().should.deep.equal({ existing: true });
         });
 
         it('calls the next callback', () => {
-            controller.createSessionModel(req, res, next);
+            controller.resetSessionModel(req, res, next);
             next.should.have.been.calledOnce;
             next.should.have.been.calledWithExactly();
         });
