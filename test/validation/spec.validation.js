@@ -84,6 +84,9 @@ describe('validation', () => {
                         'required',
                         { type: 'regex', arguments: /^fo+$/ }
                     ]
+                },
+                'field-3': {
+                    validate: { type: 'minlength', arguments: 20 }
                 }
             };
         });
@@ -113,6 +116,14 @@ describe('validation', () => {
                 .and.be.equal('regex');
             error.should.have.property('key')
                 .and.be.equal('field-2');
+        });
+
+        it('passes arguments as an array to error', () => {
+            error = validation.validate(fields, 'field-3', 'foo');
+            error.should.have.property('type')
+                .and.be.equal('minlength');
+            error.should.have.property('arguments')
+                .and.eql([20]);
         });
 
         it('throws and error if an unknown validator is specified', () => {
