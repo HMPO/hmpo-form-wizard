@@ -290,6 +290,63 @@ describe('Session Injection', () => {
         });
     });
 
+    describe('#middlewareDecodePayload', () =>  {
+        let res, next;
+
+        beforeEach(() => {
+            res = response();
+            next = sinon.stub();
+        });
+
+        it('sets the payload if a json body is given', () => {
+            req.body = { key: 'value' };
+            injection.middlewareDecodePayload(req, res, next);
+            next.should.have.been.calledWithExactly();
+            req.payload.should.eql({ key: 'value' });
+        });
+
+        it('sets the payload if a url encoded payload is given', () => {
+            req.body = { payload: '{"key":"value"}' };
+            injection.middlewareDecodePayload(req, res, next);
+            next.should.have.been.calledWithExactly();
+            req.payload.should.eql({ key: 'value' });
+        });
+
+        it('sets the payload to null if an empty url encoded payload is given', () => {
+            req.body = { payload: '' };
+            injection.middlewareDecodePayload(req, res, next);
+            next.should.have.been.calledWithExactly();
+            expect(req.payload).to.be.null;
+        });
+
+        it('sets the payload if a url encoded query parameter is given', () => {
+            req.query = { payload: '{"key":"value"}' };
+            injection.middlewareDecodePayload(req, res, next);
+            next.should.have.been.calledWithExactly();
+            req.payload.should.eql({ key: 'value' });
+        });
+
+        it('sets the payload to null if an empty url encoded query parameter is given', () => {
+            req.query = { payload: '' };
+            injection.middlewareDecodePayload(req, res, next);
+            next.should.have.been.calledWithExactly();
+            expect(req.payload).to.be.null;
+        });
+
+        it('should not set the payload if no payload is supplied', () => {
+            injection.middlewareDecodePayload(req, res, next);
+            next.should.have.been.calledWithExactly();
+            expect(req.payload).to.be.undefined;
+        });
+
+        it('should call next with an error if invalid JSON is supplied', () => {
+            req.query = { payload: '{"key":"value}' };
+            injection.middlewareDecodePayload(req, res, next);
+            next.should.have.been.calledWithExactly(sinon.match.instanceOf(Error));
+            res.locals.payload.should.equal('{"key":"value}');
+        });
+    });
+
     describe('#middlewareHandler', () =>  {
         let res, next;
 
@@ -306,62 +363,34 @@ describe('Session Injection', () => {
         });
 
         it('does not call inject if a json body payload is not given', () => {
-            req.body = null;
+            req.payload = undefined;
             injection.middlewareHandler(req, res, next);
             injection.inject.should.not.have.been.called;
         });
 
         it('creates journey model on req if no payload is given', () => {
-            req.body = null;
+            req.payload = undefined;
             injection.middlewareHandler(req, res, next);
             injection.createJourneyModel.should.have.been.calledWithExactly(req, 'default');
         });
 
         it('creates named journey model based on last successfull payload', () => {
-            req.body = null;
+            req.payload = undefined;
             req.session.lastInjectionPayload = { journeyName: 'other' };
             injection.middlewareHandler(req, res, next);
             injection.createJourneyModel.should.have.been.calledWithExactly(req, 'other');
         });
 
-        it('calls inject if a json body is given', () => {
-            req.body = { key: 'value' };
-            injection.middlewareHandler(req, res, next);
-            injection.inject.should.have.been.calledOnce;
-            injection.inject.should.have.been.calledWithExactly(req, { key: 'value' });
-        });
-
-        it('calls inject if a url encoded payload is given', () => {
-            req.body = { payload: '{"key":"value"}' };
-            injection.middlewareHandler(req, res, next);
-            injection.inject.should.have.been.calledOnce;
-            injection.inject.should.have.been.calledWithExactly(req, { key: 'value' });
-        });
-
-        it('calls inject if a url encoded query parameter is given', () => {
-            req.query = { payload: '{"key":"value"}' };
-            injection.middlewareHandler(req, res, next);
-            injection.inject.should.have.been.calledOnce;
-            injection.inject.should.have.been.calledWithExactly(req, { key: 'value' });
-        });
-
         it('sets the last payload from the given payload', () => {
             req.session.lastInjectionPayload = {};
-            req.body = { key: 'value' };
+            req.payload = { key: 'value' };
             injection.middlewareHandler(req, res, next);
             req.session.lastInjectionPayload.should.eql({ key: 'value' });
         });
 
         it('resets the last payload if an empty body payload is given', () => {
             req.session.lastInjectionPayload = {};
-            req.body = { payload: '' };
-            injection.middlewareHandler(req, res, next);
-            expect(req.session.lastInjectionPayload).to.be.null;
-        });
-
-        it('resets the last payload if an empty query payload is given', () => {
-            req.session.lastInjectionPayload = {};
-            req.query = { payload: '' };
+            req.payload = null;
             injection.middlewareHandler(req, res, next);
             expect(req.session.lastInjectionPayload).to.be.null;
         });
