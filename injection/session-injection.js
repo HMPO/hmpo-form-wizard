@@ -149,8 +149,8 @@ class SessionInjection {
         deepCloneMerge.extend(req.session, rawSessionValues);
     }
 
-    middlewareHandler(req, res, next) {
-        debug('middlewareHandler');
+    middlewareDecodePayload(req, res, next) {
+        debug('middlewareDecodePayload');
 
         let payload;
 
@@ -161,27 +161,39 @@ class SessionInjection {
         } else if (!_.isEmpty(req.body)) {
             payload = req.body;
         }
-        res.locals.payload = payload;
 
         if (typeof payload === 'string') {
-            payload = JSON.parse(payload);
-            res.locals.payload = payload;
+            try {
+                payload = JSON.parse(payload);
+            } catch (err) {
+                res.locals.payload = payload;
+                return next(err);
+            }
         }
 
-        if (payload) {
-            this.inject(req, payload);
-            req.session.lastInjectionPayload = payload;
+        req.payload = payload;
+
+        next();
+    }
+
+    middlewareHandler(req, res, next) {
+        debug('middlewareHandler');
+
+        if (req.payload) {
+            this.inject(req, req.payload);
             res.locals.notice = 'Payload injected';
-        }
-
-        if (payload !== undefined) req.session.lastInjectionPayload = payload;
-
-        if (!payload) {
+            res.locals.payload = req.payload;
+            req.session.lastInjectionPayload = req.payload;
+        } else {
+            if (req.payload === null) req.session.lastInjectionPayload = null;
             let journeyName = req.session.lastInjectionPayload && req.session.lastInjectionPayload.journeyName;
             this.createJourneyModel(req, journeyName || 'default');
         }
 
-        res.locals.payload = req.session.lastInjectionPayload;
+        if (!res.locals.payload) {
+            res.locals.payload = req.session.lastInjectionPayload;
+        }
+
         res.locals.featureFlags = req.session.featureFlags;
         res.locals.journeyKeys = _.omit(req.journeyModel.toJSON(), 'history', 'registered-models');
 
@@ -219,6 +231,7 @@ class SessionInjection {
         app.use(
             bodyParser.json(),
             bodyParser.urlencoded({ extended: true }),
+            this.middlewareDecodePayload.bind(this),
             this.middlewareHandler.bind(this));
         app.use(this.middlewareErrorHandler.bind(this));
         return app;
