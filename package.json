@@ -39,12 +39,9 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
-    "concat-stream": "^1.6.0",
-    "csv": "^1.1.1",
     "eslint": "^4.8.0",
     "istanbul": "^0.4.3",
     "mocha": "^3.1.2",
-    "postcode": "0.2.2",
     "proxyquire": "^1.7.10",
     "reqres": "^2.0.0",
     "sinon": "^4.0.0",
