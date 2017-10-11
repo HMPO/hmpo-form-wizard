@@ -2,10 +2,7 @@
 
 const validators = require('../../lib/validation').validators;
 
-const PostcodeData = require('../helpers/postcodes');
-
-const isCoverageTest = require.cache[require.resolve('istanbul')];
-const describeUnlessCoverage = isCoverageTest ? describe.skip : describe;
+const postcodes = require('../fixtures/postcodes');
 
 describe('Postcode validation', () => {
 
@@ -19,11 +16,7 @@ describe('Postcode validation', () => {
         validators.postcode('ABCD1234').should.not.be.ok;
     });
 
-    describeUnlessCoverage('Full postcode test - loads full UK postcode database, may take some time', function () {
-        this.timeout(40000);
-        this.slow(20000);
-
-        let testData;
+    describe('Random postcode test', function () {
 
         function test(pc) {
             try {
@@ -35,22 +28,15 @@ describe('Postcode validation', () => {
             }
         }
 
-        before(done => {
-            PostcodeData.load((err, data) => {
-                testData = data;
-                done(err);
-            });
-        });
-
         it('correctly validates uk postcodes with a single space', () => {
-            testData.forEach(testPostcode => {
+            postcodes.forEach(testPostcode => {
                 let pc = testPostcode.replace(/ \s+/, ' ');
                 test(pc);
             });
         });
 
         it('correctly validates uk postcodes with no spaces', () => {
-            testData.forEach(testPostcode => {
+            postcodes.forEach(testPostcode => {
                 let pc = testPostcode.replace(/\s+/g, '');
                 test(pc);
             });
