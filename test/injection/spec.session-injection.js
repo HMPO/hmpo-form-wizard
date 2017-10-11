@@ -89,6 +89,12 @@ describe('Session Injection', () => {
             injection.setFeatureFlags(req, { flag: true });
             expect(req.session.featureFlags.oldFlag).to.be.undefined;
         });
+
+        it('does not reset the feature flags if no flags are given', () => {
+            req.session.featureFlags = { oldFlag: true };
+            injection.setFeatureFlags(req, null);
+            req.session.featureFlags.oldFlag.should.equal(true);
+        });
     });
 
     describe('#createJourneyModel', () =>  {
@@ -113,6 +119,13 @@ describe('Session Injection', () => {
     });
 
     describe('#setJourneyKeys', () =>  {
+        it('does not reset the journey if no journey keys are given', () => {
+            injection.createJourneyModel(req, 'default');
+            req.journeyModel.set('key', 'value');
+            injection.setJourneyKeys(req, null);
+            req.journeyModel.get('key').should.equal('value');
+        });
+
         it('resets the journey', () => {
             injection.createJourneyModel(req, 'default');
             req.journeyModel.set('key', 'value');

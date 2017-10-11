@@ -66,7 +66,9 @@ class SessionInjection {
 
     setFeatureFlags(req, flags) {
         debug('setFeatureFlags', flags);
-        req.session.featureFlags = flags;
+        if (flags) {
+            req.session.featureFlags = _.extend({}, flags);
+        }
     }
 
     createJourneyModel(req, journeyName) {
@@ -79,8 +81,10 @@ class SessionInjection {
 
     setJourneyKeys(req, journeyKeys) {
         debug('setJourneyKeys', journeyKeys);
-        req.journeyModel.reset();
-        req.journeyModel.set(journeyKeys);
+        if (journeyKeys) {
+            req.journeyModel.reset();
+            req.journeyModel.set(journeyKeys);
+        }
     }
 
     setNext(req, allowedStep) {
