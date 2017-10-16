@@ -7,6 +7,7 @@ const deepCloneMerge = require('deep-clone-merge');
 const _ = require('underscore');
 const express = require('express');
 const bodyParser = require('body-parser');
+const JSON5 = require('json5');
 
 const DEFAULTS = {
     sessionExists: true,
@@ -39,7 +40,7 @@ const EXAMPLE = {
     }
 };
 
-const toJSON = v => typeof v === 'string' ? v : JSON.stringify(v, null, 2);
+const toJSON = v => typeof v === 'string' ? v : JSON5.stringify(v, null, 2);
 
 class SessionInjection {
     inject(req, options) {
@@ -164,7 +165,7 @@ class SessionInjection {
 
         if (typeof payload === 'string') {
             try {
-                payload = JSON.parse(payload);
+                payload = JSON5.parse(payload);
             } catch (err) {
                 res.locals.payload = payload;
                 return next(err);

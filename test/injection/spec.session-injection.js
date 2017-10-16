@@ -312,6 +312,13 @@ describe('Session Injection', () => {
             req.payload.should.eql({ key: 'value' });
         });
 
+        it('sets the payload if a JSON5 stype payload is given', () => {
+            req.body = { payload: '{ key: \'value\' }' };
+            injection.middlewareDecodePayload(req, res, next);
+            next.should.have.been.calledWithExactly();
+            req.payload.should.eql({ key: 'value' });
+        });
+
         it('sets the payload to null if an empty url encoded payload is given', () => {
             req.body = { payload: '' };
             injection.middlewareDecodePayload(req, res, next);
@@ -440,9 +447,9 @@ describe('Session Injection', () => {
         it('renders the webform if html is accepted', () => {
             req.accepts.withArgs('html').returns(true);
             injection.middlewareRender(req, res, next);
-            res.locals.payload.should.equal('{\n  "journeyName": "test"\n}');
-            res.locals.featureFlags.should.equal('{\n  "flag": true\n}');
-            res.locals.journeyKeys.should.equal('{\n  "key": "value"\n}');
+            res.locals.payload.should.equal('{\n  journeyName: "test"\n}');
+            res.locals.featureFlags.should.equal('{\n  flag: true\n}');
+            res.locals.journeyKeys.should.equal('{\n  key: "value"\n}');
             res.type.should.have.been.calledWithExactly('html');
             res.render.should.have.been.calledOnce;
             res.render.should.have.been.calledWithExactly(
@@ -454,7 +461,7 @@ describe('Session Injection', () => {
             res.locals.payload = null;
             req.accepts.withArgs('html').returns(true);
             injection.middlewareRender(req, res, next);
-            res.locals.payload.should.match(/^\{\n\s+"journeyName": "name"/);
+            res.locals.payload.should.match(/^\{\n\s+journeyName: "name"/);
         });
 
         it('renders unparsed payload if a parsing error occured', () => {
