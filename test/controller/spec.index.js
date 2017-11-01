@@ -598,6 +598,20 @@ describe('Form Controller', () => {
             res.locals.errorlist.should.eql(['bar', 'baz']);
         });
 
+        it('filters out grouped field errors', () => {
+            req.form.errors = {
+                'field-1': { key: 'field-1' },
+                'field-2': { key: 'field-2', errorGroup: 'group-1' },
+                'field-3': { key: 'field-3', errorGroup: 'group-1' },
+                'group-1': { key: 'group-1', errorGroup: 'group-1' },
+            };
+            controller._locals(req, res, next);
+            res.locals.errorlist.should.eql([
+                { key: 'field-1' },
+                { key: 'group-1', errorGroup: 'group-1' }
+            ]);
+        });
+
         it('calls locals as a returning function if it has 2 args', () => {
             controller.locals = (req, res) => ({ foo: 'bar'});
             sinon.spy(controller, 'locals');
@@ -945,15 +959,19 @@ describe('Form Controller', () => {
             callback.args[0][0]['error-2'].key.should.equal('error-2');
         });
 
-        it('indexes the errors by group if a group is returned from validateField', () => {
-            controller.validateField.withArgs('field-1').returns({ key: 'error-1', group: 'group-1' });
-            controller.validateField.withArgs('field-2').returns({ key: 'error-2', group: 'group-2' });
+        it('additionaly indexes the errors by errorGroup if a errorGroup is returned from validateField', () => {
+            controller.validateField.withArgs('field-1').returns({ key: 'error-1', errorGroup: 'group-1' });
+            controller.validateField.withArgs('field-2').returns({ key: 'error-2', errorGroup: 'group-2' });
             controller.validateFields(req, res, callback);
             callback.should.have.been.calledOnce;
             callback.should.have.been.calledWithExactly({
+                'error-1': sinon.match.instanceOf(controller.Error),
+                'error-2': sinon.match.instanceOf(controller.Error),
                 'group-1': sinon.match.instanceOf(controller.Error),
                 'group-2': sinon.match.instanceOf(controller.Error)
             });
+            callback.args[0][0]['error-1'].key.should.equal('error-1');
+            callback.args[0][0]['error-2'].key.should.equal('error-2');
             callback.args[0][0]['group-1'].key.should.equal('group-1');
             callback.args[0][0]['group-2'].key.should.equal('group-2');
         });

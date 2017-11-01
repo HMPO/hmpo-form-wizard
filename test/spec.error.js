@@ -14,10 +14,11 @@ describe('Error', () => {
         });
 
         it('should set key and options to the class', () => {
-            let options = { type: 'errortype' };
+            let options = { type: 'errortype', errorGroup: 'group' };
             let error = new ErrorClass('key', options, req, res);
             error.key.should.equal('key');
             error.type.should.equal('errortype');
+            error.errorGroup.should.equal('group');
         });
 
         it('should allow being called with no options', () => {
