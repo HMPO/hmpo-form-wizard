@@ -972,8 +972,8 @@ describe('Form Controller', () => {
             });
             callback.args[0][0]['error-1'].key.should.equal('error-1');
             callback.args[0][0]['error-2'].key.should.equal('error-2');
-            callback.args[0][0]['group-1'].key.should.equal('group-1');
-            callback.args[0][0]['group-2'].key.should.equal('group-2');
+            callback.args[0][0]['group-1'].key.should.equal('error-1');
+            callback.args[0][0]['group-2'].key.should.equal('error-2');
         });
     });
 
