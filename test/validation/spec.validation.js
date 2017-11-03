@@ -87,6 +87,10 @@ describe('validation', () => {
                 },
                 'field-3': {
                     validate: { type: 'minlength', arguments: 20 }
+                },
+                'field-4': {
+                    errorGroup: 'group',
+                    validate: { type: 'minlength', arguments: 20 }
                 }
             };
         });
@@ -107,7 +111,7 @@ describe('validation', () => {
                 .and.be.equal('field-1');
         });
 
-        it('passes arguments to validators', () => {
+        it('passes arguments to error', () => {
             error = validation.validate(fields, 'field-2', 'foo');
             expect(error).to.be.undefined;
 
@@ -116,6 +120,12 @@ describe('validation', () => {
                 .and.be.equal('regex');
             error.should.have.property('key')
                 .and.be.equal('field-2');
+        });
+
+        it('passes errorGroup to error', () => {
+            error = validation.validate(fields, 'field-4', 'foo');
+            error.should.have.property('errorGroup')
+                .and.be.equal('group');
         });
 
         it('passes arguments as an array to error', () => {
