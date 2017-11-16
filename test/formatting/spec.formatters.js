@@ -71,11 +71,18 @@ describe('Formatters', () => {
         ' multiple  \t spaces ': ' multiple spaces '
     });
 
-    testStringFormatter('hyphens', {
+    testStringFormatter('singlehyphens', {
         'nohyphen': 'nohyphen',
         'hyphen–one': 'hyphen-one',
         'hyphen—two': 'hyphen-two',
         '-—–—-multiple-—–—-hyphens-—–—-': '-multiple-hyphens-'
+    });
+
+    testStringFormatter('hyphens', {
+        'nohyphen': 'nohyphen',
+        'hyphen–one': 'hyphen-one',
+        'hyphen—two': 'hyphen-two',
+        '-—–—-multiple-—–—-hyphens-—–—-': '-----multiple-----hyphens-----'
     });
 
     testStringFormatter('removeroundbrackets', {
