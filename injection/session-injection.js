@@ -75,7 +75,7 @@ class SessionInjection {
     createJourneyModel(req, journeyName) {
         debug('createJourneyModel', journeyName);
         req.journeyModel = new JourneyModel(null, {
-            session: req.session,
+            req,
             key: 'hmpo-journey-' + journeyName
         });
     }
@@ -131,7 +131,7 @@ class SessionInjection {
     createWizardModel(req, wizardName) {
         debug('createWizardModel', wizardName);
         return new WizardModel(null, {
-            session: req.session,
+            req,
             key: 'hmpo-wizard-' + wizardName,
             journeyModel: req.journeyModel,
             fields: {}
