@@ -4,25 +4,29 @@ const JourneyModel = require('../lib/journey-model');
 const SessionModel = require('../lib/model');
 
 describe('journey model', () => {
+    let req, session, journeyModel;
+
+    beforeEach(() => {
+        session = {
+            journeyKey: {}
+        };
+        req = { session };
+        journeyModel = new JourneyModel(null, { key: 'journeyKey', req });
+    });
 
     it('exports a function', () => {
         SessionModel.should.be.a('function');
     });
 
     it('should be an instance of SessionModel', () => {
-        let journeyModel = new JourneyModel(null, { key: 'journeyKey', session: {} });
         journeyModel.should.be.an.instanceOf(SessionModel);
     });
 
     describe('registerModel', () => {
         it('should add the model to the list of currently registered models', () => {
-            let session = {
-                journeyKey: {}
-            };
             let modelStub = {
                 options: { key: 'wizard1' }
             };
-            let journeyModel = new JourneyModel(null, { key: 'journeyKey', session });
             journeyModel.registerModel(modelStub);
             journeyModel.currentModels.should.deep.equal([
                 modelStub
@@ -30,16 +34,12 @@ describe('journey model', () => {
         });
 
         it('should keep existing registered models when registering a new model', () => {
-            let session = {
-                journeyKey: {}
-            };
             let modelStub1 = {
                 options: { key: 'wizard1' }
             };
             let modelStub2 = {
                 options: { key: 'wizard2' }
             };
-            let journeyModel = new JourneyModel(null, { key: 'journeyKey', session });
             journeyModel.registerModel(modelStub1);
             journeyModel.registerModel(modelStub2);
             journeyModel.currentModels.should.deep.equal([
@@ -49,43 +49,33 @@ describe('journey model', () => {
         });
 
         it('should add the model to the list of previously registered models', () => {
-            let session = {
-                journeyKey: {}
-            };
             let modelStub = {
                 options: { key: 'wizard1' }
             };
-            let journeyModel = new JourneyModel(null, { key: 'journeyKey', session });
             journeyModel.registerModel(modelStub);
             session.journeyKey['registered-models'].should.deep.equal(['wizard1']);
         });
 
         it('should keep existing models in the list of previously registered models', () => {
-            let session = {
-                journeyKey: {}
-            };
             let modelStub1 = {
                 options: { key: 'wizard1' }
             };
             let modelStub2 = {
                 options: { key: 'wizard2' }
             };
-            let journeyModel = new JourneyModel(null, { key: 'journeyKey', session });
             journeyModel.registerModel(modelStub1);
             journeyModel.registerModel(modelStub2);
             session.journeyKey['registered-models'].should.deep.equal(['wizard1', 'wizard2']);
         });
 
         it('should not add duplicate model keys to the model list', () => {
-            let session = {
-                journeyKey: {
-                    'registered-models': [ 'wizard1' ]
-                }
+            session.journeyKey = {
+                'registered-models': [ 'wizard1' ]
             };
+            journeyModel = new JourneyModel(null, { key: 'journeyKey', req });
             let modelStub = {
                 options: { key: 'wizard1' }
             };
-            let journeyModel = new JourneyModel(null, { key: 'journeyKey', session });
             journeyModel.registerModel(modelStub);
             session.journeyKey['registered-models'].should.deep.equal(['wizard1']);
         });
@@ -93,15 +83,13 @@ describe('journey model', () => {
 
     describe('reset', () => {
         it('should clear all previously registered models', () => {
-            let session = {
-                journeyKey: {
-                    'registered-models': [ 'wizard1', 'wizard2' ]
-                },
-                wizard1: { present: true },
-                wizard2: { present: true },
-                wizard3: { present: true }
+            session.journeyKey = {
+                'registered-models': [ 'wizard1', 'wizard2' ]
             };
-            let journeyModel = new JourneyModel(null, { key: 'journeyKey', session });
+            session.wizard1 = { present: true };
+            session.wizard2 = { present: true };
+            session.wizard3 = { present: true };
+            journeyModel = new JourneyModel(null, { key: 'journeyKey', req });
             journeyModel.reset();
             session.journeyKey.should.deep.equal({});
             session.wizard1.should.deep.equal({});
@@ -110,19 +98,48 @@ describe('journey model', () => {
         });
 
         it('should call reset on all currently registered models', () => {
-            let session = {
-                journeyKey: {},
-            };
-
             let modelStub = {
                 reset: sinon.stub()
             };
-
-            let journeyModel = new JourneyModel(null, { key: 'journeyKey', session });
             journeyModel.currentModels = [ modelStub ];
             journeyModel.reset();
             modelStub.reset.should.have.been.calledOnce;
         });
     });
 
+    describe('reload', () => {
+        let cb;
+        beforeEach(() => {
+            cb = sinon.stub();
+            session.reload = sinon.stub().yields();
+            sinon.stub(SessionModel.prototype, 'reload').yields();
+        });
+
+        afterEach(() => {
+            SessionModel.prototype.reload.restore();
+        });
+
+        it('should call the super reload', () => {
+            journeyModel.reload(cb);
+            SessionModel.prototype.reload.should.have.been.calledWithExactly(sinon.match.func);
+        });
+
+        it('should callback any error from the super', () => {
+            SessionModel.prototype.reload.yields('error');
+            journeyModel.reload(cb);
+            cb.should.have.been.calledWithExactly('error');
+        });
+
+        it('should call _reload on each registered wizard model', () => {
+            let wizardModel = { _reload: sinon.stub() };
+            journeyModel.currentModels = [ wizardModel ];
+            journeyModel.reload(cb);
+            wizardModel._reload.should.have.been.calledWithExactly();
+        });
+
+        it('should call callback', () => {
+            journeyModel.reload(cb);
+            cb.should.have.been.calledWithExactly();
+        });
+    });
 });

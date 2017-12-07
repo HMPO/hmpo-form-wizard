@@ -111,7 +111,7 @@ describe('Session Injection', () => {
             injection.createJourneyModel(req, 'name');
 
             stubs.JourneyModel.should.have.been.calledWithExactly(null, {
-                session: req.session,
+                req,
                 key: 'hmpo-journey-name'
             });
             req.journeyModel.should.equal(stubs.journeyModelInstance);
@@ -259,7 +259,7 @@ describe('Session Injection', () => {
             let model = injection.createWizardModel(req, 'name');
 
             stubs.WizardModel.should.have.been.calledWithExactly(null, {
-                session: req.session,
+                req,
                 key: 'hmpo-wizard-name',
                 journeyModel: stubs.journeyModelInstance,
                 fields: {}

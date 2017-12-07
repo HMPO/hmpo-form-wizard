@@ -5,14 +5,15 @@ const JourneyModel = require('../lib/journey-model');
 const SessionModel = require('../lib/model');
 
 describe('wizard model', () => {
-    let wizardModel, journeyModel, session, fields;
+    let wizardModel, journeyModel, req, session, fields;
 
     beforeEach(() => {
         sinon.stub(JourneyModel.prototype, 'registerModel');
         sinon.stub(JourneyModel.prototype, 'set');
         sinon.stub(JourneyModel.prototype, 'get').withArgs('foo').returns('bar');
         session = {};
-        journeyModel = new JourneyModel(null, { key: 'journey', session });
+        req = { session };
+        journeyModel = new JourneyModel(null, { key: 'journey', req });
         fields = {
             a: {},
             b: { journeyKey: 'foo' },
@@ -22,7 +23,7 @@ describe('wizard model', () => {
 
         wizardModel = new WizardModel(null, {
             key: 'test',
-            session,
+            req,
             journeyModel,
             fields
         });
@@ -139,4 +140,14 @@ describe('wizard model', () => {
         });
     });
 
+    describe('reload', () => {
+        it('should call reload on the journey model', () => {
+            let cb = sinon.stub();
+            journeyModel.reload = sinon.stub();
+
+            wizardModel.reload(cb);
+
+            journeyModel.reload.should.have.been.calledWithExactly(cb);
+        });
+    });
 });
