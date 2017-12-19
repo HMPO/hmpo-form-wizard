@@ -69,7 +69,12 @@ describe('validators', () => {
                 '@.com',
                 '@com.',
                 'test.com@',
-                'test@test@test.com'
+                'test@test@test.com',
+                '.abc@test.com',
+                'abc.@test.com',
+                'abc@-test.com',
+                'abc@test-.com',
+                'abc@test-.domain.com'
             ];
             _.each(inputs, i => {
                 it(testName(i), () => {
@@ -85,7 +90,8 @@ describe('validators', () => {
                 'test@example.com',
                 'test+suffix@gmail.com',
                 'test+suffix@digital.cabinet-office.gov.uk',
-                'test.suffix@digital.cabinet-office.gov.uk'
+                'test.suffix@digital.cabinet-office.gov.uk',
+                'az09._%+a@az09.com'
             ];
             _.each(inputs, i => {
                 it(testName(i), () => {
