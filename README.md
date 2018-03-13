@@ -87,6 +87,7 @@ Any of these options can also be provided as a third argument to the wizard to c
 * `journeyName` - A namespace identifier for the entire journey. This is used to store journey-wide data such as step history on the session. Defaults to `default`.
 * `entryPoint` - Allows a user to navigate to this step with no journey step history. Defaults to `false`.
 * `checkSession` - Check if the session has expired. Defaults to `true`.
+* `checkEntryPointSession` = Check if session has expired on entry points. Defaults to `false`
 * `checkJourney` - Check this step is allowed based on the journey step history. If this step is not allowed the user is redirected to the last allowed step, or an error is returned if no step is allowed. Defaults to `true`.
 * `reset` - Reset the wizard `sessionModel` when this step is accessed. Defaults to `false`.
 * `resetJourney` - Reset the journey `journeyModel` when this step is accessed.
