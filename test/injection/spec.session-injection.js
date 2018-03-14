@@ -447,9 +447,9 @@ describe('Session Injection', () => {
         it('renders the webform if html is accepted', () => {
             req.accepts.withArgs('html').returns(true);
             injection.middlewareRender(req, res, next);
-            res.locals.payload.should.equal('{\n  journeyName: "test"\n}');
-            res.locals.featureFlags.should.equal('{\n  flag: true\n}');
-            res.locals.journeyKeys.should.equal('{\n  key: "value"\n}');
+            res.locals.payload.should.equal('{\n  journeyName: \'test\',\n}');
+            res.locals.featureFlags.should.equal('{\n  flag: true,\n}');
+            res.locals.journeyKeys.should.equal('{\n  key: \'value\',\n}');
             res.type.should.have.been.calledWithExactly('html');
             res.render.should.have.been.calledOnce;
             res.render.should.have.been.calledWithExactly(
@@ -461,10 +461,10 @@ describe('Session Injection', () => {
             res.locals.payload = null;
             req.accepts.withArgs('html').returns(true);
             injection.middlewareRender(req, res, next);
-            res.locals.payload.should.match(/^\{\n\s+journeyName: "name"/);
+            res.locals.payload.should.match(/^\{\n\s+journeyName: 'name',/);
         });
 
-        it('renders unparsed payload if a parsing error occured', () => {
+        it('renders unparsed payload if a parsing error occurred', () => {
             res.locals.payload = '{ json: error }';
             req.accepts.withArgs('html').returns(true);
             injection.middlewareRender(req, res, next);
