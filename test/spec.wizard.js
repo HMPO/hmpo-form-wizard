@@ -69,6 +69,7 @@ describe('Form Wizard', () => {
             noPost: false,
             entryPoint: false,
             checkSession: true,
+            checkEntryPointSession: false,
             checkJourney: true,
             editable: false,
             editSuffix: '/edit',

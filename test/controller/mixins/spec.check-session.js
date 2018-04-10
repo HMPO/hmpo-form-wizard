@@ -103,6 +103,15 @@ describe('mixins/check-session', () => {
             next.should.have.been.calledWithExactly();
         });
 
+        it('does not throw session error if controller checkEntryPointSession option is true', () => {
+            controller.options.entryPoint = true;
+            controller.options.checkEntryPointSession = true;
+            controller.checkSession(req, res, next);
+            next.should.have.been.calledOnce;
+            next.args[0][0].should.be.an.instanceOf(Error);
+            next.args[0][0].code.should.equal('SESSION_TIMEOUT');
+        });
+
         it('sets the session check cookie', () => {
             req.cookies = {};
             controller.checkSession(req, res, next);
