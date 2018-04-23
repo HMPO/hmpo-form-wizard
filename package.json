@@ -4,11 +4,10 @@
   "description": "Routing and request handling for a multi-step form processes",
   "main": "index.js",
   "scripts": {
-    "test": "npm run lint && npm run unit && npm run cover && npm run check-coverage",
-    "lint": "eslint .",
-    "unit": "mocha test/. --recursive --require test/helpers",
-    "cover": "istanbul cover _mocha -- -R dot test/. --recursive --require test/helpers",
-    "check-coverage": "istanbul check-coverage --statement 100 --branch 100 --function 100 --line 100",
+    "test": "npm run test:lint && npm run test:unit && npm run test:cover",
+    "test:lint": "eslint .",
+    "test:unit": "istanbul cover _mocha -- test/. --recursive --require test/helpers",
+    "test:cover": "istanbul check-coverage --statement 100 --branch 100 --function 100 --line 100",
     "snyk": "snyk test",
     "snyk:dev": "snyk test --dev"
   },

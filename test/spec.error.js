@@ -81,6 +81,14 @@ describe('Error', () => {
             error.message.should.equal('Your date is required');
         });
 
+        it('sets labels and legends using a contentKey if specified', () => {
+            req.translate.withArgs('fields.mykey.label').returns('My Label');
+            req.translate.withArgs('fields.mykey.legend').returns('My legend');
+            req.translate.withArgs('validation.mykey.required').returns('Field label is {{label}} and legend is {{legend}}');
+            let error = new ErrorClass('key', { type: 'required', contentKey: 'mykey' }, req, res);
+            error.message.should.equal('Field label is my label and legend is my legend');
+        });
+
         it('populates maxlength messages with the maximum length', () => {
             req.translate.withArgs('validation.key.maxlength').returns('This must be less than {{maxlength}} characters');
             let error = new ErrorClass('key', { type: 'maxlength', arguments: [10] }, req);
@@ -116,6 +124,25 @@ describe('Error', () => {
             res.locals.something = 'value';
             let error = new ErrorClass('key', { type: 'required' }, req, res);
             error.message.should.equal('This must be a value');
+        });
+
+        it('should set a contentKey if one is given in error options', () => {
+            req.translate.withArgs('validation.mykey.required').returns('result');
+            let error = new ErrorClass('key', { type: 'required', contentKey: 'mykey' }, req, res);
+            error.message.should.equal('result');
+        });
+
+        it('should use a contentKey if one is given in field options', () => {
+            req.form = {
+                options: {
+                    fields: {
+                        'key': { contentKey: 'mykey' }
+                    }
+                }
+            };
+            req.translate.withArgs('validation.mykey.required').returns('result');
+            let error = new ErrorClass('key', { type: 'required' }, req, res);
+            error.message.should.equal('result');
         });
 
         it('uses identity function if no req.translate is defined', () => {
