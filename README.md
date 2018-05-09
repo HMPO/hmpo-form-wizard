@@ -93,6 +93,7 @@ Any of these options can also be provided as a third argument to the wizard to c
 * `resetJourney` - Reset the journey `journeyModel` when this step is accessed.
 * `skip` - A template is not rendered on a GET request. The `post()` lifecycle is called instead. Defaults to `false`.
 * `noPost` - Don't allow posting to this step. The post method is set to null and the step is completed if there is a next step
+* `forwardQuery` - forward the query params when internally redirecting. Defaults to `false`.
 * `editable` - This step is editable. This allows accessing this step with the `editSuffix` and sets the back link and next step to the `editBackStep`. Defaults to `false`.
 * `editSuffix` - Suffix to use for editing steps. Defaults to `/edit`.
 * `editBackStep` - Location to return to after editing a step. Defaults to `confirm`
