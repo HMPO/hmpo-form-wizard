@@ -27,7 +27,7 @@ describe('Form Controller', () => {
         };
         req = request({
             method: 'GET',
-            originalUrl: '/base/route',
+            originalUrl: '/base/route?this=is&a=query',
             url: '/route',
             baseUrl: '/base',
             path: '/route',
@@ -1102,6 +1102,19 @@ describe('Form Controller', () => {
             controller.successHandler(req, res, next);
             controller.getNextStep.should.have.been.calledOnce;
             controller.getNextStep.should.have.been.calledWithExactly(req, res);
+            res.redirect.should.have.been.calledWithExactly('/next/step');
+        });
+
+        it('should keep the search query if the option is set', () => {
+            req.form.options.forwardQuery = true;
+            controller.successHandler(req, res, next);
+            res.redirect.should.have.been.calledWithExactly('/next/step?this=is&a=query');
+        });
+
+        it('should not alter the redirect the search query if the option is set but there is no query', () => {
+            req.form.options.forwardQuery = true;
+            req.originalUrl = '/original/url';
+            controller.successHandler(req, res, next);
             res.redirect.should.have.been.calledWithExactly('/next/step');
         });
 

@@ -67,6 +67,7 @@ describe('Form Wizard', () => {
             params: '',
             skip: false,
             noPost: false,
+            forwardQuery: false,
             entryPoint: false,
             checkSession: true,
             checkEntryPointSession: false,
