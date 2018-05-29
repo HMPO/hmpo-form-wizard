@@ -150,6 +150,32 @@ describe('mixins/next-step', () => {
             fn(req, res, { field: 'field1', op: 'after', value: '2 months' }).should.equal(false);
         });
 
+        it('should check if value is in an array', () => {
+            req.sessionModel.set('field1', 'foo');
+            fn(req, res, { field: 'field1', op: 'in', value: ['foo', 'bar'] }).should.equal(true);
+            fn(req, res, { field: 'field1', op: 'in', value: ['boo', 'baz'] }).should.equal(false);
+        });
+
+        it('should check if all values match', () => {
+            req.sessionModel.set('field1', 'foo');
+            req.sessionModel.set('field2', 'bar');
+            fn(req, res, { field: ['field1', 'field2'], op: 'all', value: {field1: 'foo', field2: 'bar'} }).should.equal(true);
+            fn(req, res, { field: ['field1', 'field2'], op: 'all', value: {field1: 'boo', field2: 'bar'} }).should.equal(false);
+        });
+
+        it('should check if some values match', () => {
+            req.sessionModel.set('field1', 'foo');
+            req.sessionModel.set('field2', 'bar');
+            fn(req, res, { field: ['field1', 'field2'], op: 'some', value: {field1: 'boo', field2: 'bar'} }).should.equal(true);
+            fn(req, res, { field: ['field1', 'field2'], op: 'some', value: {field1: 'boo', field2: 'baz'} }).should.equal(false);
+        });
+
+        it('should grab the field names form the value object if no fields are specified', () => {
+            req.sessionModel.set('field1', 'foo');
+            req.sessionModel.set('field2', 'bar');
+            fn(req, res, { op: 'all', value: {field1: 'foo', field2: 'bar'} }).should.equal(true);
+        });
+
         it('should run op function if it is a function', () => {
             let opFn = sinon.stub().returns(true);
             let obj = { field: 'field1', op: opFn, value: 99 };
@@ -236,6 +262,18 @@ describe('mixins/next-step', () => {
             controller.decodeConditions(req, res, nextStep).should.deep.equal({
                 url: 'nextstep',
                 condition: nextStep[0],
+                fields: [ 'field1' ]
+            });
+        });
+
+        it('should invert the result if not is specified', () => {
+            let nextStep = [
+                { field: 'field1', not: true, value: 99, next: 'nextstep' },
+                'otherstep'
+            ];
+            controller.decodeConditions(req, res, nextStep).should.deep.equal({
+                url: 'otherstep',
+                condition: null,
                 fields: [ 'field1' ]
             });
         });
@@ -399,6 +437,23 @@ describe('mixins/next-step', () => {
             let nextStep = [
                 {
                     field: { f1: 'field1', f2: 'field4', f3: 'field4' },
+                    op: fn,
+                    next: 'nextstep'
+                },
+                'otherstep'
+            ];
+            controller.decodeConditions(req, res, nextStep).should.deep.equal({
+                url: 'nextstep',
+                condition: nextStep[0],
+                fields: [ 'field1', 'field4' ]
+            });
+        });
+
+        it('should return the flattened unique fields from an object if only a value object is specified', () => {
+            let fn = sinon.stub().returns(true);
+            let nextStep = [
+                {
+                    value: { field1: 'foo', field4: 'bar' },
                     op: fn,
                     next: 'nextstep'
                 },
