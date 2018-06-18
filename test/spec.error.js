@@ -43,20 +43,42 @@ describe('Error', () => {
             res = response();
         });
 
-        it('uses the translate method from the initialising request to translate the message', () => {
-            req.translate.withArgs('validation.key.required').returns('This field is required');
+        it('uses the message from the options', () => {
+            let error = new ErrorClass('key', { type: 'required', message: 'options error message' }, req);
+            error.message.should.equal('options error message');
+        });
+
+        it('uses the translate method from the initialising request to translate the message (field block)', () => {
+            req.translate.withArgs('fields.key.validation.required').returns('This field is required');
+            req.translate.withArgs('validation.key.required').returns('Not this message');
             let error = new ErrorClass('key', { type: 'required' }, req);
             error.message.should.equal('This field is required');
         });
 
-        it('uses default error message for field if no field and type specific message is defined', () => {
+        it('uses the translate method from the initialising request to translate the message (validation block)', () => {
+            req.translate.withArgs('validation.key.required').returns('This field is required');
+            req.translate.withArgs('validation.key.default').returns('Not this message');
+            let error = new ErrorClass('key', { type: 'required' }, req);
+            error.message.should.equal('This field is required');
+        });
+
+        it('uses default error message for field if no field and type specific message is defined (field block)', () => {
             req.translate.withArgs('validation.key.default').returns('Default field message');
+            req.translate.withArgs('validation.required').returns('Not this message');
+            let error = new ErrorClass('key', { type: 'required' }, req);
+            error.message.should.equal('Default field message');
+        });
+
+        it('uses default error message for field if no field and type specific message is defined (validation block)', () => {
+            req.translate.withArgs('fields.key.validation.default').returns('Default field message');
+            req.translate.withArgs('validation.key.default').returns('Not this message');
             let error = new ErrorClass('key', { type: 'required' }, req);
             error.message.should.equal('Default field message');
         });
 
         it('uses default error message for validation type if no field level message is defined', () => {
             req.translate.withArgs('validation.required').returns('Default required message');
+            req.translate.withArgs('validation.default').returns('Not this message');
             let error = new ErrorClass('key', { type: 'required' }, req);
             error.message.should.equal('Default required message');
         });
@@ -150,6 +172,22 @@ describe('Error', () => {
             let error = new ErrorClass('key', { type: 'required' }, req);
             error.translate('test').should.equal('test');
             expect(error.message).to.equal(null);
+        });
+
+        it('uses the header message from the options', () => {
+            let error = new ErrorClass('key', { type: 'required', headerMessage: 'options header error message' }, req);
+            error.headerMessage.should.equal('options header error message');
+        });
+
+        it('uses the translate method for the header error message', () => {
+            req.translate.withArgs('fields.key.validation.required_header').returns('This field is required');
+            let error = new ErrorClass('key', { type: 'required' }, req);
+            error.headerMessage.should.equal('This field is required');
+        });
+
+        it('uses the standard message as the header message if there is no header message', () => {
+            let error = new ErrorClass('key', { type: 'required', message: 'options error message' }, req);
+            error.headerMessage.should.equal('options error message');
         });
 
     });
