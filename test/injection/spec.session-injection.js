@@ -269,7 +269,7 @@ describe('Session Injection', () => {
     });
 
     describe('#setRawSessionValues', () =>  {
-        it('deep merges supplied object with the existing session', () => {
+        it('set session items over the existing session', () => {
             let existingObject = { a: 1, b: 2 };
             req.session.existingObject = existingObject;
             injection.setRawSessionValues(req, {
@@ -277,8 +277,7 @@ describe('Session Injection', () => {
                 existingObject: { a: 3, boo: 'baz' },
                 key: 'value'
             });
-            req.session.existingObject.should.equal(existingObject);
-            req.session.existingObject.should.eql({ a: 3, b: 2, boo: 'baz' });
+            req.session.existingObject.should.eql({ a: 3, boo: 'baz' });
             req.session.additonalObject.should.eql({ foo: 'bar' });
             req.session.key.should.equal('value');
         });
