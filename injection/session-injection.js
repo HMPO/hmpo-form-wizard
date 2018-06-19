@@ -3,7 +3,6 @@
 const debug = require('debug')('hmpo:injection');
 const JourneyModel = require('../lib/journey-model');
 const WizardModel = require('../lib/wizard-model');
-const deepCloneMerge = require('deep-clone-merge');
 const _ = require('underscore');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -146,8 +145,10 @@ class SessionInjection {
     }
 
     setRawSessionValues(req, rawSessionValues) {
-        debug('setRawSessionValues', rawSessionValues);
-        deepCloneMerge.extend(req.session, rawSessionValues);
+        if (rawSessionValues) {
+            debug('setRawSessionValues', rawSessionValues);
+            _.forEach(rawSessionValues, (val, key) => req.session[key] = val);
+        }
     }
 
     middlewareDecodePayload(req, res, next) {
