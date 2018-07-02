@@ -115,6 +115,23 @@ describe('Form Controller', () => {
             controller.options.allFields.should.equal(options.fields);
         });
 
+        it('should set default formatters', () =>{
+            let controller = new Controller(options);
+            controller.options.defaultFormatters.should.eql([
+                'trim',
+                'singlespaces',
+                'hyphens',
+                'apostrophes',
+                'quotes'
+            ]);
+        });
+
+        it('should allow default formatters set in options', () =>{
+            options.defaultFormatters = [ 'hyphens' ];
+            let controller = new Controller(options);
+            controller.options.defaultFormatters.should.eql(['hyphens']);
+        });
+
     });
 
     describe('_bindFunctions', () => {

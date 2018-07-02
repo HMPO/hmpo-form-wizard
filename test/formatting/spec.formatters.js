@@ -78,6 +78,21 @@ describe('Formatters', () => {
         '-—–—-multiple-—–—-hyphens-—–—-': '-multiple-hyphens-'
     });
 
+    testStringFormatter('apostrophes', {
+        'no apos': 'no apos',
+        'normal\'apos': 'normal\'apos',
+        'curly’apos': 'curly\'apos',
+        'back`tick': 'back\'tick',
+        'forward‘apos': 'forward\'apos'
+    });
+
+    testStringFormatter('quotes', {
+        'no quotes': 'no quotes',
+        'double"quotes': 'double"quotes',
+        'double“open': 'double"open',
+        'double”close': 'double"close'
+    });
+
     testStringFormatter('removeroundbrackets', {
         'nobrackets': 'nobrackets',
         '(brackets)': 'brackets'
