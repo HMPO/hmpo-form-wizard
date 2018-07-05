@@ -337,7 +337,6 @@ describe('validators', () => {
 
         describe('invalid values', () => {
             let inputs = [
-                '',
                 '01',
                 'abc',
                 'ABC123',
@@ -355,6 +354,7 @@ describe('validators', () => {
 
         describe('valid values', () => {
             let inputs = [
+                '',
                 '0000',
                 '0001',
                 '2015',
@@ -373,7 +373,6 @@ describe('validators', () => {
 
         describe('invalid values', () => {
             let inputs = [
-                '',
                 '0',
                 '13',
                 'Jan',
@@ -391,6 +390,7 @@ describe('validators', () => {
 
         describe('valid values', () => {
             let inputs = [
+                '',
                 '01',
                 '12'
             ];
@@ -423,6 +423,7 @@ describe('validators', () => {
 
         describe('valid values', () => {
             let inputs = [
+                '',
                 '01',
                 '28',
                 '29',
