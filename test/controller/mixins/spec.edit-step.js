@@ -121,6 +121,16 @@ describe('mixins/edit-step', () => {
             controller.getNextStep(req, res).should.equal('/base/url/backstep');
         });
 
+        it('returns editBackStep if an allowed next step', () => {
+            req.isEditing = true;
+            controller.getNextStepObject.returns({ url: 'nextstep' });
+            req.journeyModel.set('history', [
+                { path: '/base/url/nextstep' },
+                { path: '/base/url/anotherstep', next: '/base/url/backstep' }
+            ]);
+            controller.getNextStep(req, res).should.equal('/base/url/backstep');
+        });
+
         it('returns next step if the step has the continueOnEdit option set', () => {
             req.isEditing = true;
             controller.options.continueOnEdit = true;
