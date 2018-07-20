@@ -92,6 +92,10 @@ describe('mixins/edit-step', () => {
         beforeEach(() => {
             req.form = { options };
             controller.getNextStepObject = sinon.stub().returns({});
+            req.journeyModel.set('history', [
+                { path: '/base/url/nextstep' },
+                { path: '/base/url/backstep' }
+            ]);
         });
 
         it('calls the super method if not editing', () => {
@@ -128,6 +132,24 @@ describe('mixins/edit-step', () => {
             req.isEditing = true;
             controller.getNextStepObject.returns({ url: 'nextstep', condition: { continueOnEdit: true } });
             controller.getNextStep(req, res).should.equal('/base/url/nextstep/editsuffix');
+        });
+
+        it('returns next step if the back step is not in the history', () => {
+            req.journeyModel.set('history', null);
+            req.isEditing = true;
+            controller.getNextStepObject.returns({ url: 'nextstep', condition: {} });
+            controller.getNextStep(req, res).should.equal('/base/url/nextstep');
+        });
+
+        it('returns next step if the back step is after an invalid step in the history', () => {
+            req.journeyModel.set('history', [
+                { path: '/base/url/nextstep' },
+                { path: '/base/url/nextstep', invalid: true },
+                { path: '/base/url/backstep' }
+            ]);
+            req.isEditing = true;
+            controller.getNextStepObject.returns({ url: 'nextstep', condition: {} });
+            controller.getNextStep(req, res).should.equal('/base/url/nextstep');
         });
 
         it('returns editBackStep if the step has no continueOnEdit option set in a matched condition', () => {

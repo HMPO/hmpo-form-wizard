@@ -108,13 +108,10 @@ describe('mixins/invalidate-journey', () => {
             ]);
         });
 
-        it('should invalidate all steps in history matching a changed field', () => {
+        it('should invalidate at first step in history matching a changed field', () => {
             controller._invalidateJourney(req, res, { field2: 'value' });
             req.journeyModel.get('history').should.deep.equal([
                 { wizard: 'w1', path: '/one' },
-                { wizard: 'w1', path: '/two', fields: [ 'field1', 'field2' ], invalid: true },
-                { wizard: 'w1', path: '/three' },
-                { wizard: 'w1', path: '/four', fields: [ 'field2' ], invalid: true },
             ]);
         });
 
@@ -124,8 +121,7 @@ describe('mixins/invalidate-journey', () => {
             req.journeyModel.get('history').should.deep.equal([
                 { wizard: 'w1', path: '/one' },
                 { wizard: 'w1', path: '/two', fields: [ 'field1', 'field2' ] },
-                { wizard: 'w1', path: '/three' },
-                { wizard: 'w1', path: '/four', fields: [ 'field2' ], invalid: true }
+                { wizard: 'w1', path: '/three' }
             ]);
         });
 
@@ -140,8 +136,7 @@ describe('mixins/invalidate-journey', () => {
             req.journeyModel.get('history').should.deep.equal([
                 { wizard: 'w1', path: '/one' },
                 { wizard: 'w2', path: '/two', fields: [ 'field1', 'field2' ] },
-                { wizard: 'w2', path: '/three' },
-                { wizard: 'w1', path: '/four', fields: [ 'field2' ], invalid: true },
+                { wizard: 'w2', path: '/three' }
             ]);
         });
 
@@ -153,8 +148,7 @@ describe('mixins/invalidate-journey', () => {
             req.form.options.allFields = { field2: { journeyKey: 'journey2' }};
             controller._invalidateJourney(req, res, { field2: 'value' });
             req.journeyModel.get('history').should.deep.equal([
-                { wizard: 'w1', path: '/one' },
-                { wizard: 'w2', path: '/two', fields: [ 'field1', 'journey2' ], invalid: true },
+                { wizard: 'w1', path: '/one' }
             ]);
         });
 
