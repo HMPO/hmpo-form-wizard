@@ -112,7 +112,8 @@ Remaining field options documentation can be found in the hmpo-template-mixins [
 ## Field options
 
 * `journeyKey` - Name of the cross-wizard field storage name
-* `formater` - Array of formatter names for this field
+* `formater` - Array of formatter names for this field in addition to the default formatter set
+* `ignore-defaults` - Disabled the default set of formatters for this field
 * `validate` - An array of validator names, or validator objects
   * `type` - Validator name
   * `arguments` - Array of validator arguments, eg. `{ type: 'minlength', arguments: [24] }`
@@ -132,6 +133,7 @@ Remaining field options documentation can be found in the hmpo-template-mixins [
   * `attribute`
   * `value`
 * `autocomplete` - Autocomplete key to add to input field
+* `contentKey` - localisation key to use for this field instead of the field name
 
 ## Central journey storage
 To facilitate sharing form values between wizards in the same journey a field can be specified to save into the `journeyModel` instead of the `sessionModel` using the `journeyKey` property:
