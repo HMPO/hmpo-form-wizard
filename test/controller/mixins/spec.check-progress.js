@@ -183,7 +183,6 @@ describe('mixins/check-progress', () => {
                     fields: [ 'field1', 'field2' ],
                     wizard: 'wizard',
                     skip: undefined,
-                    minor: undefined,
                     continueOnEdit: undefined
                 }
             );
@@ -198,7 +197,6 @@ describe('mixins/check-progress', () => {
                     fields: [ 'field1', 'field2' ],
                     wizard: 'wizard',
                     skip: undefined,
-                    minor: undefined,
                     continueOnEdit: undefined
                 }
             );
@@ -214,7 +212,6 @@ describe('mixins/check-progress', () => {
                     fields: [ 'field1', 'field2' ],
                     wizard: 'wizard',
                     skip: true,
-                    minor: undefined,
                     continueOnEdit: undefined
                 }
             );
@@ -232,7 +229,6 @@ describe('mixins/check-progress', () => {
                     fields: undefined,
                     wizard: 'wizard',
                     skip: undefined,
-                    minor: undefined,
                     continueOnEdit: undefined
                 }
             );
@@ -255,13 +251,12 @@ describe('mixins/check-progress', () => {
                     fields: ['f1', 'j2', 'f3'],
                     wizard: 'wizard',
                     skip: undefined,
-                    minor: undefined,
                     continueOnEdit: undefined
                 }
             );
         });
 
-        it('appends step fields to form fields', () => {
+        it('appends step fields and decisionFields to form fields', () => {
             req.form.options.fields = {
                 f1: {},
                 f2: {},
@@ -273,6 +268,11 @@ describe('mixins/check-progress', () => {
                 f3: { journeyKey: 'j3' },
                 f4: {}
             };
+            req.form.options.decisionFields = [
+                'd1',
+                'f1',
+                'd2'
+            ];
             controller.getNextStepObject.returns({
                 url: 'nextstep',
                 fields: ['f1', 'f2', 'f4']
@@ -282,29 +282,9 @@ describe('mixins/check-progress', () => {
                 {
                     path: '/base/teststep',
                     next: '/base/nextstep',
-                    fields: ['f1', 'j2', 'j3', 'f4'],
+                    fields: ['f1', 'j2', 'j3', 'f4', 'd1', 'd2'],
                     wizard: 'wizard',
                     skip: undefined,
-                    minor: undefined,
-                    continueOnEdit: undefined
-                }
-            );
-        });
-
-        it('sets minor if minor is set in step options', () => {
-            req.form.options.minor = true;
-            controller.getNextStepObject.returns({
-                url: 'nextstep'
-            });
-            controller.setStepComplete(req, res);
-            controller.addJourneyHistoryStep.args[0][2].should.deep.equal(
-                {
-                    path: '/base/teststep',
-                    next: '/base/nextstep',
-                    fields: undefined,
-                    wizard: 'wizard',
-                    skip: undefined,
-                    minor: true,
                     continueOnEdit: undefined
                 }
             );
@@ -324,7 +304,6 @@ describe('mixins/check-progress', () => {
                     fields: undefined,
                     wizard: 'wizard',
                     skip: undefined,
-                    minor: undefined,
                     continueOnEdit: true
                 }
             );
@@ -342,7 +321,6 @@ describe('mixins/check-progress', () => {
                     fields: undefined,
                     wizard: 'wizard',
                     skip: undefined,
-                    minor: undefined,
                     continueOnEdit: undefined
                 }
             );
@@ -413,39 +391,41 @@ describe('mixins/check-progress', () => {
             ]);
         });
 
-        it('overwrites step and marks old next as invalid if minor option is supplied', () => {
+        it('truncates and adds new step if not first invalid step', () => {
             req.journeyModel.set('history', [
                 { path: '/path/one', next: '/path/two' },
                 { path: '/path/two', next: '/path/three' },
-                { path: '/path/three', next: '/path/four' },
+                { path: '/path/three', next: '/path/four', invalid: true },
                 { path: '/path/four', next: '/path/five' },
                 { path: '/path/five', next: '/path/six' }
             ]);
             controller.addJourneyHistoryStep(req, res,
-                { path: '/path/three', next: '/path/newnext', minor: true }
+                { path: '/path/four', next: '/path/five', newitem: true }
             );
             req.journeyModel.get('history').should.deep.equal([
                 { path: '/path/one', next: '/path/two' },
                 { path: '/path/two', next: '/path/three' },
-                { path: '/path/three', next: '/path/newnext', minor: true },
-                { path: '/path/four', next: '/path/five', invalid: true },
-                { path: '/path/five', next: '/path/six' }
+                { path: '/path/four', next: '/path/five', newitem: true }
             ]);
         });
 
-        it('overwrites step if old next does not exist', () => {
+        it('replaces step if new step is the first invalid step', () => {
             req.journeyModel.set('history', [
                 { path: '/path/one', next: '/path/two' },
                 { path: '/path/two', next: '/path/three' },
-                { path: '/path/three', next: '/path/four' }
+                { path: '/path/three', next: '/path/four' },
+                { path: '/path/four', next: '/path/five', invalid: true },
+                { path: '/path/five', next: '/path/six' }
             ]);
             controller.addJourneyHistoryStep(req, res,
-                { path: '/path/three', next: '/path/newnext', minor: true }
+                { path: '/path/four', next: '/path/five', newitem: true }
             );
             req.journeyModel.get('history').should.deep.equal([
                 { path: '/path/one', next: '/path/two' },
                 { path: '/path/two', next: '/path/three' },
-                { path: '/path/three', next: '/path/newnext', minor: true }
+                { path: '/path/three', next: '/path/four' },
+                { path: '/path/four', next: '/path/five', newitem: true },
+                { path: '/path/five', next: '/path/six' }
             ]);
         });
     });

@@ -136,18 +136,15 @@ describe('Form Wizard', () => {
     it('should call the controller\'s requestHandler', () => {
         wizard(steps, fields, options);
         ControllerClass.prototype.requestHandler.should.have.been.calledOnce;
-        routerStub.all.should.have.been.calledOnce;
         routerStub.all.should.have.been.calledWithExactly(
             '/first',
             ControllerClass.prototype.router
         );
     });
 
-    it('should use the controllerRouter on the edit path if the step is editable', () => {
-        options.editable = true;
+    it('should use the editing handler and controllerRouter on the edit path', () => {
         routerStub.all.onFirstCall().callsArg(1);
         wizard(steps, fields, options);
-        routerStub.all.should.have.been.calledTwice;
         routerStub.all.should.have.been.calledWithExactly(
             '/first/edit',
             sinon.match.func,

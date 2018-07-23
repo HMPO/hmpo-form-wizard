@@ -102,12 +102,36 @@ Any of these options can also be provided as a third argument to the wizard to c
 *  `templatePath` - provides the location within `app.get('views')` that templates are stored.
 * `backLink` - Specifies the location of the step previous to this one.
 * `backLinks` - Specifies valid referrers that can be used as a back link. If this or `backLink` are not specified then an algorithm is applied which checks the previously visited steps which have the current step set as `next`.
-* `controller` - The constructor for the controller to be used for this step's request handling. The default is an extension of the [hmpo-form-controller](https://www.npmjs.com/package/hmpo-form-controller), which is exported as a `Controller` property of this module. If custom behaviour is required for a particular form step then custom extensions can be defined - see [Custom Controllers](#custom-controllers)
-* `invalidates` - an array of field names that will be 'invalidated' when this field value is set or changed. Any fields specified in the `invalidates` array will be removed from the `sessionModel`. Future steps that have used this value to make a branching decision will also be invalidated, making the user go through those steps and decisions again.
+* `controller` - The constructor for the controller to be used for this step's request handling. The default is exported as a `Controller` property of this module. If custom behaviour is required for a particular form step then custom extensions can be defined - see [Custom Controllers](#custom-controllers)
+* `decisionFields` - Additional fields that we be recorded as being part of this step's routing decision. Default: `[]`
 * `translate` - provide a function for translating validation error codes into usable messages. Previous implementations have used [i18next](https://www.npmjs.com/package/i18next) to do translations.
 * `params` - Define express parameters for the route for supporting additional URL parameters.
 
 Remaining field options documentation can be found in the hmpo-template-mixins [README](https://github.com/UKHomeOffice/passports-template-mixins#options-1).
+
+## Field options
+
+* `journeyKey` - Name of the cross-wizard field storage name
+* `formater` - Array of formatter names for this field
+* `validate` - An array of validator names, or validator objects
+  * `type` - Validator name
+  * `arguments` - Array of validator arguments, eg. `{ type: 'minlength', arguments: [24] }`
+* `options` - Array of select box or radio button options
+  * `value` - Item value
+  * `toggle` - ID of item this radio button should toggle
+  * `child` - Type of child template to auto insert
+* `dependent` - Name of field to make this field conditional upon. This field will not be validated  or stored if this condition is not met. Can also also be an object to specify a specific value instead of the default of `true`:
+  * `field` - Field name
+  * `value` - Field value
+* `invalidates` - an array of field names that will be 'invalidated' when this field value is set or changed. Any fields specified in the `invalidates` array will be removed from the `sessionModel`. Future steps that have used this value to make a branching decision will also be invalidated, making the user go through those steps and decisions again.
+* `className` - Class name applied to the input field
+* `labelClassName` - Class name applied to the input label
+* `legendClassName` - Class name applied the the input legend, eg. the overall label for a set of radio buttons
+* `groupClassName` - Class name applied to the input group, eg. `'inline'` for radio buttons
+* `attributes` - Array of attributes to add to the input field
+  * `attribute`
+  * `value`
+* `autocomplete` - Autocomplete key to add to input field
 
 ## Central journey storage
 To facilitate sharing form values between wizards in the same journey a field can be specified to save into the `journeyModel` instead of the `sessionModel` using the `journeyKey` property:

@@ -16,6 +16,7 @@ describe('mixins/edit-step', () => {
         };
 
         req = request({
+            originalUrl: '/base/url/path/editsuffix?arg=value',
             baseUrl: '/base/url'
         });
         res = response();
@@ -41,6 +42,7 @@ describe('mixins/edit-step', () => {
 
     describe('editing', () => {
         it('sets editing flags in req and res', () => {
+            options.editable = true;
             controller.editing(req, res, next);
             req.isEditing.should.equal(true);
             res.locals.isEditing.should.equal(true);
@@ -48,9 +50,20 @@ describe('mixins/edit-step', () => {
         });
 
         it('calls the next callback', () => {
+            options.editable = true;
             controller.editing(req, res, next);
             next.should.have.been.calledOnce;
             next.should.have.been.calledWithExactly();
+        });
+
+        it('calls redirect to non edit step if not editable', () => {
+            controller.editing(req, res, next);
+            res.redirect.should.have.been.calledWithExactly('/base/url/path?arg=value');
+        });
+
+        it('throws an error if the edit url does not contain the edit suffix', () => {
+            req.originalUrl = '/base/url/path';
+            expect(() => controller.editing(req, res, next)).to.throw();
         });
     });
 
@@ -138,28 +151,17 @@ describe('mixins/edit-step', () => {
             controller.getNextStep(req, res).should.equal('/base/url/nextstep/editsuffix');
         });
 
+        it('returns next remote url if the step has the continueOnEdit option set', () => {
+            req.isEditing = true;
+            controller.options.continueOnEdit = true;
+            controller.getNextStepObject.returns({ url: 'http://example.com' });
+            controller.getNextStep(req, res).should.equal('http://example.com');
+        });
+
         it('returns next step if the step has the continueOnEdit option set in a matched condition', () => {
             req.isEditing = true;
             controller.getNextStepObject.returns({ url: 'nextstep', condition: { continueOnEdit: true } });
             controller.getNextStep(req, res).should.equal('/base/url/nextstep/editsuffix');
-        });
-
-        it('returns next step if the back step is not in the history', () => {
-            req.journeyModel.set('history', null);
-            req.isEditing = true;
-            controller.getNextStepObject.returns({ url: 'nextstep', condition: {} });
-            controller.getNextStep(req, res).should.equal('/base/url/nextstep');
-        });
-
-        it('returns next step if the back step is after an invalid step in the history', () => {
-            req.journeyModel.set('history', [
-                { path: '/base/url/nextstep' },
-                { path: '/base/url/nextstep', invalid: true },
-                { path: '/base/url/backstep' }
-            ]);
-            req.isEditing = true;
-            controller.getNextStepObject.returns({ url: 'nextstep', condition: {} });
-            controller.getNextStep(req, res).should.equal('/base/url/nextstep');
         });
 
         it('returns editBackStep if the step has no continueOnEdit option set in a matched condition', () => {
@@ -169,6 +171,55 @@ describe('mixins/edit-step', () => {
             controller.getNextStep(req, res).should.equal('/base/url/backstep');
         });
 
+        it('returns last valid next in history in edit mode if backstep is not valid', () => {
+            req.journeyModel.set('history', [
+                { path: '/base/url/step1', next: '/base/url/step2' },
+                { path: '/base/url/step2', next: '/base/url/step3' },
+                { path: '/base/url/step3', next: '/base/url/step4' },
+                { path: '/base/url/step4', next: '/base/url/step5', invalid: true },
+                { path: '/base/url/step5', next: '/base/url/backstep' },
+                { path: '/base/url/backstep' }
+            ]);
+            req.isEditing = true;
+            controller.getNextStepObject.returns({ url: 'step2', condition: {} });
+            controller.getNextStep(req, res).should.equal('/base/url/step4/editsuffix');
+        });
+
+        it('returns last valid step in history in edit mode if backstep is not valid', () => {
+            req.journeyModel.set('history', [
+                { path: '/base/url/step1', next: '/base/url/step2' },
+                { path: '/base/url/step2', next: '/base/url/step3' },
+                { path: '/base/url/step3' },
+                { path: '/base/url/step4', next: '/base/url/step5', invalid: true },
+                { path: '/base/url/step5', next: '/base/url/backstep' },
+                { path: '/base/url/backstep' }
+            ]);
+            req.isEditing = true;
+            controller.getNextStepObject.returns({ url: 'step2', condition: {} });
+            controller.getNextStep(req, res).should.equal('/base/url/step3/editsuffix');
+        });
+
+        it('returns last valid remote url in history if backstep is not valid', () => {
+            req.journeyModel.set('history', [
+                { path: '/base/url/step1', next: '/base/url/step2' },
+                { path: '/base/url/step2', next: '/base/url/step3' },
+                { path: '/base/url/step3', next: 'http://example.com' },
+                { path: '/base/url/step4', next: '/base/url/step5', invalid: true },
+                { path: '/base/url/step5', next: '/base/url/backstep' },
+                { path: '/base/url/backstep' }
+            ]);
+            req.isEditing = true;
+            controller.getNextStepObject.returns({ url: 'step2', condition: {} });
+            controller.getNextStep(req, res).should.equal('http://example.com');
+        });
+
+        it('returns normal next step if there is no history', () => {
+            req.journeyModel.set('history', null);
+            req.isEditing = true;
+            controller.getNextStepObject.returns({ url: 'nextstep', condition: {} });
+            controller.getNextStep(req, res);
+            BaseController.prototype.getNextStep.should.have.been.calledWithExactly(req, res);
+        });
     });
 
 });
