@@ -110,7 +110,6 @@ class SessionInjection {
             next: next || '/dummy/next',
             wizard: 'session-injection',
             fields: [],
-            minor: false,
             skip: false,
             continueOnEdit: false
         };
