@@ -16,6 +16,7 @@ describe('Form Controller', () => {
     beforeEach(() => {
         options = {
             route: '/route',
+            checkJourney: true,
             next: 'nextstep',
             template: 'template',
             fields: {
@@ -415,8 +416,14 @@ describe('Form Controller', () => {
             req.form.should.be.an('object');
         });
 
+        it('resolves the current route to its full path', () => {
+            controller._configure(req, res, next);
+            req.form.options.fullPath.should.equal('/base/route');
+        });
+
         it('deep clones the controller config to req.form.options', () => {
             controller._configure(req, res, next);
+            delete req.form.options.fullPath; // except for the added fullPath
             req.form.options.should.deep.equal(controller.options);
             req.form.options.should.not.equal(controller.options);
             req.form.options.fields.should.deep.equal(controller.options.fields);
@@ -1027,7 +1034,7 @@ describe('Form Controller', () => {
             expect(result).to.be.undefined;
         });
 
-        it('should not validate the field if the isAllowedDependent returns false', () => {
+        it('should validate the field if the isAllowedDependent returns true', () => {
             validation.isAllowedDependent.returns(true);
             validation.validate.returns(true);
             controller.validateField('field', req, res);

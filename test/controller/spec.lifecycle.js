@@ -9,6 +9,7 @@ describe('Controller Lifecycle', () => {
     beforeEach(() => {
         options = {
             route: '/route',
+            checkJourney: true,
             next: 'nextstep',
             template: 'template',
             fields: {
@@ -349,6 +350,23 @@ describe('Controller Lifecycle', () => {
             handler(req, res, next);
         });
 
+        it('does not set the step as complete if checkJourney is disabled', done => {
+            options.checkJourney = false;
+
+            assert = () => {
+                controller.render.should.have.been
+                    .calledOnce
+                    .calledAfter(controller._checkStatus)
+                    .and.calledOn(controller)
+                    .and.calledWithExactly(req, res, sinon.match.func);
+                controller.setStepComplete.should.not.have.been.called;
+                controller.successHandler.should.not.have.been.called;
+                done();
+            };
+
+            handler(req, res, next);
+        });
+
     });
 
     describe('POST request', () =>{
@@ -465,6 +483,24 @@ describe('Controller Lifecycle', () => {
                 res.redirect.should.have.been
                     .calledOnce
                     .calledAfter(controller.setStepComplete);
+                done();
+            };
+
+            handler(req, res, next);
+        });
+
+        it('successHandler does not set step complete if checkJourney is disabled', done => {
+            options.checkJourney = false;
+            assert = () => {
+                controller.successHandler.should.have.been
+                    .calledOnce
+                    .calledAfter(controller.saveValues)
+                    .and.calledOn(controller)
+                    .and.calledWithExactly(req, res, sinon.match.func);
+                controller.setStepComplete.should.not.have.been.called;
+                res.redirect.should.have.been
+                    .calledOnce
+                    .calledAfter(controller.successHandler);
                 done();
             };
 

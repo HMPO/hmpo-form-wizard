@@ -2,6 +2,7 @@
 
 const baseController = require('../../helpers/controller');
 const resolvePath = require('../../../lib/controller/mixins/resolve-path');
+const checkProgress = require('../../../lib/controller/mixins/check-progress');
 const editStep = require('../../../lib/controller/mixins/edit-step');
 
 describe('mixins/edit-step', () => {
@@ -24,6 +25,7 @@ describe('mixins/edit-step', () => {
 
         BaseController = baseController();
         BaseController = resolvePath(BaseController);
+        BaseController = checkProgress(BaseController);
         StubController = editStep(BaseController);
         controller = new StubController(options);
 
@@ -101,12 +103,54 @@ describe('mixins/edit-step', () => {
         });
     });
 
+    describe('checkEditing', () => {
+        beforeEach(() => {
+            sinon.stub(req.journeyModel, 'get').withArgs('history').returns([
+                { path: '/base/url/a', next: '/base/url/b', editing: true },
+                { path: '/base/url/b', next: '/base/url/c', editing: true },
+                { path: '/base/url/c', next: '/base/url/backstep' },
+                { path: '/base/url/backstep' }
+            ]);
+            sinon.stub(req.journeyModel, 'set');
+        });
+
+        it('clears editing status if no longer editing', () => {
+            controller.checkEditing(req, res, next);
+            req.journeyModel.set.should.have.been.calledOnce.and.calledWithExactly('history', sinon.match.array);
+            req.journeyModel.get('history').should.eql([
+                { path: '/base/url/a', next: '/base/url/b' },
+                { path: '/base/url/b', next: '/base/url/c' },
+                { path: '/base/url/c', next: '/base/url/backstep' },
+                { path: '/base/url/backstep' }
+            ]);
+        });
+
+        it('does not clear editing status if editing', () => {
+            req.isEditing = true;
+            controller.checkEditing(req, res, next);
+            req.journeyModel.set.should.not.have.been.called;
+        });
+
+        it('does not change history if there are no editing steps ', () => {
+            req.journeyModel.get.withArgs('history').returns([
+                { path: '/base/url/a', next: '/base/url/b' },
+                { path: '/base/url/b', next: '/base/url/c' },
+                { path: '/base/url/c', next: '/base/url/backstep' },
+                { path: '/base/url/backstep' }
+            ]);
+            controller.checkEditing(req, res, next);
+            req.journeyModel.set.should.not.have.been.called;
+        });
+    });
+
     describe('getNextStep override', () => {
         beforeEach(() => {
             req.form = { options };
             controller.getNextStepObject = sinon.stub().returns({});
             req.journeyModel.set('history', [
-                { path: '/base/url/nextstep' },
+                { path: '/base/url/a', next: '/base/url/b' },
+                { path: '/base/url/b', next: '/base/url/c' },
+                { path: '/base/url/c', next: '/base/url/backstep' },
                 { path: '/base/url/backstep' }
             ]);
         });
@@ -123,32 +167,17 @@ describe('mixins/edit-step', () => {
             BaseController.prototype.getNextStep.should.not.have.been.called;
         });
 
-        it('returns editBackStep if the step has no next step', () => {
+        it('returns editBackStep if an allowed step', () => {
             req.isEditing = true;
-            controller.getNextStep(req, res).should.equal('/base/url/backstep');
-        });
-
-        it('returns editBackStep if the step has no continueOnEdit option set', () => {
-            req.isEditing = true;
-            controller.getNextStepObject.returns({ url: 'nextstep' });
-            controller.getNextStep(req, res).should.equal('/base/url/backstep');
-        });
-
-        it('returns editBackStep if an allowed next step', () => {
-            req.isEditing = true;
-            controller.getNextStepObject.returns({ url: 'nextstep' });
-            req.journeyModel.set('history', [
-                { path: '/base/url/nextstep' },
-                { path: '/base/url/anotherstep', next: '/base/url/backstep' }
-            ]);
+            controller.getNextStepObject.returns({ url: 'c' });
             controller.getNextStep(req, res).should.equal('/base/url/backstep');
         });
 
         it('returns next step if the step has the continueOnEdit option set', () => {
             req.isEditing = true;
             controller.options.continueOnEdit = true;
-            controller.getNextStepObject.returns({ url: 'nextstep' });
-            controller.getNextStep(req, res).should.equal('/base/url/nextstep/editsuffix');
+            controller.getNextStepObject.returns({ url: 'c' });
+            controller.getNextStep(req, res).should.equal('/base/url/c/editsuffix');
         });
 
         it('returns next remote url if the step has the continueOnEdit option set', () => {
@@ -160,56 +189,73 @@ describe('mixins/edit-step', () => {
 
         it('returns next step if the step has the continueOnEdit option set in a matched condition', () => {
             req.isEditing = true;
-            controller.getNextStepObject.returns({ url: 'nextstep', condition: { continueOnEdit: true } });
-            controller.getNextStep(req, res).should.equal('/base/url/nextstep/editsuffix');
+            controller.getNextStepObject.returns({ url: 'c', condition: { continueOnEdit: true } });
+            controller.getNextStep(req, res).should.equal('/base/url/c/editsuffix');
         });
 
         it('returns editBackStep if the step has no continueOnEdit option set in a matched condition', () => {
             req.isEditing = true;
             controller.options.continueOnEdit = true;
-            controller.getNextStepObject.returns({ url: 'nextstep', condition: {} });
+            controller.getNextStepObject.returns({ url: 'c', condition: {} });
             controller.getNextStep(req, res).should.equal('/base/url/backstep');
         });
 
-        it('returns last valid next in history in edit mode if backstep is not valid', () => {
+        it('returns last valid next in history in edit mode with next arg if backstep is not valid', () => {
             req.journeyModel.set('history', [
-                { path: '/base/url/step1', next: '/base/url/step2' },
-                { path: '/base/url/step2', next: '/base/url/step3' },
-                { path: '/base/url/step3', next: '/base/url/step4' },
-                { path: '/base/url/step4', next: '/base/url/step5', invalid: true },
-                { path: '/base/url/step5', next: '/base/url/backstep' },
+                { path: '/base/url/a', next: '/base/url/b' },
+                { path: '/base/url/b', next: '/base/url/c' },
+                { path: '/base/url/c', next: '/base/url/backstep', invalid: true },
                 { path: '/base/url/backstep' }
             ]);
             req.isEditing = true;
-            controller.getNextStepObject.returns({ url: 'step2', condition: {} });
-            controller.getNextStep(req, res).should.equal('/base/url/step4/editsuffix');
+            controller.getNextStepObject.returns({ url: 'b', condition: {} });
+            controller.getNextStep(req, res).should.equal('/base/url/c/editsuffix?next');
         });
 
-        it('returns last valid step in history in edit mode if backstep is not valid', () => {
+        it('returns last valid next in history in edit mode if backstep is not valid and revalidate is true', () => {
             req.journeyModel.set('history', [
-                { path: '/base/url/step1', next: '/base/url/step2' },
-                { path: '/base/url/step2', next: '/base/url/step3' },
-                { path: '/base/url/step3' },
-                { path: '/base/url/step4', next: '/base/url/step5', invalid: true },
-                { path: '/base/url/step5', next: '/base/url/backstep' },
+                { path: '/base/url/a', next: '/base/url/b' },
+                { path: '/base/url/b', next: '/base/url/c' },
+                { path: '/base/url/c', next: '/base/url/backstep', invalid: true, revalidate: true },
                 { path: '/base/url/backstep' }
             ]);
             req.isEditing = true;
-            controller.getNextStepObject.returns({ url: 'step2', condition: {} });
-            controller.getNextStep(req, res).should.equal('/base/url/step3/editsuffix');
+            controller.getNextStepObject.returns({ url: 'b', condition: {} });
+            controller.getNextStep(req, res).should.equal('/base/url/c/editsuffix');
         });
 
-        it('returns last valid remote url in history if backstep is not valid', () => {
+        it('returns last valid path in history in edit mode if there is no next', () => {
             req.journeyModel.set('history', [
-                { path: '/base/url/step1', next: '/base/url/step2' },
-                { path: '/base/url/step2', next: '/base/url/step3' },
-                { path: '/base/url/step3', next: 'http://example.com' },
-                { path: '/base/url/step4', next: '/base/url/step5', invalid: true },
-                { path: '/base/url/step5', next: '/base/url/backstep' },
+                { path: '/base/url/a', next: '/base/url/b' },
+                { path: '/base/url/b', next: '/base/url/c' },
+                { path: '/base/url/c' }
+            ]);
+            req.isEditing = true;
+            controller.getNextStepObject.returns({ url: 'b', condition: {} });
+            controller.getNextStep(req, res).should.equal('/base/url/c/editsuffix');
+        });
+
+        it('returns last valid next in history if backstep is not allowed', () => {
+            req.journeyModel.set('history', [
+                { path: '/base/url/a', next: '/base/url/b' },
+                { path: '/base/url/b', next: '/base/url/c' },
+                { path: '/base/url/c', next: '/base/url/d' },
                 { path: '/base/url/backstep' }
             ]);
             req.isEditing = true;
-            controller.getNextStepObject.returns({ url: 'step2', condition: {} });
+            controller.getNextStepObject.returns({ url: 'b', condition: {} });
+            controller.getNextStep(req, res).should.equal('/base/url/d/editsuffix');
+        });
+
+        it('returns last valid remote url in history if backstep is not allowed', () => {
+            req.journeyModel.set('history', [
+                { path: '/base/url/a', next: '/base/url/b' },
+                { path: '/base/url/b', next: '/base/url/c' },
+                { path: '/base/url/c', next: 'http://example.com' },
+                { path: '/base/url/backstep' }
+            ]);
+            req.isEditing = true;
+            controller.getNextStepObject.returns({ url: 'b', condition: {} });
             controller.getNextStep(req, res).should.equal('http://example.com');
         });
 
