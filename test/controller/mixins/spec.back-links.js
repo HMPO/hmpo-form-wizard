@@ -3,6 +3,7 @@
 const baseController = require('../../helpers/controller');
 const backLinks = require('../../../lib/controller/mixins/back-links');
 const resolvePath = require('../../../lib/controller/mixins/resolve-path');
+const checkProgress = require('../../../lib/controller/mixins/check-progress');
 
 describe('mixins/back-links', () => {
     let BaseController, StubController;
@@ -12,6 +13,7 @@ describe('mixins/back-links', () => {
 
         BaseController = baseController();
         BaseController = resolvePath(BaseController);
+        BaseController = checkProgress(BaseController);
         StubController = backLinks(BaseController);
 
         let options = { route: '/' };
@@ -104,51 +106,6 @@ describe('mixins/back-links', () => {
             controller.options.backLink = false;
             let backLink = controller.getBackLink(req, res);
             backLink.should.equal(false);
-        });
-
-        it('strips baseUrl before checking whitelist', () => {
-            req.get.withArgs('referrer').returns('http://example.com/base/whitelist');
-            controller.options.backLinks = ['whitelist'];
-            let backLink = controller.getBackLink(req, res);
-            backLink.should.equal('/base/whitelist');
-        });
-
-        it('supports absolute paths in whitelist', () => {
-            req.get.withArgs('referrer').returns('http://example.com/whitelist');
-            controller.options.backLinks = ['/whitelist'];
-            let backLink = controller.getBackLink(req, res);
-            backLink.should.equal('/whitelist');
-        });
-
-        it('permits whitelisting of steps in history', () => {
-            req.get.withArgs('referrer').returns('http://example.com/base/step4');
-            controller.options.backLinks = ['step2'];
-            controller.options.route = '/step4';
-            let backLink = controller.getBackLink(req, res);
-            backLink.should.equal('/base/step2');
-        });
-
-        it('returns most recent of whitelisted steps in history', () => {
-            req.get.withArgs('referrer').returns('http://example.com/base/step4');
-            controller.options.backLinks = ['step2', 'step1'];
-            controller.options.route = '/step3';
-            let backLink = controller.getBackLink(req, res);
-            backLink.should.equal('/base/step2');
-        });
-
-        it('returns undefined if referrer header is not on whitelist', () => {
-            req.get.withArgs('referrer').returns('http://example.com/not-whitelisted');
-            controller.options.route = '/step3';
-            controller.options.backLinks = ['whitelist'];
-            let backLink = controller.getBackLink(req, res);
-            expect(backLink).to.be.undefined;
-        });
-
-        it('returns undefined if referrer header not present', () => {
-            controller.options.route = '/step3';
-            controller.options.backLinks = ['whitelist'];
-            let backLink = controller.getBackLink(req, res);
-            expect(backLink).to.be.undefined;
         });
 
         it('skips history items that are marked as skip', () => {

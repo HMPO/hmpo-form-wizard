@@ -104,6 +104,7 @@ Any of these options can also be provided as a third argument to the wizard to c
 * `backLinks` - Specifies valid referrers that can be used as a back link. If this or `backLink` are not specified then an algorithm is applied which checks the previously visited steps which have the current step set as `next`.
 * `controller` - The constructor for the controller to be used for this step's request handling. The default is exported as a `Controller` property of this module. If custom behaviour is required for a particular form step then custom extensions can be defined - see [Custom Controllers](#custom-controllers)
 * `decisionFields` - Additional fields that we be recorded as being part of this step's routing decision. Default: `[]`
+* `revalidate` - Show this page instead of only recalculating the routing if this page is marked invalid. Default: `false`
 * `translate` - provide a function for translating validation error codes into usable messages. Previous implementations have used [i18next](https://www.npmjs.com/package/i18next) to do translations.
 * `params` - Define express parameters for the route for supporting additional URL parameters.
 
@@ -112,6 +113,7 @@ Remaining field options documentation can be found in the hmpo-template-mixins [
 ## Field options
 
 * `journeyKey` - Name of the cross-wizard field storage name
+* `default` - Default value for this field
 * `formater` - Array of formatter names for this field in addition to the default formatter set
 * `ignore-defaults` - Disabled the default set of formatters for this field
 * `validate` - An array of validator names, or validator objects

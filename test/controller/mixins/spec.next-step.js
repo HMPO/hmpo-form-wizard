@@ -12,13 +12,14 @@ describe('mixins/next-step', () => {
     beforeEach(() => {
         let options = {
             route: '/step1',
+            fullPath: '/base/step1',
             next: 'nextstep'
         };
 
         req = request({
             form: { options },
             baseUrl: '/base',
-            path: '/request/path'
+            originalUrl: '/original/url'
         });
         res = response();
 
@@ -530,7 +531,7 @@ describe('mixins/next-step', () => {
                 { code: 'A', redirect: 'redirect1' },
                 { code: 'B' }
             ];
-            controller.getErrorStep(err, req, res).should.equal('/base/request/path');
+            controller.getErrorStep(err, req, res).should.equal('/original/url');
         });
 
         it('should redirect to first redirect if all errors have redirects', () => {

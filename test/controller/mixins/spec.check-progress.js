@@ -7,15 +7,16 @@ const checkProgress = require('../../../lib/controller/mixins/check-progress');
 describe('mixins/check-progress', () => {
 
     let BaseController, StubController;
-    let req, res, next, controller;
+    let req, res, next, controller, options;
 
     beforeEach(() => {
-        let options = {
+        options = {
             fields: {},
             allFields: {},
             checkJourney: true,
             name: 'wizard',
             route: '/teststep',
+            fullPath: '/base/teststep',
             template: 'template',
             next: 'nextstep'
         };
@@ -48,21 +49,24 @@ describe('mixins/check-progress', () => {
             BaseController.prototype.middlewareChecks.should.have.been.calledOnce;
         });
 
-        it('uses the checkJourneyProgress middleware', () => {
+        it('uses the checkJourneyProgress and checkProceedToNextStep middleware', () => {
             controller.middlewareChecks();
-            BaseController.prototype.use.should.have.been.calledOnce;
+            BaseController.prototype.use.should.have.been.calledTwice;
             BaseController.prototype.use.should.have.been.calledWithExactly(
                 controller.checkJourneyProgress
+            );
+            BaseController.prototype.use.should.have.been.calledWithExactly(
+                controller.checkProceedToNextStep
             );
         });
     });
 
     describe('checkJourneyProgress', () => {
         it('truncates journey history if reset session option is present', () => {
-            controller.removeJourneyHistoryStep = sinon.stub();
+            controller.resetJourneyHistory = sinon.stub();
             controller.options.reset = true;
             controller.checkJourneyProgress(req, res, next);
-            controller.removeJourneyHistoryStep.should.have.been.calledWithExactly(req, res, '/base/teststep');
+            controller.resetJourneyHistory.should.have.been.calledWithExactly(req, res);
         });
 
         it('calls callback with MISSING_PREREQ error if there are no steps in history', () => {
@@ -134,6 +138,26 @@ describe('mixins/check-progress', () => {
             next.should.have.been.calledOnce;
             next.args[0][0].should.be.an.instanceOf(Error);
             next.args[0][0].code.should.equal('MISSING_PREREQ');
+            next.args[0][0].redirect.should.equal('/previous/step?next');
+        });
+
+        it('calls callback with MISSING_PREREQ if previous step is invalid and revalidate is true', () => {
+            req.journeyModel.set('history', [
+                {
+                    path: '/first/step',
+                    next: '/previous/step'
+                },
+                {
+                    path: '/previous/step',
+                    next: '/base/teststep',
+                    invalid: true,
+                    revalidate: true
+                }
+            ]);
+            controller.checkJourneyProgress(req, res, next);
+            next.should.have.been.calledOnce;
+            next.args[0][0].should.be.an.instanceOf(Error);
+            next.args[0][0].code.should.equal('MISSING_PREREQ');
             next.args[0][0].redirect.should.equal('/previous/step');
         });
 
@@ -160,6 +184,63 @@ describe('mixins/check-progress', () => {
         });
     });
 
+    describe('checkProceedToNextStep', () => {
+        beforeEach(() => {
+            controller.successHandler = sinon.stub();
+            req.query = { next: '' };
+            req.journeyModel.set('history', [
+                {
+                    path: '/base/first',
+                    next: '/base/teststep'
+                },
+                {
+                    path: '/base/teststep',
+                    next: '/base/nextstep',
+                    invalid: true
+                }
+            ]);
+        });
+
+        it('Calls next if no next query', () => {
+            req.query = {};
+            controller.checkProceedToNextStep(req, res, next);
+            next.should.have.been.calledWithExactly();
+            controller.successHandler.should.not.have.been.called;
+        });
+
+        it('Calls success handler if this step has completed before and is now invalid', () => {
+            controller.checkProceedToNextStep(req, res, next);
+            next.should.not.have.been.called;
+            controller.successHandler.should.have.been.calledWithExactly(req, res, next);
+        });
+
+        it('Calls next if revalidate is specified', () => {
+            req.journeyModel.set('history', [
+                {
+                    path: '/base/teststep',
+                    next: '/base/nextstep',
+                    revalidate: true,
+                    invalid: true
+                }
+            ]);
+            controller.checkProceedToNextStep(req, res, next);
+            next.should.have.been.calledWithExactly();
+            controller.successHandler.should.not.have.been.called;
+        });
+
+        it('Calls next if step is not invalid', () => {
+            req.journeyModel.set('history', [
+                {
+                    path: '/base/teststep',
+                    next: '/base/nextstep'
+                }
+            ]);
+            controller.checkProceedToNextStep(req, res, next);
+            next.should.have.been.calledWithExactly();
+            controller.successHandler.should.not.have.been.called;
+        });
+    });
+
     describe('setStepComplete', () => {
         beforeEach(() => {
             controller.addJourneyHistoryStep = sinon.stub();
@@ -167,6 +248,27 @@ describe('mixins/check-progress', () => {
                 url: 'nextstep',
                 fields: ['field1', 'field2']
             });
+        });
+
+        it('if this step is allowed by prereq then update the prereq to have this step as its next', () => {
+            options.prereqPath = '/base/prereq';
+            req.journeyModel.set('history', [{
+                path: '/base/prereq',
+                next: '/original/next'
+            }]);
+            controller.setStepComplete(req, res);
+            controller.addJourneyHistoryStep.should.have.been.calledTwice;
+            controller.addJourneyHistoryStep.should.have.been.calledWithExactly(
+                req,
+                res,
+                sinon.match.object
+            );
+            controller.addJourneyHistoryStep.args[0][2].should.deep.equal(
+                {
+                    path: '/base/prereq',
+                    next: '/base/teststep',
+                }
+            );
         });
 
         it('adds step to history', () => {
@@ -181,9 +283,7 @@ describe('mixins/check-progress', () => {
                     path: '/base/teststep',
                     next: '/base/nextstep',
                     fields: [ 'field1', 'field2' ],
-                    wizard: 'wizard',
-                    skip: undefined,
-                    continueOnEdit: undefined
+                    wizard: 'wizard'
                 }
             );
         });
@@ -195,9 +295,7 @@ describe('mixins/check-progress', () => {
                     path: '/base/custom/route',
                     next: '/base/nextstep',
                     fields: [ 'field1', 'field2' ],
-                    wizard: 'wizard',
-                    skip: undefined,
-                    continueOnEdit: undefined
+                    wizard: 'wizard'
                 }
             );
         });
@@ -211,8 +309,21 @@ describe('mixins/check-progress', () => {
                     next: '/base/nextstep',
                     fields: [ 'field1', 'field2' ],
                     wizard: 'wizard',
-                    skip: true,
-                    continueOnEdit: undefined
+                    skip: true
+                }
+            );
+        });
+
+        it('sets revalidate to true if revalidate option is true', () => {
+            controller.options.revalidate = true;
+            controller.setStepComplete(req, res);
+            controller.addJourneyHistoryStep.args[0][2].should.deep.equal(
+                {
+                    path: '/base/teststep',
+                    next: '/base/nextstep',
+                    fields: [ 'field1', 'field2' ],
+                    revalidate: true,
+                    wizard: 'wizard'
                 }
             );
         });
@@ -226,10 +337,7 @@ describe('mixins/check-progress', () => {
                 {
                     path: '/base/teststep',
                     next: '/base/nextstep',
-                    fields: undefined,
-                    wizard: 'wizard',
-                    skip: undefined,
-                    continueOnEdit: undefined
+                    wizard: 'wizard'
                 }
             );
         });
@@ -249,9 +357,7 @@ describe('mixins/check-progress', () => {
                     path: '/base/teststep',
                     next: '/base/nextstep',
                     fields: ['f1', 'j2', 'f3'],
-                    wizard: 'wizard',
-                    skip: undefined,
-                    continueOnEdit: undefined
+                    wizard: 'wizard'
                 }
             );
         });
@@ -283,14 +389,13 @@ describe('mixins/check-progress', () => {
                     path: '/base/teststep',
                     next: '/base/nextstep',
                     fields: ['f1', 'j2', 'j3', 'f4', 'd1', 'd2'],
-                    wizard: 'wizard',
-                    skip: undefined,
-                    continueOnEdit: undefined
+                    formFields: ['f1', 'j2', 'j3'],
+                    wizard: 'wizard'
                 }
             );
         });
 
-        it('sets continueOnEdit if in editing mode and continueOnEdit is in condition', () => {
+        it('sets editing and continueOnEdit if in editing mode and continueOnEdit is in condition', () => {
             req.isEditing = true;
             controller.getNextStepObject.returns({
                 url: 'nextstep',
@@ -301,9 +406,8 @@ describe('mixins/check-progress', () => {
                 {
                     path: '/base/teststep',
                     next: '/base/nextstep',
-                    fields: undefined,
                     wizard: 'wizard',
-                    skip: undefined,
+                    editing: true,
                     continueOnEdit: true
                 }
             );
@@ -317,11 +421,7 @@ describe('mixins/check-progress', () => {
             controller.addJourneyHistoryStep.args[0][2].should.deep.equal(
                 {
                     path: '/base/teststep',
-                    next: null,
-                    fields: undefined,
-                    wizard: 'wizard',
-                    skip: undefined,
-                    continueOnEdit: undefined
+                    wizard: 'wizard'
                 }
             );
         });
@@ -338,22 +438,7 @@ describe('mixins/check-progress', () => {
             ]);
         });
 
-        it('appends step to end of existing history', () => {
-            req.journeyModel.set('history', [
-                { path: '/path/one', next: '/path/two' },
-                { path: '/path/two', next: '/path/three' }
-            ]);
-            controller.addJourneyHistoryStep(req, res,
-                { path: '/path/newstep', next: '/path/newnext', newitem: true }
-            );
-            req.journeyModel.get('history').should.deep.equal([
-                { path: '/path/one', next: '/path/two' },
-                { path: '/path/two', next: '/path/three' },
-                { path: '/path/newstep', next: '/path/newnext', newitem: true }
-            ]);
-        });
-
-        it('overwrites existing step with the same path', () => {
+        it('overwrites existing step if it is found', () => {
             req.journeyModel.set('history', [
                 { path: '/path/one', next: '/path/two' },
                 { path: '/path/two', next: '/path/three' },
@@ -373,60 +458,57 @@ describe('mixins/check-progress', () => {
             ]);
         });
 
-        it('overwrites existing step and truncates if the next url is different', () => {
+        it('inserts step into history after previous step to maintain backwards compatibility', () => {
             req.journeyModel.set('history', [
-                { path: '/path/one', next: '/path/two' },
-                { path: '/path/two', next: '/path/three' },
-                { path: '/path/three', next: '/path/four' },
-                { path: '/path/four', next: '/path/five' },
-                { path: '/path/five', next: '/path/six' }
+                { path: '/path/one', next: '/path/newstep' },
+                { path: '/path/two', next: '/path/three' }
             ]);
             controller.addJourneyHistoryStep(req, res,
-                { path: '/path/three', next: '/path/newnext', newitem: true }
+                { path: '/path/newstep', next: '/path/newnext', newitem: true }
             );
             req.journeyModel.get('history').should.deep.equal([
-                { path: '/path/one', next: '/path/two' },
-                { path: '/path/two', next: '/path/three' },
-                { path: '/path/three', next: '/path/newnext', newitem: true }
+                { path: '/path/one', next: '/path/newstep' },
+                { path: '/path/newstep', next: '/path/newnext', newitem: true },
+                { path: '/path/two', next: '/path/three' }
             ]);
         });
 
-        it('truncates and adds new step if not first invalid step', () => {
+        it('appends step to end of existing history', () => {
             req.journeyModel.set('history', [
                 { path: '/path/one', next: '/path/two' },
-                { path: '/path/two', next: '/path/three' },
-                { path: '/path/three', next: '/path/four', invalid: true },
-                { path: '/path/four', next: '/path/five' },
-                { path: '/path/five', next: '/path/six' }
+                { path: '/path/two', next: '/path/three' }
             ]);
             controller.addJourneyHistoryStep(req, res,
-                { path: '/path/four', next: '/path/five', newitem: true }
+                { path: '/path/newstep', next: '/path/newnext', newitem: true }
             );
             req.journeyModel.get('history').should.deep.equal([
                 { path: '/path/one', next: '/path/two' },
                 { path: '/path/two', next: '/path/three' },
-                { path: '/path/four', next: '/path/five', newitem: true }
+                { path: '/path/newstep', next: '/path/newnext', newitem: true }
             ]);
         });
+    });
 
-        it('replaces step if new step is the first invalid step', () => {
+    describe('lastAllowedStep', () => {
+        it('returns last allowed step', () => {
+            req.journeyModel.set('history', [
+                { path: '/path/one', next: '/path/two' },
+                { path: '/path/two', next: '/path/three' },
+                { path: '/path/three', next: '/path/four' }
+            ]);
+            let step = controller.lastAllowedStep(req, res);
+            step.path.should.equal('/path/three');
+        });
+
+        it('does not get stuck in a loop', () => {
             req.journeyModel.set('history', [
                 { path: '/path/one', next: '/path/two' },
                 { path: '/path/two', next: '/path/three' },
                 { path: '/path/three', next: '/path/four' },
-                { path: '/path/four', next: '/path/five', invalid: true },
-                { path: '/path/five', next: '/path/six' }
+                { path: '/path/four', next: '/path/two' }
             ]);
-            controller.addJourneyHistoryStep(req, res,
-                { path: '/path/four', next: '/path/five', newitem: true }
-            );
-            req.journeyModel.get('history').should.deep.equal([
-                { path: '/path/one', next: '/path/two' },
-                { path: '/path/two', next: '/path/three' },
-                { path: '/path/three', next: '/path/four' },
-                { path: '/path/four', next: '/path/five', newitem: true },
-                { path: '/path/five', next: '/path/six' }
-            ]);
+            let step = controller.lastAllowedStep(req, res);
+            step.path.should.equal('/path/four');
         });
     });
 
@@ -472,7 +554,8 @@ describe('mixins/check-progress', () => {
             ]);
             controller.removeJourneyHistoryStep(req, res, '/path/two');
             req.journeyModel.get('history').should.deep.equal([
-                { path: '/path/one', next: '/path/two' }
+                { path: '/path/one', next: '/path/two' },
+                { path: '/path/three', next: '/path/four' }
             ]);
         });
 
@@ -491,6 +574,28 @@ describe('mixins/check-progress', () => {
         it('should do nothing if there is no step history', () => {
             controller.removeJourneyHistoryStep(req, res, '/path/seven');
             expect(req.journeyModel.get('history')).to.be.undefined;
+        });
+    });
+
+    describe('resetJourneyHistory', () => {
+        it('removes wizard steps from the history', () => {
+            options.name = 'wizard b';
+            req.journeyModel.set('history', [
+                { path: '/path/one', next: '/path/two', wizard: 'wizard a' },
+                { path: '/path/two', next: '/path/three', wizard: 'wizard b' },
+                { path: '/path/three', next: '/path/four', wizard: 'wizard a' },
+                { path: '/path/four', next: '/path/five', wizard: 'wizard b' }
+            ]);
+            controller.resetJourneyHistory(req, res);
+            req.journeyModel.get('history').should.deep.equal([
+                { path: '/path/one', next: '/path/two', wizard: 'wizard a' },
+                { path: '/path/three', next: '/path/four', wizard: 'wizard a' }
+            ]);
+        });
+
+        it('should do nothing if there is no step history', () => {
+            controller.resetJourneyHistory(req, res);
+            req.journeyModel.get('history').should.eql([]);
         });
     });
 
