@@ -362,7 +362,7 @@ describe('mixins/check-progress', () => {
             );
         });
 
-        it('appends step fields and decisionFields to form fields', () => {
+        it('appends step fields and decisionFields to fields', () => {
             req.form.options.fields = {
                 f1: {},
                 f2: {},
@@ -390,6 +390,39 @@ describe('mixins/check-progress', () => {
                     next: '/base/nextstep',
                     fields: ['f1', 'j2', 'j3', 'f4', 'd1', 'd2'],
                     formFields: ['f1', 'j2', 'j3'],
+                    wizard: 'wizard'
+                }
+            );
+        });
+
+        it('appends step fields and revalidateIf to formFields', () => {
+            req.form.options.fields = {
+                f1: {},
+                f2: {},
+                f3: {}
+            };
+            req.form.options.allFields = {
+                f1: {},
+                f2: { journeyKey: 'j2' },
+                f3: { journeyKey: 'j3' },
+                f4: {}
+            };
+            req.form.options.revalidateIf = [
+                'd1',
+                'f1',
+                'd2'
+            ];
+            controller.getNextStepObject.returns({
+                url: 'nextstep',
+                fields: ['f1', 'f2', 'f4']
+            });
+            controller.setStepComplete(req, res);
+            controller.addJourneyHistoryStep.args[0][2].should.deep.equal(
+                {
+                    path: '/base/teststep',
+                    next: '/base/nextstep',
+                    fields: ['f1', 'j2', 'j3', 'f4'],
+                    formFields: ['f1', 'j2', 'j3', 'd1', 'd2'],
                     wizard: 'wizard'
                 }
             );
