@@ -105,6 +105,7 @@ Any of these options can also be provided as a third argument to the wizard to c
 * `controller` - The constructor for the controller to be used for this step's request handling. The default is exported as a `Controller` property of this module. If custom behaviour is required for a particular form step then custom extensions can be defined - see [Custom Controllers](#custom-controllers)
 * `decisionFields` - Additional fields that we be recorded as being part of this step's routing decision. Default: `[]`
 * `revalidate` - Show this page instead of only recalculating the routing if this page is marked invalid. Default: `false`
+* `revalidateIf` - Show this page instead of only recalculating the routing if one of these values is changed. Default: `[]`
 * `translate` - provide a function for translating validation error codes into usable messages. Previous implementations have used [i18next](https://www.npmjs.com/package/i18next) to do translations.
 * `params` - Define express parameters for the route for supporting additional URL parameters.
 
