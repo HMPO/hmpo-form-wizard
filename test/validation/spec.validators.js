@@ -566,6 +566,170 @@ describe('validators', () => {
 
     });
 
+    describe('alphanumex', () => {
+        describe('invalid values', () => {
+            let inputs = [
+                null,
+                undefined,
+                9,
+                '&',
+                '/',
+                '\\',
+                '@',
+                '!'
+            ];
+            _.each(inputs, i => {
+                it(testName(i), () => {
+                    validators.alphanumex(i).should.not.be.ok;
+                });
+            });
+        });
+
+        describe('valid values', () => {
+            let inputs = [
+                '',
+                'ABCabc123 .,-\'',
+            ];
+            _.each(inputs, i => {
+                it(testName(i), () => {
+                    validators.alphanumex(i).should.be.ok;
+                });
+            });
+        });
+    });
+
+    describe('alphanumex1', () => {
+        describe('invalid values', () => {
+            let inputs = [
+                null,
+                undefined,
+                9,
+                '\\',
+                '@',
+                '!'
+            ];
+            _.each(inputs, i => {
+                it(testName(i), () => {
+                    validators.alphanumex1(i).should.not.be.ok;
+                });
+            });
+        });
+
+        describe('valid values', () => {
+            let inputs = [
+                '',
+                'ABCabc123 .,-\'&/',
+            ];
+            _.each(inputs, i => {
+                it(testName(i), () => {
+                    validators.alphanumex1(i).should.be.ok;
+                });
+            });
+        });
+    });
+
+    describe('alpha', () => {
+
+        describe('invalid values', () => {
+            let inputs = [
+                null,
+                undefined,
+                9,
+                '-',
+                '.',
+                ',',
+                '\'',
+                'a1'
+            ];
+            _.each(inputs, i => {
+                it(testName(i), () => {
+                    validators.alpha(i).should.not.be.ok;
+                });
+            });
+        });
+
+        describe('valid values', () => {
+            let inputs = [
+                '',
+                'abc',
+                'ABC'
+            ];
+            _.each(inputs, i => {
+                it(testName(i), () => {
+                    validators.alpha(i).should.be.ok;
+                });
+            });
+        });
+
+    });
+
+    describe('alphex', () => {
+        describe('invalid values', () => {
+            let inputs = [
+                null,
+                undefined,
+                9,
+                '&',
+                '/',
+                '\\',
+                '@',
+                '!',
+                '123'
+            ];
+            _.each(inputs, i => {
+                it(testName(i), () => {
+                    validators.alphaex(i).should.not.be.ok;
+                });
+            });
+        });
+
+        describe('valid values', () => {
+            let inputs = [
+                '',
+                'ABCabc .,-\'',
+            ];
+            _.each(inputs, i => {
+                it(testName(i), () => {
+                    validators.alphaex(i).should.be.ok;
+                });
+            });
+        });
+    });
+
+    describe('alphaex1', () => {
+        describe('invalid values', () => {
+            let inputs = [
+                null,
+                undefined,
+                9,
+                '\\',
+                '&',
+                '/',
+                '@',
+                '.',
+                ',',
+                '!'
+            ];
+            _.each(inputs, i => {
+                it(testName(i), () => {
+                    validators.alphaex1(i).should.not.be.ok;
+                });
+            });
+        });
+
+        describe('valid values', () => {
+            let inputs = [
+                '',
+                'ABCabc -\'',
+            ];
+            _.each(inputs, i => {
+                it(testName(i), () => {
+                    validators.alphaex1(i).should.be.ok;
+                });
+            });
+        });
+    });
+
     describe('numeric', () => {
 
         describe('invalid values', () => {
@@ -591,6 +755,44 @@ describe('validators', () => {
             _.each(inputs, i => {
                 it(testName(i), () => {
                     validators.numeric(i).should.be.ok;
+                });
+            });
+        });
+
+    });
+
+    describe('postcode', () => {
+
+        describe('invalid values', () => {
+            let inputs = [
+                null,
+                undefined,
+                true,
+                0,
+                '123ABC',
+                'Y04 2BA',
+                'W14F 7BB',
+                'YO1234BB',
+            ];
+            _.each(inputs, i => {
+                it(testName(i), () => {
+                    validators.postcode(i).should.not.be.ok;
+                });
+            });
+        });
+
+        describe('valid values', () => {
+            let inputs = [
+                '',
+                'AB1 2BU',
+                'W1F 7BB',
+                'BA10 4DD',
+                'NW11AA',
+                'BX43BT'
+            ];
+            _.each(inputs, i => {
+                it(testName(i), () => {
+                    validators.postcode(i).should.be.ok;
                 });
             });
         });
