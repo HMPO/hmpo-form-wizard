@@ -212,6 +212,7 @@ describe('mixins/check-progress', () => {
             controller.checkProceedToNextStep(req, res, next);
             next.should.not.have.been.called;
             controller.successHandler.should.have.been.calledWithExactly(req, res, next);
+            req.notRevalidated.should.be.true;
         });
 
         it('Calls next if revalidate is specified', () => {
@@ -226,6 +227,7 @@ describe('mixins/check-progress', () => {
             controller.checkProceedToNextStep(req, res, next);
             next.should.have.been.calledWithExactly();
             controller.successHandler.should.not.have.been.called;
+            expect(req.notRevalidated).to.not.be.true;
         });
 
         it('Calls next if step is not invalid', () => {
@@ -442,6 +444,23 @@ describe('mixins/check-progress', () => {
                     wizard: 'wizard',
                     editing: true,
                     continueOnEdit: true
+                }
+            );
+        });
+
+        it('does not set editing if in editing mode and the step was only revalidated', () => {
+            req.isEditing = true;
+            req.notRevalidated = true;
+            controller.getNextStepObject.returns({
+                url: 'nextstep',
+                condition: { continueOnEdit: true }
+            });
+            controller.setStepComplete(req, res);
+            controller.addJourneyHistoryStep.args[0][2].should.deep.equal(
+                {
+                    path: '/base/teststep',
+                    next: '/base/nextstep',
+                    wizard: 'wizard'
                 }
             );
         });
