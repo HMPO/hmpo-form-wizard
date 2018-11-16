@@ -24,7 +24,7 @@ module.exports = {
     fields: ['age'],
     next: [
       { field: 'age', op: '<', value: 18, next: 'not-old-enough' },
-      next: 'step4'
+      'step4'
     ]
   },
   '/step4': {},
