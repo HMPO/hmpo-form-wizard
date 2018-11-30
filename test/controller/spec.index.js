@@ -1041,7 +1041,12 @@ describe('Form Controller', () => {
             validation.validate.should.have.been.calledWithExactly(
                 req.form.options.fields,
                 'field',
-                'value'
+                'value',
+                {
+                    sessionModel: req.sessionModel,
+                    values: req.form.values,
+                    fields: req.form.options.fields
+                }
             );
         });
 

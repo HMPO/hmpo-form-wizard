@@ -799,4 +799,123 @@ describe('validators', () => {
 
     });
 
+    describe('match', () => {
+        it('matches another field', () => {
+            let context = {
+                values: {
+                    fieldname: 'a value'
+                }
+            };
+            validators.match.call(context, 'a value', 'fieldname').should.be.ok;
+        });
+
+        it('matches a session field', () => {
+            let context = {
+                sessionModel: {
+                    get: sinon.stub().withArgs('fieldname').returns('a value')
+                }
+            };
+            validators.match.call(context, 'a value', 'fieldname', true).should.be.ok;
+        });
+
+        it('should return false if value doesn\'t match', () => {
+            let context = {
+                values: {
+                    fieldname: 'different'
+                }
+            };
+            validators.match.call(context, 'a value', 'fieldname').should.not.be.ok;
+        });
+
+        it('return false if it doesn\'t match a session field', () => {
+            let context = {
+                sessionModel: {
+                    get: sinon.stub()
+                }
+            };
+            validators.match.call(context, 'a value', 'fieldname', true).should.not.be.ok;
+        });
+
+        it('should return false if field isn\'t set', () => {
+            let context = {
+                values: {
+                }
+            };
+            validators.match.call(context, 'a value', 'fieldname').should.not.be.ok;
+        });
+    });
+
+    describe('beforeField', () => {
+        it('should return true if value is before field', () => {
+            let context = {
+                values: {
+                    fieldname: '2014-11-06'
+                }
+            };
+            validators.beforeField.call(context, '2014-11-05', 'fieldname').should.be.ok;
+        });
+
+        it('should return true if value is before session field', () => {
+            let context = {
+                sessionModel: {
+                    get: sinon.stub().withArgs('fieldname').returns('2014-11-06')
+                }
+            };
+            validators.beforeField.call(context, '2014-11-05', 'fieldname', true).should.be.ok;
+        });
+
+        it('should return false if value is not before field', () => {
+            let context = {
+                values: {
+                    fieldname: '2014-11-05'
+                }
+            };
+            validators.beforeField.call(context, '2014-11-05', 'fieldname').should.not.be.ok;
+        });
+
+        it('should return false if field isn\'t set', () => {
+            let context = {
+                values: {
+                }
+            };
+            validators.beforeField.call(context, '2014-11-05', 'fieldname').should.not.be.ok;
+        });
+    });
+
+    describe('afterField', () => {
+        it('should return true if value is after field', () => {
+            let context = {
+                values: {
+                    fieldname: '2014-11-04'
+                }
+            };
+            validators.afterField.call(context, '2014-11-05', 'fieldname').should.be.ok;
+        });
+
+        it('should return true if value is before session field', () => {
+            let context = {
+                sessionModel: {
+                    get: sinon.stub().withArgs('fieldname').returns('2014-11-04')
+                }
+            };
+            validators.afterField.call(context, '2014-11-05', 'fieldname', true).should.be.ok;
+        });
+
+        it('should return false if value is not after field', () => {
+            let context = {
+                values: {
+                    fieldname: '2014-11-05'
+                }
+            };
+            validators.afterField.call(context, '2014-11-05', 'fieldname').should.not.be.ok;
+        });
+
+        it('should return false if field isn\'t set', () => {
+            let context = {
+                values: {
+                }
+            };
+            validators.afterField.call(context, '2014-11-05', 'fieldname').should.not.be.ok;
+        });
+    });
 });
