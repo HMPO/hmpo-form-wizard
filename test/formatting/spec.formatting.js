@@ -28,6 +28,7 @@ describe('Formatting', () => {
         });
 
         it('defaults falsy value arrays to empty strings', () => {
+            fields.field.multiple = true;
             value = formatting.format(fields, 'field', [0, false, undefined]);
             value.should.eql(['', '', '']);
         });
@@ -37,7 +38,13 @@ describe('Formatting', () => {
             value.should.eql('VALUE');
         });
 
-        it('should use the default formatters for an array of values', () => {
+        it('should use the default formatters and only return first item in array of values', () => {
+            value = formatting.format(fields, 'field', ['value 1', 'value 2'], 'uppercase');
+            value.should.eql('VALUE 1');
+        });
+
+        it('should use the default formatters for an array of values if multiple is true', () => {
+            fields.field.multiple = true;
             value = formatting.format(fields, 'field', ['value 1', 'value 2'], 'uppercase');
             value.should.eql(['VALUE 1', 'VALUE 2']);
         });
@@ -54,7 +61,14 @@ describe('Formatting', () => {
             value.should.eql('VALUE');
         });
 
+        it('should use the formatters from the field config and return only first item in an array of values', () => {
+            fields.field.formatter = 'uppercase';
+            value = formatting.format(fields, 'field', ['value 1', 'value 2']);
+            value.should.eql('VALUE 1');
+        });
+
         it('should use the formatters from the field config for an array of values', () => {
+            fields.field.multiple = true;
             fields.field.formatter = 'uppercase';
             value = formatting.format(fields, 'field', ['value 1', 'value 2']);
             value.should.eql(['VALUE 1', 'VALUE 2']);
