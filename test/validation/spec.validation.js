@@ -111,6 +111,19 @@ describe('validation', () => {
                 .and.be.equal('field-1');
         });
 
+        it('returns an error if a first built-in validator fails', () => {
+            fields['field-1'].validate = ['required', 'string'];
+            error = validation.validate(fields, 'field-1', 'present');
+            expect(error).to.be.undefined;
+
+            error = validation.validate(fields, 'field-1');
+            error.should.have.property('type')
+                .and.be.equal('required');
+            error.should.have.property('key')
+                .and.be.equal('field-1');
+        });
+
+
         it('returns an error if a validator fails for one item in an array', () => {
             error = validation.validate(fields, 'field-1', ['present', '', 'also present']);
             error.should.have.property('type')
