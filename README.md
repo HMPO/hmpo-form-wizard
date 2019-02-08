@@ -206,7 +206,7 @@ Creating a custom controller:
 // controller.js
 const Controller = require('hmpo-form-wizard').Controller;
 
-class CustomController extends Controller) {
+class CustomController extends Controller {
   /* Custom middleware */
   middlewareSetup() {
     super.middlewareSetup();
