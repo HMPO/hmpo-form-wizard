@@ -854,7 +854,7 @@ describe('Form Controller', () => {
 
         it('applies formatter to array of values', () => {
             controller.options.fields = {
-                field: { formatter: 'uppercase' }
+                field: { formatter: 'uppercase', multiple: true }
             };
             req.body.field = ['value', 'another value'];
             controller._process(req, res, next);
@@ -863,7 +863,7 @@ describe('Form Controller', () => {
 
         it('applies formatter function to array of values', () => {
             options.fields = {
-                field: { formatter: value => value.toUpperCase() }
+                field: { formatter: value => value.toUpperCase(), multiple: true }
             };
             req.body.field = ['value', 'another value'];
             controller._process(req, res, next);

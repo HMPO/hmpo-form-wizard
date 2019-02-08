@@ -112,30 +112,22 @@ Any of these options can also be provided as a third argument to the wizard to c
 Remaining field options documentation can be found in the hmpo-template-mixins [README](https://github.com/UKHomeOffice/passports-template-mixins#options-1).
 
 ## Field options
+See hmpo-template-mixins or hmpo-components for additional field options.
 
 * `journeyKey` - Name of the cross-wizard field storage name
 * `default` - Default value for this field
+* `multiple` - Allow multiple incomming values for a field. The result is presented as an array
 * `formater` - Array of formatter names for this field in addition to the default formatter set
 * `ignore-defaults` - Disabled the default set of formatters for this field
 * `validate` - An array of validator names, or validator objects
   * `type` - Validator name
   * `arguments` - Array of validator arguments, eg. `{ type: 'minlength', arguments: [24] }`
-* `options` - Array of select box or radio button options
+* `items` - Array of select box or radio button options
   * `value` - Item value
-  * `toggle` - ID of item this radio button should toggle
-  * `child` - Type of child template to auto insert
 * `dependent` - Name of field to make this field conditional upon. This field will not be validated  or stored if this condition is not met. Can also also be an object to specify a specific value instead of the default of `true`:
   * `field` - Field name
   * `value` - Field value
 * `invalidates` - an array of field names that will be 'invalidated' when this field value is set or changed. Any fields specified in the `invalidates` array will be removed from the `sessionModel`. Future steps that have used this value to make a branching decision will also be invalidated, making the user go through those steps and decisions again.
-* `className` - Class name applied to the input field
-* `labelClassName` - Class name applied to the input label
-* `legendClassName` - Class name applied the the input legend, eg. the overall label for a set of radio buttons
-* `groupClassName` - Class name applied to the input group, eg. `'inline'` for radio buttons
-* `attributes` - Array of attributes to add to the input field
-  * `attribute`
-  * `value`
-* `autocomplete` - Autocomplete key to add to input field
 * `contentKey` - localisation key to use for this field instead of the field name
 
 ## Central journey storage

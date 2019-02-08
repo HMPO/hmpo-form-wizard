@@ -50,7 +50,7 @@ describe('validation', () => {
             result.should.be.true;
         });
 
-        it('returns true if there is a dependent field thatdoes not matche the value', () => {
+        it('returns true if there is a dependent field thatdoes not matches the value', () => {
             values['field-2'] = false;
             result = validation.isAllowedDependent(fields, 'field-3', values);
             result.should.be.false;
@@ -63,7 +63,7 @@ describe('validation', () => {
             result.should.be.true;
         });
 
-        it('returns false if none of the field values matche any of the field values', () => {
+        it('returns false if none of the field values matches any of the field values', () => {
             fields['field-3'].dependent = { field: 'field-2', value: ['x', 'y', 'z'] };
             values['field-2'] = ['a', 'b', 'c'];
             result = validation.isAllowedDependent(fields, 'field-3', values);
@@ -105,6 +105,14 @@ describe('validation', () => {
             expect(error).to.be.undefined;
 
             error = validation.validate(fields, 'field-1');
+            error.should.have.property('type')
+                .and.be.equal('required');
+            error.should.have.property('key')
+                .and.be.equal('field-1');
+        });
+
+        it('returns an error if a validator fails for one item in an array', () => {
+            error = validation.validate(fields, 'field-1', ['present', '', 'also present']);
             error.should.have.property('type')
                 .and.be.equal('required');
             error.should.have.property('key')
@@ -158,6 +166,19 @@ describe('validation', () => {
             fields.field.validate[0].arguments.should.deep.equal([ 'number', 'one', 'two', 'three' ]);
         });
 
+        it('adds an equality validator if field has items defined', () => {
+            fields = {
+                'field': {
+                    items: [ 'number', 'one', 'two', 'three' ]
+                }
+            };
+
+            validation.validate(fields, 'field');
+            fields.field.validate.should.have.length(1);
+            fields.field.validate[0].type.should.equal('equal');
+            fields.field.validate[0].arguments.should.deep.equal([ 'number', 'one', 'two', 'three' ]);
+        });
+
         it('adds an equality validator if field has complex options defined', () => {
             fields = {
                 'field': {
@@ -171,7 +192,7 @@ describe('validation', () => {
             fields.field.validate[0].arguments.should.deep.equal([ 'number', 'one', 'two', 'three' ]);
         });
 
-        it('should not add the  options validator twice', () => {
+        it('should not add the options validator twice', () => {
             fields = {
                 'field': {
                     options: [ 'number', 'one', 'two', 'three' ]
