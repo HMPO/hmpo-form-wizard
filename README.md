@@ -341,3 +341,6 @@ A GET to this endpoint will render a web form that can submit this JSON.
 * Dependent fields that are hidden are not set to their formatted defaults in `_process` instead of as part of `_validation`
 * The interface to the validation library has changed.
 * The `locals()` lifecycle event is now called asynchronously if a callback is supplied: `locals(req, res, callback(err, locals))`. The method can still be overwridden synchonrously by only providing a method as `locals(req, res)`.
+
+## Migrating to wizard v11
+* Hogan has been removed from the wizard. Error messages are no longer localised and templated by the wizard at validation time. An updated `passports-template-mixins` module is reqiured to translate and format the error messages for both the inline errors and error summary at render time.
