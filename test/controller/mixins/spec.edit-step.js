@@ -84,19 +84,32 @@ describe('mixins/edit-step', () => {
             controller.getBackLink(req, res).should.equal('/base/backlink');
         });
 
-        it('returns previous edit step if it has continueOnEdit option set', () => {
+        it('returns previous edit step from history', () => {
             req.isEditing = true;
-            req.journeyModel.set('history', [{ path: '/base/backlink', continueOnEdit: true }]);
+            req.form.options.fullPath = '/base/currentpage';
+            req.journeyModel.set('history', [
+                { path: '/base/firstpage', next: '/base/wrongbacklink' },
+                { path: '/base/wrongbacklink', next: '/base/anotherpage', editing: true },
+                { path: '/base/anotherpage', next: '/base/backlink' },
+                { path: '/base/backlink', next: '/base/anotherpage2', editing: true },
+                { path: '/base/anotherpage2', next: '/base/currentpage' },
+                { path: '/base/currentpage' }
+            ]);
             controller.getBackLink(req, res).should.equal('/base/backlink/editsuffix');
         });
 
-        it('returns editBackStep if the previous step does not have continueOnEdit set', () => {
+        it('returns editBackStep if not previous editing steps', () => {
             req.isEditing = true;
-            req.journeyModel.set('history', [{ path: '/base/backlink' }]);
+            req.journeyModel.set('history', [
+                { path: '/base/firstpage', next: '/base/anotherpage' },
+                { path: '/base/anotherpage', next: '/base/anotherpage2' },
+                { path: '/base/anotherpage2', next: '/base/currentpage' },
+                { path: '/base/currentpage' }
+            ]);
             controller.getBackLink(req, res).should.equal('/base/url/backstep');
         });
 
-        it('returns editBackStep if the previous step is not in history', () => {
+        it('returns editBackStep if the current step is not in history', () => {
             req.isEditing = true;
             req.journeyModel.set('history', []);
             controller.getBackLink(req, res).should.equal('/base/url/backstep');
@@ -178,6 +191,14 @@ describe('mixins/edit-step', () => {
             controller.options.continueOnEdit = true;
             controller.getNextStepObject.returns({ url: 'c' });
             controller.getNextStep(req, res).should.equal('/base/url/c/editsuffix');
+        });
+
+        it('does not return next continueOnEdit step if only checking the next condition', () => {
+            req.isEditing = true;
+            req.query.next = '';
+            controller.options.continueOnEdit = true;
+            controller.getNextStepObject.returns({ url: 'c' });
+            controller.getNextStep(req, res).should.equal('/base/url/backstep');
         });
 
         it('returns next remote url if the step has the continueOnEdit option set', () => {
