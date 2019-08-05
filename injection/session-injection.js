@@ -8,6 +8,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const JSON5 = require('json5');
 
+const fs = require('fs');
+const path = require('path');
+const templateHtml = fs.readFileSync(path.join(__dirname, 'injection.html'), 'utf8');
+const template = _.template(templateHtml);
+
 const DEFAULTS = {
     sessionExists: true,
     journeyName: 'default',
@@ -213,7 +218,7 @@ class SessionInjection {
             res.locals.journeyKeys = toJSON(res.locals.journeyKeys);
             res.locals.featureFlags = toJSON(res.locals.featureFlags);
             res.type('html');
-            return res.render(__dirname + '/injection.html');
+            return res.send(template(res.locals));
         }
 
         let currentStatus = _.pick(res.locals, 'featureFlags', 'journeyKeys', 'payload');
