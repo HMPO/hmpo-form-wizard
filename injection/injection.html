@@ -3,23 +3,23 @@
 <body>
 <form method="POST">
 </br/>
-{{#notice}}
+{% if notice %}
   <h2 id="notice">{{notice}}</h2>
-{{/notice}}
+{% endif %}
 <h3>Session Injection JSON:</h3>
 <textarea id="payload" name="payload" rows="20" cols="80">{{payload}}</textarea><br/><br/>
 <input type="submit"/>
 </form>
 </br/>
-{{#journeyKeys}}
+{% if journeyKeys %}
   <h3>Current Journey Keys:</h3>
   <pre id="journeyKeys">{{journeyKeys}}</pre>
   </br/>
-{{/journeyKeys}}
-{{#featureFlags}}
+{% endif %}
+{% if featureFlags %}
   <h3>Current Feature Flags:</h3>
   <pre id="featureFlags">{{featureFlags}}</pre>
   </br/>
-{{/featureFlags}}
+{% endif %}
 </body>
 </html>
