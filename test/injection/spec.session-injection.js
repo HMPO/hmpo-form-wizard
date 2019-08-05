@@ -450,9 +450,9 @@ describe('Session Injection', () => {
             res.locals.featureFlags.should.equal('{\n  flag: true,\n}');
             res.locals.journeyKeys.should.equal('{\n  key: \'value\',\n}');
             res.type.should.have.been.calledWithExactly('html');
-            res.render.should.have.been.calledOnce;
-            res.render.should.have.been.calledWithExactly(
-                sinon.match(/\/injection.html$/)
+            res.send.should.have.been.calledOnce;
+            res.send.should.have.been.calledWithExactly(
+                sinon.match(/<title>Session Injection<\/title>/)
             );
         });
 
