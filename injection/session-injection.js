@@ -21,7 +21,8 @@ const DEFAULTS = {
     prereqStep: null,
     featureFlags: null,
     wizardValues: null,
-    rawSessionValues: null
+    rawSessionValues: null,
+    enumeratedDistribution: null
 };
 
 const EXAMPLE = {
@@ -41,6 +42,14 @@ const EXAMPLE = {
     },
     'rawSessionValues': {
         'sessionKey': 'value'
+    },
+    'enumeratedDistribution': {
+        'ABJourney': {
+            'probability': {
+                'A': 10,
+                'B': 90
+            }
+        }
     }
 };
 
@@ -67,6 +76,8 @@ class SessionInjection {
         this.createWizardModels(req, options.wizardValues);
 
         this.setRawSessionValues(req, options.rawSessionValues);
+
+        this.setEnumeratedDistributions(req, options.enumeratedDistribution);
     }
 
     setFeatureFlags(req, flags) {
@@ -155,6 +166,13 @@ class SessionInjection {
         }
     }
 
+    setEnumeratedDistributions(req, enumeratedDistributions) {
+        debug('setEnumeratedDistributions', enumeratedDistributions);
+        if (enumeratedDistributions) {
+            req.session.enumeratedDistribution = _.extend({}, enumeratedDistributions);
+        }
+    }
+
     middlewareDecodePayload(req, res, next) {
         debug('middlewareDecodePayload');
 
@@ -201,6 +219,7 @@ class SessionInjection {
         }
 
         res.locals.featureFlags = req.session.featureFlags;
+        res.locals.enumeratedDistribution = req.session.enumeratedDistribution;
         res.locals.journeyKeys = _.omit(req.journeyModel.toJSON(), 'history', 'registered-models');
 
         this.middlewareRender(req, res, next);
@@ -217,11 +236,12 @@ class SessionInjection {
             res.locals.payload = toJSON(res.locals.payload || EXAMPLE);
             res.locals.journeyKeys = toJSON(res.locals.journeyKeys);
             res.locals.featureFlags = toJSON(res.locals.featureFlags);
+            res.locals.enumeratedDistribution = toJSON(res.locals.enumeratedDistribution);
             res.type('html');
             return res.send(template(res.locals));
         }
 
-        let currentStatus = _.pick(res.locals, 'featureFlags', 'journeyKeys', 'payload');
+        let currentStatus = _.pick(res.locals, 'featureFlags', 'journeyKeys', 'payload', 'enumeratedDistribution');
         if (req.accepts('json')) {
             res.type('json');
             return res.send(currentStatus);

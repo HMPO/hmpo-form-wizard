@@ -22,6 +22,7 @@ describe('Session Injection', () => {
             sinon.stub(injection, 'setPrereq');
             sinon.stub(injection, 'createWizardModels');
             sinon.stub(injection, 'setRawSessionValues');
+            sinon.stub(injection, 'setEnumeratedDistributions');
         });
 
         it('throws an error if there is no session available', () => {
@@ -39,6 +40,7 @@ describe('Session Injection', () => {
             injection.setPrereq.should.have.been.calledWithExactly(req, null);
             injection.createWizardModels.should.have.been.calledWithExactly(req, null);
             injection.setRawSessionValues.should.have.been.calledWithExactly(req, null);
+            injection.setEnumeratedDistributions.should.have.been.calledWithExactly(req, null);
         });
 
         it('sets session exists to sessionExists value', () => {
@@ -50,6 +52,11 @@ describe('Session Injection', () => {
         it('calls setFeatureFlags with feature flag options', () => {
             injection.inject(req, { featureFlags: { foo: 'bar' }});
             injection.setFeatureFlags.should.have.been.calledWithExactly(req, { foo: 'bar' });
+        });
+
+        it('calls setEnumeratedDistributions with enumerated distribution options', () => {
+            injection.inject(req, { enumeratedDistribution: { AB: { probability: { A: 10, B: 90 }}}});
+            injection.setEnumeratedDistributions.should.have.been.calledWithExactly(req, { AB: { probability: { A: 10, B: 90 }}});
         });
 
         it('calls createJourneyModel with journey name from options', () => {
@@ -94,6 +101,27 @@ describe('Session Injection', () => {
             req.session.featureFlags = { oldFlag: true };
             injection.setFeatureFlags(req, null);
             req.session.featureFlags.oldFlag.should.equal(true);
+        });
+    });
+
+    describe('#setEnumeratedDistributions', () =>  {
+        it('sets enumerated distribution on the session', () => {
+            injection.setEnumeratedDistributions(req, { AB: { probability: { A: 10, B: 90 }}});
+            req.session.enumeratedDistribution.AB.probability.A.should.equal(10);
+            req.session.enumeratedDistribution.AB.probability.B.should.equal(90);
+        });
+
+        it('overwrites any existing session enumerated distributions', () => {
+            req.session.enumeratedDistribution = { AB: { probability: { A: 10, B: 90 }}};
+            injection.setEnumeratedDistributions(req, { implementation: { probability: { implA: 50, implB: 50 }}});
+            expect(req.session.enumeratedDistribution.AB).to.be.undefined;
+        });
+
+        it('does not reset the enumerated distributions if no enumerated distributionss are given', () => {
+            req.session.enumeratedDistribution = { AB: { probability: { A: 10, B: 90 }}};
+            injection.setEnumeratedDistributions(req, null);
+            req.session.enumeratedDistribution.AB.probability.A.should.equal(10);
+            req.session.enumeratedDistribution.AB.probability.B.should.equal(90);
         });
     });
 
@@ -441,6 +469,7 @@ describe('Session Injection', () => {
             res.locals.payload = { journeyName: 'test' };
             res.locals.featureFlags = { flag: true };
             res.locals.journeyKeys = { key: 'value' };
+            res.locals.enumeratedDistribution = { AB: { probability: { A: 10, B: 90 }}};
         });
 
         it('renders the webform if html is accepted', () => {
@@ -449,6 +478,7 @@ describe('Session Injection', () => {
             res.locals.payload.should.equal('{\n  journeyName: \'test\',\n}');
             res.locals.featureFlags.should.equal('{\n  flag: true,\n}');
             res.locals.journeyKeys.should.equal('{\n  key: \'value\',\n}');
+            res.locals.enumeratedDistribution.should.equal('{\n  AB: {\n    probability: {\n      A: 10,\n      B: 90,\n    },\n  },\n}');
             res.type.should.have.been.calledWithExactly('html');
             res.send.should.have.been.calledOnce;
             res.send.should.have.been.calledWithExactly(
@@ -478,7 +508,8 @@ describe('Session Injection', () => {
             res.send.should.have.been.calledWithExactly({
                 payload: { journeyName: 'test' },
                 featureFlags: { flag: true },
-                journeyKeys: { key: 'value' }
+                journeyKeys: { key: 'value' },
+                enumeratedDistribution: { AB: { probability: { A: 10, B: 90 }}}
             });
         });
 
