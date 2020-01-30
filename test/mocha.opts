@@ -1,2 +1,2 @@
-test/**/*.js
+test/**/spec.*.js
 --require test/helpers
