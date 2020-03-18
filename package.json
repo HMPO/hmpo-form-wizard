@@ -4,7 +4,7 @@
   "description": "Routing and request handling for a multi-step form processes",
   "main": "index.js",
   "scripts": {
-    "test": "npm run test:lint && npm run test:unit && npm run test:cover && npm audit",
+    "test": "npm run test:lint && npm run test:unit && npm run test:cover && npm audit --production",
     "test:lint": "eslint .",
     "test:unit": "nyc --reporter=lcov --reporter=text-summary _mocha",
     "test:cover": "nyc check-coverage"
@@ -26,9 +26,9 @@
     "body-parser": "^1.19.0",
     "csrf": "^3.1.0",
     "debug": "^4.1.1",
-    "deep-clone-merge": "^1.5.0",
-    "hmpo-model": "^3.0.0",
-    "json5": "^2.1.1",
+    "deep-clone-merge": "^1.5.1",
+    "hmpo-model": "^3.0.1",
+    "json5": "^2.1.2",
     "moment": "^2.17.1",
     "underscore": "^1.9.2"
   },
@@ -39,12 +39,12 @@
     "chai": "^4.1.2",
     "eslint": "^6.8.0",
     "express": "^4.17.1",
-    "mocha": "^7.0.1",
+    "mocha": "^7.1.1",
     "nyc": "^15.0.0",
     "proxyquire": "^2.1.3",
     "reqres": "^3.0.1",
-    "sinon": "^8.1.1",
-    "sinon-chai": "^3.4.0"
+    "sinon": "^9.0.1",
+    "sinon-chai": "^3.5.0"
   },
   "nyc": {
     "all": true,
