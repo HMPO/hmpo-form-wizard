@@ -25,6 +25,15 @@ const DEFAULTS = {
     enumeratedDistribution: null
 };
 
+const SIMPLE_EXAMPLE = {
+    'featureFlags': {
+        'flag': true
+    },
+    'journeyKeys': {
+        'key': 'name'
+    }
+};
+
 const EXAMPLE = {
     'journeyName': 'name',
     'journeyKeys': {
@@ -98,7 +107,6 @@ class SessionInjection {
     setJourneyKeys(req, journeyKeys) {
         debug('setJourneyKeys', journeyKeys);
         if (journeyKeys) {
-            req.journeyModel.reset();
             req.journeyModel.set(journeyKeys);
         }
     }
@@ -233,7 +241,9 @@ class SessionInjection {
 
     middlewareRender(req, res, next) {
         if (req.accepts('html')) {
-            res.locals.payload = toJSON(res.locals.payload || EXAMPLE);
+            res.locals.fullExample = toJSON(EXAMPLE);
+            res.locals.simpleExample = toJSON(SIMPLE_EXAMPLE);
+            res.locals.payload = toJSON(res.locals.payload || SIMPLE_EXAMPLE);
             res.locals.journeyKeys = toJSON(res.locals.journeyKeys);
             res.locals.featureFlags = toJSON(res.locals.featureFlags);
             res.locals.enumeratedDistribution = toJSON(res.locals.enumeratedDistribution);

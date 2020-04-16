@@ -1,5 +1,14 @@
 <html>
-<head><title>Session Injection</title></head>
+<head>
+    <title>Session Injection</title>
+    <script>
+        function showExample(type) {
+            document.getElementById("payload").value =
+                document.getElementById(type+"Example").value;
+            return false;
+        }
+    </script>
+</head>
 <body>
 <form method="POST">
 </br/>
@@ -7,6 +16,13 @@
   <h2 id="notice"><%- notice %></h2>
 <% } %>
 <h3>Session Injection JSON:</h3>
+<div>
+    <a href="javascript: showExample('simple')">Show Simple Example</a>
+    <textarea id="simpleExample" style="display: none"><%- simpleExample %></textarea>
+    |
+    <a href="javascript: showExample('full')">Show Full Example</a>
+    <textarea id="fullExample" style="display: none"><%- fullExample %></textarea>
+</div>
 <textarea id="payload" name="payload" rows="20" cols="80"><%- payload %></textarea><br/><br/>
 <input type="submit"/>
 </form>

@@ -147,23 +147,18 @@ describe('Session Injection', () => {
     });
 
     describe('#setJourneyKeys', () =>  {
-        it('does not reset the journey if no journey keys are given', () => {
+        it('does not add journey keys if no journey keys are given', () => {
             injection.createJourneyModel(req, 'default');
             req.journeyModel.set('key', 'value');
             injection.setJourneyKeys(req, null);
             req.journeyModel.get('key').should.equal('value');
         });
 
-        it('resets the journey', () => {
-            injection.createJourneyModel(req, 'default');
-            req.journeyModel.set('key', 'value');
-            injection.setJourneyKeys(req, {});
-            expect(req.journeyModel.get('key')).to.be.undefined;
-        });
-
         it('sets a journey key', () => {
             injection.createJourneyModel(req, 'default');
+            req.journeyModel.set('existing', 'key');
             injection.setJourneyKeys(req, { key: 'value' });
+            req.journeyModel.get('existing').should.equal('key');
             req.journeyModel.get('key').should.equal('value');
         });
     });
@@ -490,7 +485,7 @@ describe('Session Injection', () => {
             res.locals.payload = null;
             req.accepts.withArgs('html').returns(true);
             injection.middlewareRender(req, res, next);
-            res.locals.payload.should.match(/^\{\n\s+journeyName: 'name',/);
+            res.locals.payload.should.match(/^\{\n\s+featureFlags: /);
         });
 
         it('renders unparsed payload if a parsing error occurred', () => {
