@@ -46,16 +46,29 @@
     "sinon": "^9.0.2",
     "sinon-chai": "^3.5.0"
   },
+  "mocha": {
+    "require": "test/helpers",
+    "spec": "test/**/spec.*.js"
+  },
   "nyc": {
     "all": true,
     "exclude": [
+      "bin/**",
       "coverage/**",
       "test/**",
       "example/**"
     ],
-    "lines": 100,
+    "check-coverage": true,
+    "skip-full": true,
+    "temp-directory": "coverage/.nyc_output",
+    "reporter": [
+      "text-summary",
+      "text",
+      "lcov"
+    ],
+    "statements": 100,
     "branches": 100,
     "functions": 100,
-    "statements": 100
+    "lines": 100
   }
 }
