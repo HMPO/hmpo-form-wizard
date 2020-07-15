@@ -39,6 +39,7 @@ describe('Controller Lifecycle', () => {
 
         sinon.spy(controller, '_configure');
         sinon.spy(controller, 'configure');
+        sinon.spy(controller, 'rejectUnsupportedMethods');
         middleware = sinon.stub().yields();
         controller.middlewareMixins = function () {
             this.use(middleware);
@@ -78,12 +79,24 @@ describe('Controller Lifecycle', () => {
             handler(req, res, next);
         });
 
+        it('calls rejectUnsupportedMethods', done => {
+            assert = () => {
+                controller.rejectUnsupportedMethods.should.have.been
+                    .calledOnce
+                    .calledAfter(controller.configure)
+                    .calledOn(controller)
+                    .calledWithExactly(req, res, sinon.match.func);
+                done();
+            };
+
+            handler(req, res, next);
+        });
 
         it('calls middleware mixins', done => {
             assert = () => {
                 middleware.should.have.been
                     .calledOnce
-                    .calledAfter(controller.configure)
+                    .calledAfter(controller.rejectUnsupportedMethods)
                     .calledOn(controller)
                     .calledWithExactly(req, res, sinon.match.func);
                 done();

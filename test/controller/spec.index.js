@@ -270,6 +270,11 @@ describe('Form Controller', () => {
             controller.use.should.have.been.calledWith(controller._configure);
         });
 
+        it('router uses rejectUnsupportedMethods', () => {
+            controller.requestHandler();
+            controller.use.should.have.been.calledWith(controller.rejectUnsupportedMethods);
+        });
+
         it('calls middlewareMixins', () => {
             controller.requestHandler();
             controller.middlewareMixins.should.have.been.called;
@@ -287,18 +292,43 @@ describe('Form Controller', () => {
             controller.useWithMethod.should.have.been.calledWithExactly('post', controller.post);
         });
 
-        it('uses methodNotSupported for unsupported methods', () =>  {
-            req.method = 'PUT';
-            controller.requestHandler();
-            controller.useWithMethod.should.have.been.calledWithExactly('put', controller.methodNotSupported);
-        });
-
         it('uses errorHandler', () =>  {
             req.method = 'PUT';
             controller.requestHandler();
             controller.use.should.have.been.calledWithExactly(controller.errorHandler);
         });
 
+    });
+
+    describe('rejectUnsupportedMethods', () => {
+        let controller;
+
+        beforeEach(() => {
+            controller = new Controller(options);
+            controller.methodNotSupported = sinon.stub();
+        });
+
+        it('calls methodNotSupported for unsupported methods', () =>  {
+            req.method = 'PUT';
+            controller.rejectUnsupportedMethods(req, res, next);
+            controller.methodNotSupported.should.have.been.calledWithExactly(req, res, next);
+            next.should.not.have.been.called;
+        });
+
+        it('calls methodNotSupported for POSTing to a skip step', () =>  {
+            req.form.options.skip = true;
+            req.method = 'POST';
+            controller.rejectUnsupportedMethods(req, res, next);
+            controller.methodNotSupported.should.have.been.calledWithExactly(req, res, next);
+            next.should.not.have.been.called;
+        });
+
+        it('does not call methodNotSupported for supported methods', () =>  {
+            req.method = 'POST';
+            controller.rejectUnsupportedMethods(req, res, next);
+            controller.methodNotSupported.should.not.have.been.called;
+            next.should.have.been.calledWithExactly();
+        });
     });
 
     describe('get', () => {
