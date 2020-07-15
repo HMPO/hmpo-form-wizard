@@ -183,7 +183,7 @@ describe('Controller Lifecycle', () => {
                 next.should.have.been.called;
                 let err = next.args[0][0];
                 err.should.be.instanceOf(Error);
-                err.statusCode.should.equal(405);
+                err.status.should.equal(405);
                 done();
             };
 
