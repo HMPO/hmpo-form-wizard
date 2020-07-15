@@ -428,7 +428,8 @@ describe('Form Controller', () => {
             controller.methodNotSupported(req, res, next);
             next.should.have.been.called.and.calledWithExactly(sinon.match.instanceOf(Error));
             let err = next.args[0][0];
-            err.statusCode.should.equal(405);
+            err.status.should.equal(405);
+            err.code.should.equal('METHOD_NOT_SUPPORTED');
         });
     });
 
