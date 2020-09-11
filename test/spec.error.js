@@ -14,11 +14,12 @@ describe('Error', () => {
         });
 
         it('should set key and options to the class', () => {
-            let options = { type: 'errortype', errorGroup: 'group', redirect: '/redir', message: 'message override', headerMessage: 'header message override' };
+            let options = { type: 'errortype', errorGroup: 'group', field: 'field', redirect: '/redir', message: 'message override', headerMessage: 'header message override' };
             let error = new ErrorClass('key', options, req, res);
             error.key.should.equal('key');
             error.type.should.equal('errortype');
             error.errorGroup.should.equal('group');
+            error.field.should.equal('field');
             error.redirect.should.equal('/redir');
             error.message.should.equal('message override');
             error.headerMessage.should.equal('header message override');
