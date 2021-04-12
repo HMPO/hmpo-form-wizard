@@ -86,5 +86,29 @@ describe('Formatting', () => {
             value.should.eql('value custom formatter');
         });
 
+        it('should format using a custom formatter object', () => {
+            fields.field.formatter = { fn: value => value + ' custom formatter' };
+            value = formatting.format(fields, 'field', 'value');
+            value.should.eql('value custom formatter');
+        });
+
+        it('should format using a custom formatter object with args', () => {
+            fields.field.formatter = { fn: (value, arg) => value + arg + ' custom formatter', arguments: 'test' };
+            value = formatting.format(fields, 'field', 'value');
+            value.should.eql('valuetest custom formatter');
+        });
+
+        it('should format using a custom formatter object with args array', () => {
+            fields.field.formatter = { fn: (value, arg1, arg2) => value + arg1 + arg2 + ' custom formatter', arguments: ['test', 'foo', 'bar'] };
+            value = formatting.format(fields, 'field', 'value');
+            value.should.eql('valuetestfoo custom formatter');
+        });
+
+        it('should format using a context', () => {
+            fields.field.formatter = { fn: function (value) { return value + ' context ' + this.foo; } };
+            value = formatting.format(fields, 'field', 'value', [], { foo: 'bar' });
+            value.should.eql('value context bar');
+        });
+
     });
 });

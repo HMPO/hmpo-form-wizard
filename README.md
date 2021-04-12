@@ -117,10 +117,14 @@ See hmpo-template-mixins or hmpo-components for additional field options.
 * `journeyKey` - Name of the cross-wizard field storage name
 * `default` - Default value for this field
 * `multiple` - Allow multiple incomming values for a field. The result is presented as an array
-* `formater` - Array of formatter names for this field in addition to the default formatter set
+* `formater` - Array of formatter names for this field in addition to the default formatter set, or formatter objects
+  * `type` - Formatter name
+  * `fn` - Formatter function
+  * `arguments` - Array of formatter arguments, eg. `{ type: 'truncate', arguments: [24] }`
 * `ignore-defaults` - Disabled the default set of formatters for this field
 * `validate` - An array of validator names, or validator objects
   * `type` - Validator name
+  * `fn` - Validator function
   * `arguments` - Array of validator arguments, eg. `{ type: 'minlength', arguments: [24] }`
 * `items` - Array of select box or radio button options
   * `value` - Item value

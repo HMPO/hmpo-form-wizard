@@ -866,6 +866,18 @@ describe('Form Controller', () => {
             });
         });
 
+        it('formats fields using context', () => {
+            controller.options.fields.field = {
+                formatter: function (value) { return value + ' context ' + this.values.name; }
+            };
+            controller._process(req, res, next);
+            req.form.values.should.eql({
+                'field': 'value context Joe Smith',
+                'name': 'Joe Smith',
+                'bool': true
+            });
+        });
+
         it('ignores an unknown formatter', () => {
             controller.options.fields = {
                 field: { formatter: 'unknown' }
