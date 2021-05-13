@@ -1,0 +1,99 @@
+index:
+  title: Example form wizards
+  content:
+    - - <a href="/basic">Basic inputs</a>
+      - <a href="/branching">Branching example</a>
+      - <a href="/multiwizard">Multi-wizard example</a>
+      - <a href="/invalidation">Invalidation example</a>
+
+basic:
+  index:
+    title: Basic example
+    content: This is a demo form using HMPO Form tools
+  submit:
+    title: Submit
+    content:
+      - 'Name: {{values.name}}'
+      - 'Age: {{values.age}}'
+      - 'Color: {{values.color}}'
+      - Submit your completed form?
+  done:
+    title: Successfully submitted
+    content:
+      - Form successfully submitted!
+      - <a href="/" class="govuk-button">Back to examples list</a>
+
+branching:
+  index:
+    title: Branching example
+    content: This is a demo uses branching based on user input to follow different routes
+  neither:
+    title: Neither branch
+    content:
+      - Neither branch was selected.
+      - You won't be allowed to access the <a href="left-branch">left</a> or <a href="right-branch">right</a> branch steps.
+  done:
+    title: Completed
+    content:
+      - Demo completed!
+      - <a href="/" class="govuk-button">Back to examples list</a>
+
+invalidation:
+  index:
+    title: Invalidation example
+    content: This demo shows how fields can be automatically unset and require filling out again when setting a particular field
+  done:
+    title: Completed
+    content:
+      - Demo completed!
+      - Change the answer to <a href="question2">question 2</a> and question 3 and 4 will be invalidated.
+      - You won't be able to move forward until you complete those questions.
+      - <a href="/" class="button">Back to examples list</a>
+  all:
+    shortcuts:
+      - 'Shortcuts to steps:'
+      - - <a href="question1">question 1</a>
+      - - <a href="question2">question 2</a>
+      - - <a href="question3">question 3</a>
+      - - <a href="question4">question 4</a>
+      - - <a href="question5">question 5</a>
+      - - <a href="done">done</a>
+
+multiwizard:
+  index:
+    title: Multi-wizard example
+    content: This demo shows how multiple wizards (possibly in separate microservices) can exchange field values using a <i>journeyKey</i>
+  submit:
+    title: Submit
+    content: Submit your completed form?
+  adult:
+    title: Adult
+    content: You are an adult
+  baby:
+    title: Baby
+    content: You are a baby
+  child:
+    title: Child
+    content: You are a child
+  teenager:
+    title: Teenager
+    content: You are a teenager
+  done:
+    title: Completed
+    content:
+      - Demo completed!
+      - <a href="/" class="button">Back to examples list</a>
+  all:
+    editAge:
+      - This page is on a separate wizard and uses the <i>age</i> value that has been saved into the journey using the <i>journeyKey</i>
+      - Return to the <a href="your-age">age question</a> to change your age.
+
+error:
+  title: An error occured
+  content: An error occured
+sessionExpired:
+  title: Session Expired
+  content: Your session has expired.
+fileNotFound:
+  title: File not found
+  content: The file requested could not be found

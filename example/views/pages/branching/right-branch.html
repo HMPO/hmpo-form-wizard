@@ -1,14 +1,20 @@
-{{< layout}}
+{% from "hmpo-form/macro.njk" import hmpoForm %}
+{% from "hmpo-text/macro.njk" import hmpoText %}
+{% from "hmpo-submit/macro.njk" import hmpoSubmit %}
 
-{{$header}}<h1>Right branch</h1>{{/header}}
+{% extends "hmpo-template.njk" %}
 
-{{$content}}
-    {{<hmpo-partials-form}}
-        {{$form}}
-            {{#input-text}}right-only{{/input-text}}
-            {{#input-submit}}{{/input-submit}}
-        {{/form}}
-    {{/hmpo-partials-form}}
-{{/content}}
+{% set hmpoTitleKey = "fields.right-only.label" %}
 
-{{/ layout}}
+{% block content %}
+    {% call hmpoForm(ctx) %}
+
+        {{ hmpoText(ctx, {
+            id: "right-only",
+            isPageHeading: true
+        }) }}
+
+        {{ hmpoSubmit(ctx) }}
+
+    {% endcall %}
+{% endblock %}

@@ -1,0 +1,8 @@
+port: 3000
+logs:
+    console: true
+    app: false
+    error: false
+api: {
+    url: http://localhost:3000/api
+}

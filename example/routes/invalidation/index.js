@@ -1,27 +1,16 @@
 'use strict';
 
-const express = require('express');
-const templateMixins = require('hmpo-template-mixins');
-const wizard = require('../../../');
+const { Router } = require('express');
+const wizard = require('hmpo-form-wizard');
 
-let app = express.Router();
+const app = Router();
 
-app.use(templateMixins());
-
-const steps1 = require('./steps1');
-const fields1 = require('./fields1');
-app.use(wizard(steps1, fields1, {
+const steps = require('./steps');
+const fields = require('./fields');
+app.use(wizard(steps, fields, {
     journeyName: 'invalidation',
     name: 'invalidation1',
     controller: require('../../controllers/question'),
-    templatePath: 'pages/invalidation'
-}));
-
-const steps2 = require('./steps2');
-const fields2 = require('./fields2');
-app.use(wizard(steps2, fields2, {
-    journeyName: 'invalidation',
-    name: 'invalidation2',
     templatePath: 'pages/invalidation'
 }));
 

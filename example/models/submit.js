@@ -1,17 +1,19 @@
 'use strict';
 
-/* eslint no-console: 0 */
-
 const Model = require('hmpo-model');
-
+const config = require('../config');
+const logger = require('hmpo-logger').get();
 class Submit extends Model {
     url() {
-        return require('../config').API_URL;
+        return config.api.url;
     }
 
     save(callback) {
-        console.log('Saving model data to ' + this.url() + ':');
-        console.log(this.toJSON());
+        logger.info('Saving model data to :url', {
+            url: this.url(),
+            data: this.toJSON()
+        });
+
         super.save(callback);
     }
 }

@@ -1,14 +1,3 @@
-{{< layout}}
+{% extends "hmpo-template.njk" %}
+{% set hmpoPageKey = "index" %}
 
-{{$header}}<h1>Examples</h1>{{/header}}
-
-{{$content}}
-    <ul class="list list-bullet">
-        <li><a href="/basic">Basic inputs</a></li>
-        <li><a href="/branching">Branching example</a></li>
-        <li><a href="/multiwizard">Multi-wizard example</a></li>
-        <li><a href="/invalidation">Invalidation example</a></li>
-    </ul>
-{{/content}}
-
-{{/ layout}}

@@ -1,13 +1,14 @@
-{{< layout}}
+{% from "hmpo-form/macro.njk" import hmpoForm %}
+{% from "hmpo-submit/macro.njk" import hmpoSubmit %}
 
-{{$header}}<h1>Multi-Wizard Demo</h1>{{/header}}
+{% extends "hmpo-template.njk" %}
 
-{{$content}}
-    {{<hmpo-partials-form}}
-        {{$form}}
-            {{#input-submit}}{{/input-submit}}
-        {{/form}}
-    {{/hmpo-partials-form}}
-{{/content}}
+{% set hmpoPageKey = "multiwizard.index" %}
+{% set backLink = "/" %}
 
-{{/ layout}}
+{% block content %}
+    {{ super() }}
+    {% call hmpoForm(ctx) %}
+        {{ hmpoSubmit(ctx) }}
+    {% endcall %}
+{% endblock %}

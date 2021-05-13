@@ -1,13 +1,17 @@
 {% from "hmpo-form/macro.njk" import hmpoForm %}
 {% from "hmpo-submit/macro.njk" import hmpoSubmit %}
+{% from "hmpo-html/macro.njk" import hmpoHtml %}
+{% from "hmpo-inset-text/macro.njk" import hmpoInsetText %}
 
 {% extends "hmpo-template.njk" %}
 
-{% set hmpoPageKey = "invalidation.index" %}
-{% set backLink = "/" %}
-
 {% block content %}
     {{ super() }}
+
+    {% call hmpoInsetText() %}
+        {{ hmpoHtml(translate("pages.multiwizard.all.editAge")) }}
+    {% endcall %}
+
     {% call hmpoForm(ctx) %}
         {{ hmpoSubmit(ctx) }}
     {% endcall %}

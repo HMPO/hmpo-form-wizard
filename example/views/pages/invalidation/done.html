@@ -1,11 +1,14 @@
-{{< layout}}
+{% from "hmpo-html/macro.njk" import hmpoHtml %}
+{% from "hmpo-inset-text/macro.njk" import hmpoInsetText %}
 
-{{$header}}<h1>Completed</h1>{{/header}}
+{% extends "hmpo-template.njk" %}
 
-{{$content}}
-    <p>Completed!</p>
-    <p>Change the answer to <a href="question2">question 2</a> and question 3 and 4 will be invalidated. You won't be able to move forward until you complete those questions.</p>
-    <a href="/" class="button">Back to exmaples list</a>
-{{/content}}
+{% set hmpoPageKey = "invalidation.done" %}
 
-{{/ layout}}
+{% block mainContent %}
+    {{ super() }}
+
+    {% call hmpoInsetText() %}
+        {{ hmpoHtml(translate("pages.invalidation.all.shortcuts")) }}
+    {% endcall %}
+{% endblock %}

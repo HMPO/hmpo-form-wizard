@@ -1,20 +1,20 @@
-{{< layout}}
 
-{{$header}}<h1>Error{{#err.message}} - {{err.message}}{{/err.message}}</h1>{{/header}}
+{% from "hmpo-submit/macro.njk" import hmpoSubmit %}
 
-{{$content}}
-    {{<hmpo-partials-form}}
-        {{$form}}
-            <p>An error occurred</p>
-            <a href="/" class="button">Start again</a>
+{% set hmpoPageKey = "error" %}
 
-            <div>
-                <pre>
-{{err.stack}}
-                </pre>
-            </div>
-        {{/form}}
-    {{/hmpo-partials-form}}
-{{/content}}
+{% extends "hmpo-template.njk" %}
 
-{{/ layout}}
+{% block content %}
+    {{ super() }}
+
+    {{ hmpoSubmit(ctx, {
+        key: "startAgain",
+        href: "/"
+    }) }}
+
+    <h2>{{err.code + " - " if err.code}}{{err.message}}</h2>
+    {%if err.stack %}
+        <pre>{{err.stack | safe}}</pre>
+    {% endif %}
+{% endblock %}

@@ -1,15 +1,3 @@
-{{< layout}}
+{% extends "./result.njk" %}
 
-{{$header}}<h1>Adult</h1>{{/header}}
-
-{{$content}}
-    {{<hmpo-partials-form}}
-        {{$form}}
-            <p>You are an adult</p>
-            {{>partials-edit-age}}
-            {{#input-submit}}{{/input-submit}}
-        {{/form}}
-    {{/hmpo-partials-form}}
-{{/content}}
-
-{{/ layout}}
+{% set hmpoPageKey = "multiwizard.adult" %}
