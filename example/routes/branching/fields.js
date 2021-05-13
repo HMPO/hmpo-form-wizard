@@ -1,8 +1,8 @@
 module.exports = {
     direction: {
-        options: [
-            { value: 'left', label: 'Left' },
-            { value: 'right', label: 'Right' }
+        items: [
+            'left',
+            'right'
         ]
     },
     'left-only': {

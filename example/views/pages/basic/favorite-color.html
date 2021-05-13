@@ -1,14 +1,21 @@
-{{< layout}}
+{% from "hmpo-form/macro.njk" import hmpoForm %}
+{% from "hmpo-select/macro.njk" import hmpoSelect %}
+{% from "hmpo-submit/macro.njk" import hmpoSubmit %}
 
-{{$header}}<h1>Select your favorite color</h1>{{/header}}
+{% extends "hmpo-template.njk" %}
 
-{{$content}}
-    {{<hmpo-partials-form}}
-        {{$form}}
-            {{#select}}color{{/select}}
-            {{#input-submit}}{{/input-submit}}
-        {{/form}}
-    {{/hmpo-partials-form}}
-{{/content}}
+{% set hmpoTitleKey = "fields.color.label" %}
 
-{{/ layout}}
+{% block content %}
+    {% call hmpoForm(ctx) %}
+
+        {{ hmpoSelect(ctx, {
+            id: "color",
+            placeholder: true,
+            isPageHeading: true
+        }) }}
+
+        {{ hmpoSubmit(ctx) }}
+
+    {% endcall %}
+{% endblock %}

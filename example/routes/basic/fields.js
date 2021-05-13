@@ -5,13 +5,13 @@ module.exports = {
     age: {
         validate: [
             'required',
-            'numeric'
+            'numeric',
+            { type: 'range', fn: value => value >= 0 && value < 120 },
         ]
     },
     color: {
         validate: 'required',
-        options: [
-            {value: ' ', label: 'Select a color'},
+        items: [
             'red',
             'blue',
             'green',

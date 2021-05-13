@@ -1,7 +1,5 @@
-'use strict';
+const hmpoConfig = require('hmpo-config');
 
-const _ = require('underscore');
-module.exports = _.extend({
-    API_URL: 'http://localhost:3000/api',
-    PORT: 3000
-}, process.env);
+const config = new hmpoConfig();
+config.addFile('./config/default.yaml');
+module.exports = config.toJSON();

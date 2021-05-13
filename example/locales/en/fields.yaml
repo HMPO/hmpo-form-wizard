@@ -1,0 +1,55 @@
+
+name:
+  label: Your name
+
+age:
+  label: Your age
+  validation:
+    range: Your age must be between 0 and 120
+
+color:
+  label: Pick your favourite colour
+  placeholder: Select a color
+  items:
+    red:
+      label: Red
+    blue:
+      label: Blue
+    pink:
+      label: Pink
+    green:
+      label: Green
+    purple:
+      label: Purple
+
+direction:
+  legend: Select a direction
+  items:
+    left:
+      label: Left
+    right:
+      label: Right
+
+left-only:
+  label: Left field
+  hint: This field is only shown if you selected Left
+
+right-only:
+  label: Right field
+  hint: This field is only shown if you selected Left
+
+question1:
+  label: Question 1
+
+question2:
+  label: Question 2
+  hint: Answering this question will invalidate question 3 and question 4
+
+question3:
+  label: Question 3
+
+question4:
+  label: Question 4
+
+question5:
+  label: Question 5

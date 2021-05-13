@@ -1,14 +1,20 @@
-{{< layout}}
+{% from "hmpo-form/macro.njk" import hmpoForm %}
+{% from "hmpo-text/macro.njk" import hmpoText %}
+{% from "hmpo-submit/macro.njk" import hmpoSubmit %}
 
-{{$header}}<h1>Enter your name</h1>{{/header}}
+{% extends "hmpo-template.njk" %}
 
-{{$content}}
-    {{<hmpo-partials-form}}
-        {{$form}}
-            {{#input-text}}name{{/input-text}}
-            {{#input-submit}}{{/input-submit}}
-        {{/form}}
-    {{/hmpo-partials-form}}
-{{/content}}
+{% set hmpoTitleKey = "fields.name.label" %}
 
-{{/ layout}}
+{% block content %}
+    {% call hmpoForm(ctx) %}
+
+        {{ hmpoText(ctx, {
+            id: "name",
+            isPageHeading: true
+        }) }}
+
+        {{ hmpoSubmit(ctx) }}
+
+    {% endcall %}
+{% endblock %}

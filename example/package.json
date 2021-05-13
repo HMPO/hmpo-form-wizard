@@ -4,25 +4,26 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "postinstall": "node-sass ./assets/app.scss ./assets/stylesheets/app.css --include-path ./node_modules",
-    "start": "node app.js"
+    "start": "node .",
+    "postinstall": "npm run build",
+    "build": "npm run build:sass && npm run build:js",
+    "build:sass": "mkdir -p public/stylesheets; node-sass assets/stylesheets/app.scss --output-style compressed public/stylesheets/application.css",
+    "build:js": "mkdir -p public/javascripts; cat node_modules/govuk-frontend/govuk/all.js node_modules/hmpo-components/all.js assets/javascripts/*.js > public/javascripts/application.js"
   },
-  "author": "",
+  "author": "HMPO",
   "dependencies": {
     "body-parser": "^1.12.2",
     "cookie-parser": "^1.4.1",
-    "express": "^4.12.3",
-    "express-partial-templates": "^0.2.0",
+    "express": "^4.17.1",
     "express-session": "^1.13.0",
+    "govuk-frontend": "latest",
+    "hmpo-components": "latest",
+    "hmpo-config": "latest",
     "hmpo-form-wizard": "file:..",
-    "hmpo-frontend-toolkit": "^8.0.0",
-    "hmpo-govuk-template": "^0.2.0",
-    "hmpo-model": "^1.0.0",
-    "hmpo-template-mixins": "^5.1.0",
-    "hmpo-templates": "^2.0.0",
-    "hogan-express-strict": "^0.5.3",
-    "i18n-future": "^1.0.0",
-    "node-sass": "^4.2.0",
-    "underscore": "^1.8.3"
+    "hmpo-i18n": "latest",
+    "hmpo-logger": "latest",
+    "hmpo-model": "latest",
+    "node-sass": "^6.0.0",
+    "nunjucks": "^3.2.3"
   }
 }

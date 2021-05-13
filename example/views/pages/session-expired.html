@@ -1,0 +1,14 @@
+{% extends "hmpo-template.njk" %}
+
+{% from "hmpo-submit/macro.njk" import hmpoSubmit %}
+
+{% set hmpoPageKey = "sessionExpired" %}
+
+{% block content %}
+    {{ super() }}
+
+    {{ hmpoSubmit(ctx, {
+        key: "startAgain",
+        href: "/"
+    }) }}
+{% endblock %}

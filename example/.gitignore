@@ -1,2 +1,4 @@
 node_modules
-assets/stylesheets
+public
+*.log
+package-lock.json

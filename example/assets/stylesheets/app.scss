@@ -1,0 +1,5 @@
+$govuk-assets-path: "/public/";
+$path: "./images/";
+
+@import "node_modules/govuk-frontend/govuk/all";
+@import "node_modules/hmpo-components/all";

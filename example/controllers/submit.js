@@ -1,13 +1,17 @@
 'use strict';
 
-const Controller = require('hmpo-form-wizard').Controller;
+const { Controller } = require('hmpo-form-wizard');
 const Model = require('../models/submit');
 
 class Submit extends Controller {
-    saveValues(req, res, callback) {
-        let data = req.sessionModel.toJSON();
-        let model = new Model(data);
-        model.save(callback);
+    saveValues(req, res, next) {
+        const data = {
+            chosenColor: req.sessionModel.get('color'),
+            yourAge: req.sessionModel.get('age'),
+            fullName: req.sessionModel.get('name')
+        };
+        const model = new Model(data);
+        model.save(next);
     }
 }
 

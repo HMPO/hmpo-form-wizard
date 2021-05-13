@@ -1,14 +1,20 @@
-{{< layout}}
+{% from "hmpo-form/macro.njk" import hmpoForm %}
+{% from "hmpo-number/macro.njk" import hmpoNumber %}
+{% from "hmpo-submit/macro.njk" import hmpoSubmit %}
 
-{{$header}}<h1>Enter your age</h1>{{/header}}
+{% extends "hmpo-template.njk" %}
 
-{{$content}}
-    {{<hmpo-partials-form}}
-        {{$form}}
-            {{#input-number}}age{{/input-number}}
-            {{#input-submit}}{{/input-submit}}
-        {{/form}}
-    {{/hmpo-partials-form}}
-{{/content}}
+{% set hmpoTitleKey = "fields.age.label" %}
 
-{{/ layout}}
+{% block content %}
+    {% call hmpoForm(ctx) %}
+
+        {{ hmpoNumber(ctx, {
+            id: "age",
+            isPageHeading: true
+        }) }}
+
+        {{ hmpoSubmit(ctx) }}
+
+    {% endcall %}
+{% endblock %}
