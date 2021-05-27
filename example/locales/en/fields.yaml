@@ -36,7 +36,7 @@ left-only:
 
 right-only:
   label: Right field
-  hint: This field is only shown if you selected Left
+  hint: This field is only shown if you selected Right
 
 question1:
   label: Question 1

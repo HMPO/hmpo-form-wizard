@@ -1,24 +1,10 @@
-{% from "hmpo-form/macro.njk" import hmpoForm %}
-{% from "hmpo-text/macro.njk" import hmpoText %}
-{% from "hmpo-submit/macro.njk" import hmpoSubmit %}
 {% from "hmpo-html/macro.njk" import hmpoHtml %}
 {% from "hmpo-inset-text/macro.njk" import hmpoInsetText %}
 
-{% extends "hmpo-template.njk" %}
+{% extends "form-template.njk" %}
 
-{% set hmpoTitleKey = "fields.left-only.label" %}
-
-{% block content %}
-    {% call hmpoForm(ctx) %}
-
-        {{ hmpoText(ctx, {
-            id: fieldName,
-            isPageHeading: true
-        }) }}
-
-        {{ hmpoSubmit(ctx) }}
-
-    {% endcall %}
+{% block mainContent %}
+    {{ super() }}
 
     {% call hmpoInsetText() %}
         {{ hmpoHtml(translate("pages.invalidation.all.shortcuts")) }}

@@ -15,7 +15,7 @@
     "body-parser": "^1.12.2",
     "cookie-parser": "^1.4.1",
     "express": "^4.17.1",
-    "express-session": "^1.13.0",
+    "express-session": "^1.17.2",
     "govuk-frontend": "latest",
     "hmpo-components": "latest",
     "hmpo-config": "latest",
