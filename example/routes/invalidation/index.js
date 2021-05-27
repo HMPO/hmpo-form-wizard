@@ -10,8 +10,8 @@ const fields = require('./fields');
 app.use(wizard(steps, fields, {
     journeyName: 'invalidation',
     name: 'invalidation1',
-    controller: require('../../controllers/question'),
-    templatePath: 'pages/invalidation'
+    templatePath: 'pages/invalidation',
+    editBackStep: 'done'
 }));
 
 module.exports = app;

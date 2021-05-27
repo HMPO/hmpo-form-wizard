@@ -1,8 +1,10 @@
 module.exports = {
     name: {
+        type: 'text',
         validate: 'required'
     },
     age: {
+        type: 'number',
         validate: [
             'required',
             'numeric',
@@ -10,6 +12,7 @@ module.exports = {
         ]
     },
     color: {
+        type: 'select',
         validate: 'required',
         items: [
             'red',

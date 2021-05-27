@@ -46,18 +46,18 @@ invalidation:
     title: Completed
     content:
       - Demo completed!
-      - Change the answer to <a href="question2">question 2</a> and question 3 and 4 will be invalidated.
+      - Change the answer to <a href="question2/edit">question 2</a> and question 3 and 4 will be invalidated.
       - You won't be able to move forward until you complete those questions.
-      - <a href="/" class="button">Back to examples list</a>
+      - <a href="/" class="govuk-button">Back to examples list</a>
   all:
     shortcuts:
-      - 'Shortcuts to steps:'
-      - - <a href="question1">question 1</a>
-      - - <a href="question2">question 2</a>
-      - - <a href="question3">question 3</a>
-      - - <a href="question4">question 4</a>
-      - - <a href="question5">question 5</a>
-      - - <a href="done">done</a>
+      - 'Direct links to steps:'
+      - - <a href="/invalidation/question1/edit">question 1</a>
+      - - <a href="/invalidation/question2/edit">question 2</a>
+      - - <a href="/invalidation/question3/edit">question 3</a>
+      - - <a href="/invalidation/question4/edit">question 4</a>
+      - - <a href="/invalidation/question5/edit">question 5</a>
+      - - <a href="/invalidation/done">done</a>
 
 multiwizard:
   index:

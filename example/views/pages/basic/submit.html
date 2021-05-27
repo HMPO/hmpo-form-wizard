@@ -1,14 +1,3 @@
-{% from "hmpo-form/macro.njk" import hmpoForm %}
-{% from "hmpo-submit/macro.njk" import hmpoSubmit %}
-
-{% extends "hmpo-template.njk" %}
+{% extends "form-template.njk" %}
 
 {% set hmpoPageKey = "basic.submit" %}
-
-{% block content %}
-    {{ super() }}
-
-    {% call hmpoForm(ctx) %}
-        {{ hmpoSubmit(ctx) }}
-    {% endcall %}
-{% endblock %}
