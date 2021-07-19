@@ -425,11 +425,20 @@ describe('Form Controller', () => {
         });
 
         it('calls next with a 405 error', () => {
+            req.method = 'POST';
             controller.methodNotSupported(req, res, next);
             next.should.have.been.called.and.calledWithExactly(sinon.match.instanceOf(Error));
             let err = next.args[0][0];
             err.status.should.equal(405);
             err.code.should.equal('METHOD_NOT_SUPPORTED');
+        });
+
+        it('calls next with a 405 error', () => {
+            req.method = 'HEAD';
+            controller.methodNotSupported(req, res, next);
+            next.should.not.have.been.called;
+            res.status.should.have.been.calledWithExactly(405);
+            res.send.should.have.been.calledWithExactly();
         });
     });
 
