@@ -25,7 +25,7 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "csrf": "^3.1.0",
-    "debug": "^4.3.1",
+    "debug": "^4.3.2",
     "deep-clone-merge": "^1.5.2",
     "hmpo-model": "^3.2.2",
     "json5": "^2.2.0",
@@ -37,9 +37,9 @@
   },
   "devDependencies": {
     "chai": "^4.3.4",
-    "eslint": "^7.27.0",
+    "eslint": "^7.31.0",
     "express": "^4.17.1",
-    "mocha": "^8.4.0",
+    "mocha": "^9.0.2",
     "nyc": "^15.1.0",
     "proxyquire": "^2.1.3",
     "reqres": "^3.0.1",
