@@ -28,7 +28,7 @@ describe('Form Controller', () => {
         };
         req = request({
             method: 'GET',
-            protocol: 'http:',
+            protocol: 'http',
             originalUrl: '/base/route?this=is&a=query',
             url: '/route',
             baseUrl: '/base',
