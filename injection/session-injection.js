@@ -62,7 +62,7 @@ class SessionInjection {
             throw new Error('No express session is available in request');
         }
 
-        options = _.extend({}, DEFAULTS, options);
+        options = Object.assign({}, DEFAULTS, options);
 
         req.session.exists = options.sessionExists;
 
@@ -81,7 +81,7 @@ class SessionInjection {
     setFeatureFlags(req, flags) {
         debug('setFeatureFlags', flags);
         if (flags) {
-            req.session.featureFlags = _.extend({}, flags);
+            req.session.featureFlags = Object.assign({}, flags);
         }
     }
 

@@ -16,7 +16,7 @@
   "author": "HMPO",
   "license": "MIT",
   "engines": {
-    "node": ">=8"
+    "node": ">=10"
   },
   "bugs": {
     "url": "https://github.com/UKHomeOffice/passports-form-wizard/issues"
@@ -25,9 +25,9 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "csrf": "^3.1.0",
-    "debug": "^4.3.2",
-    "deep-clone-merge": "^1.5.2",
-    "hmpo-model": "^3.2.2",
+    "debug": "^4.3.3",
+    "deep-clone-merge": "^1.5.3",
+    "hmpo-model": "^4.0.1",
     "json5": "^2.2.0",
     "moment": "^2.29.1",
     "underscore": "^1.13.1"
@@ -37,13 +37,13 @@
   },
   "devDependencies": {
     "chai": "^4.3.4",
-    "eslint": "^7.31.0",
+    "eslint": "^8.3.0",
     "express": "^4.17.1",
-    "mocha": "^9.0.2",
+    "mocha": "^9.1.3",
     "nyc": "^15.1.0",
     "proxyquire": "^2.1.3",
     "reqres": "^3.0.1",
-    "sinon": "^11.1.1",
+    "sinon": "^12.0.1",
     "sinon-chai": "^3.7.0"
   },
   "mocha": {

@@ -104,7 +104,7 @@ describe('wizard model', () => {
             wizardModel.getSessionData().should.deep.equal({
                 a: 'val1', // from wizard data
                 b: 'bar',  // from journey data
-                c: 'baz',   // from default
+                c: 'baz',  // from default
                 d: 'bam'   // from default
             });
         });
@@ -119,7 +119,7 @@ describe('wizard model', () => {
             wizardModel.reset();
             wizardModel.toJSON().should.deep.equal({
                 b: 'bar',  // from journey data
-                c: 'baz',   // from default
+                c: 'baz',  // from default
                 d: 'bam'   // from default
             });
         });
