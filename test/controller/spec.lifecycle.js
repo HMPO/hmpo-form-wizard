@@ -21,6 +21,7 @@ describe('Controller Lifecycle', () => {
         };
         req = request({
             method: 'GET',
+            protocol: 'http:',
             originalUrl: '/base/route',
             url: '/route',
             baseUrl: '/base',

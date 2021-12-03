@@ -149,7 +149,7 @@ describe('session model', () => {
         it('should reset the sessionModel attributes', () => {
             sessionModel.attributes = { foo: 'bar '};
             sessionModel._reload();
-            sessionModel.attributes.should.eql({});
+            expect(sessionModel.attributes).to.eql({});
         });
 
         it('should silently set the sessionModel with session data', () => {
