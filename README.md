@@ -172,14 +172,14 @@ The next step for each step can be a relative path, an external URL, or an array
   // next can be an array of conditions
   next: [
     // field, op and value. op defaults to '==='
-    { field: 'field1', op: '===', 'foobar', next: 'conditional-next' },
+    { field: 'field1', op: '===', value: 'foobar', next: 'conditional-next' },
 
     // an operator can be a function
     { field: 'field1', op: (fieldValue, req, res, con) => fieldValue === con.value, value: true, next: 'next-step' },
 
     // next can be an array of conditions
     { field: 'field1', value: 'boobaz', next: [
-        { field: 'field2', op: '=', 'foobar', next: 'sub-condition-next' },
+        { field: 'field2', op: '=', value: 'foobar', next: 'sub-condition-next' },
         'sub-condition-default-next'
     ] },
 
@@ -235,7 +235,7 @@ module.exports = CustomController
 Examples of custom controllers can be found in the [example app](./example/controllers)
 
 ## Controller lifecycle
-These controllers can be overridden in a custom controller to provide additional behaviour to a standard controller. 
+These controllers can be overridden in a custom controller to provide additional behaviour to a standard controller.
 
 [This diagram](https://github.com/UKHomeOffice/passports-form-wizard/wiki/HMPO%20Forms%20Flow.pdf) shows the interaction and sequence of these lifecycle events.
 
