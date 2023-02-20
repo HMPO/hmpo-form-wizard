@@ -205,6 +205,19 @@ describe('validation', () => {
             fields.field.validate[0].arguments.should.deep.equal([ 'number', 'one', 'two', 'three' ]);
         });
 
+        it('does not add divider items to the equality validator', () => {
+            fields = {
+                'field': {
+                    items: [ 'number', 'one', { divider: 'or' }, 'two', 'three' ]
+                }
+            };
+
+            validation.validate(fields, 'field');
+            fields.field.validate.should.have.length(1);
+            fields.field.validate[0].type.should.equal('equal');
+            fields.field.validate[0].arguments.should.deep.equal([ 'number', 'one', 'two', 'three' ]);
+        });
+
         it('should not add the options validator twice', () => {
             fields = {
                 'field': {
