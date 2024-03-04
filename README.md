@@ -97,6 +97,7 @@ Any of these options can also be provided as a third argument to the wizard to c
 * `editable` - This step is editable. This allows accessing this step with the `editSuffix` and sets the back link and next step to the `editBackStep`. Defaults to `false`.
 * `editSuffix` - Suffix to use for editing steps. Defaults to `/edit`.
 * `editBackStep` - Location to return to after editing a step. Defaults to `confirm`
+* `continueOnEdit` - While editing, if the step marked with this is evaluated to be the next step, continue to editing it instead of returning to `editBackStep`. Defaults to `false`.
 * `fields` - specifies which of the fields from the field definition list are applied to this step. Form inputs which are not named on this list will not be processed. Default: `[]`
 * `template` - Specifies the template to render for GET requests to this step. Defaults to the route (without trailing slash)
 *  `templatePath` - provides the location within `app.get('views')` that templates are stored.
