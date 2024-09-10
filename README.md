@@ -238,7 +238,10 @@ Examples of custom controllers can be found in the [example app](./example/contr
 ## Controller lifecycle
 These controllers can be overridden in a custom controller to provide additional behaviour to a standard controller.
 
-[This diagram](https://github.com/UKHomeOffice/passports-form-wizard/wiki/HMPO%20Forms%20Flow.pdf) shows the interaction and sequence of these lifecycle events.
+[![HMPO Forms Flow](https://user-images.githubusercontent.com/196695/161105955-1cc0837e-22da-4076-a4d6-fb7a95842834.png
+)](://github.com/UKHomeOffice/passports-form-wizard/wiki/HMPO%20Forms%20Flow.pdf)
+
+[This diagram]( ://github.com/UKHomeOffice/passports-form-wizard/wiki/HMPO%20Forms%20Flow.pdf) shows the interaction and sequence of these lifecycle events.
 
 ### GET lifecycle
 > #### - `configure(req, res, next)`
