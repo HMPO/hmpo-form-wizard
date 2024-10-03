@@ -1,3 +1,3 @@
 'use strict';
 
-module.exports = require('reqres').res;
+module.exports = require('hmpo-reqres').res;
