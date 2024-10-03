@@ -1,6 +1,6 @@
 'use strict';
 
-const reqres = require('reqres');
+const reqres = require('hmpo-reqres');
 const WizardModel = require('../../lib/wizard-model');
 const JourneyModel = require('../../lib/journey-model');
 
