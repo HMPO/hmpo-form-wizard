@@ -7,7 +7,7 @@
     "start": "node .",
     "postinstall": "npm run build",
     "build": "npm run build:sass && npm run build:js",
-    "build:sass": "mkdir -p public/stylesheets; node-sass assets/stylesheets/app.scss --output-style compressed public/stylesheets/application.css",
+    "build:sass": "mkdir -p public/stylesheets; sass -q -I . -s compressed --no-source-map assets/stylesheets/app.scss public/stylesheets/application.css",
     "build:js": "mkdir -p public/javascripts; cat node_modules/govuk-frontend/govuk/all.js node_modules/hmpo-components/all.js assets/javascripts/*.js > public/javascripts/application.js"
   },
   "author": "HMPO",
@@ -23,7 +23,7 @@
     "hmpo-i18n": "latest",
     "hmpo-logger": "latest",
     "hmpo-model": "latest",
-    "node-sass": "latest",
-    "nunjucks": "latest"
+    "nunjucks": "latest",
+    "sass": "latest"
   }
 }

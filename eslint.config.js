@@ -24,6 +24,9 @@ const styleRules = {
 module.exports = [
     js.configs.recommended,
     {
+        ignores: ['example/public/**']
+    },
+    {
         languageOptions: {
             ecmaVersion: 2022,
             globals: {
