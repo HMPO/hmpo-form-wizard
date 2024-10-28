@@ -163,6 +163,37 @@ describe('validators', () => {
 
     });
 
+    describe('maxwords', () => {
+
+        describe('invalid values', () => {
+            let inputs = [
+                [undefined, 1],
+                [100, 10],
+                ['asdfasdfasdf', 0],
+                ['asdf asdf asdf asdf asdf asdf asdf asdf', 3]
+            ];
+            _.each(inputs, i => {
+                it(testName(i), () => {
+                    validators.maxwords.apply(null, i).should.not.be.ok;
+                });
+            });
+        });
+
+        describe('valid values', () => {
+            let inputs = [
+                ['', 0],
+                ['asdfasdf asdf asdf asdf asdf', 10],
+                ['123', 4]
+            ];
+            _.each(inputs, i => {
+                it(testName(i), () => {
+                    validators.maxwords.apply(null, i).should.be.ok;
+                });
+            });
+        });
+
+    });
+
     describe('exactlength', () => {
 
         describe('invalid values', () => {
