@@ -1,0 +1,42 @@
+# Contribution guidelines
+
+*WIP QUESTION : Who currently maintains this?*
+
+## Contributing
+
+If you’ve got an idea or suggestion you can:
+
+* [create a GitHub issue](https://github.com/alphagov/govuk-prototype-kit/issues)
+
+## Raising bugs
+
+When raising bugs please explain the issue in good detail and provide a guide to how to replicate it.
+When describing the bug it's useful to follow the format:
+
+* what you did
+* what you expected to happen
+* what happened
+
+## Suggesting features
+
+Please raise feature requests as issues before contributing any code.
+
+This ensures they are discussed properly before any time is spent on them.
+
+## Contributing code
+
+### Indentation and whitespace
+
+Your JavaScript code should pass [linting](internal_docs/linting.md).
+
+For anything else, maintain 2-space, soft-tabs only indentation. No trailing whitespace.
+
+### Testing
+
+Please ensure unit tests are added or updated as appropriate for your changes.
+
+### Commit hygiene
+
+*WIP QUESTION : Do we want a rule about including the issue number in a commit?*
+
+To keep our commit history clean and easy to follow, we kindly ask that you squash your commits before merging your branch into the main branch. This helps to consolidate changes and makes the history more readable.
