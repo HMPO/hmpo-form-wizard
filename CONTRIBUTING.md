@@ -1,6 +1,6 @@
 # Contribution guidelines
 
-*WIP QUESTION : Who currently maintains this?*
+This is currently maintained by HMPO DCS (Digital Customer Services).
 
 ## Contributing
 
@@ -29,7 +29,7 @@ This ensures they are discussed properly before any time is spent on them.
 
 Your JavaScript code should pass linting checks.
 
-For anything else, maintain 4-space, soft-tabs only indentation. No trailing whitespace.
+For anything else, maintain 4-space, soft-tabs only indentation.
 
 ### Testing
 
