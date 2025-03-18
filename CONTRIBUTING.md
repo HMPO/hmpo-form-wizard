@@ -47,7 +47,13 @@ This ensures they are discussed properly before any time is spent on them.
 
 Your JavaScript code should pass linting checks.
 
-For anything else, maintain 4-space, soft-tabs only indentation.
+We use ESLint with its rules defined by [eslint.config.js](eslint.config.js)
+Some useful docs on ESLint can be found here:
+* [ESLint - Getting Started](https://eslint.org/docs/latest/use/getting-started)
+* [ESLint - CLI Options](https://eslint.org/docs/latest/use/command-line-interface)
+* [ESLint for VS Code](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint#:~:text=If%20you%20haven't%20installed,create%20an%20.eslintrc%20configuration%20file.)
+
+We ask that you maintain 4-space, soft-tabs only indentation.
 
 ### Testing
 
