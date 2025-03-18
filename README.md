@@ -8,7 +8,7 @@ Additional checks are also applied to ensure a user completes the form in the co
 
 ## Usage
 
-Define a set of steps:
+#### Define a set of steps:
 
 ```javascript
 // steps.js
@@ -32,7 +32,7 @@ module.exports = {
 }
 ```
 
-Define field rules:
+#### Define field rules:
 
 ```javascript
 // fields.js
@@ -46,9 +46,10 @@ module.exports = {
 }
 ```
 
-Create a wizard and bind it as middleware to an app:
+#### Create a wizard and bind it as middleware to an app:
 
 ```javascript
+// index.js
 const wizard = require('hmpo-form-wizard');
 const steps = require('./steps');
 const fields = require('./fields');
@@ -173,6 +174,7 @@ module.exports = {
 The next step for each step can be a relative path, an external URL, or an array of conditional next steps. Each condition next step can contain a next location, a field name, operator and value, or a custom condition function:
 
 ```javascript
+// steps.js
 '/step1': {
   // next can be a relative string path
   next: 'step2'
@@ -241,7 +243,7 @@ class CustomController extends Controller {
 module.exports = CustomController
 ```
 
-Examples of custom controllers can be found in the [example app](./example/controllers)
+Examples of custom controllers can be found in the [example app](./example/controllers/submit.js)
 
 ## Controller lifecycle
 These controllers can be overridden in a custom controller to provide additional behaviour to a standard controller.
@@ -289,7 +291,7 @@ An example application can be found in [the ./example directory](./example). To 
 
 ## Session Injection
 
-A helper is provided to aid with session injection:
+A [helper](./injection//session-injection.js) is provided to aid with session injection:
 
 ```javascript
 const SessionInjection = require('hmpo-form-wizard').SessionInjection;
@@ -338,7 +340,11 @@ This endpoint `/debug/session` can take a POST of JSON or url encoded data in th
 
 A GET to this endpoint will render a web form that can submit this JSON.
 
-## Migrating to wizard v6
+## Important Notes
+
+The following notes on version migrations can prove useful for better implementation understanding.
+
+### Migrating to wizard v6
 
 * The code has been updated to es6 and requires a minimum of Node v4
 * If additional middleware has been added by overriding the `constructor` or `requestHandler` method, this will need to be moved to one of the middleware setup methods (`middlewareSetup`, `middlewareChecks`, `middlewareActions`, or `middlewareLocals`) (see the Custom Controller example above)
@@ -347,8 +353,7 @@ A GET to this endpoint will render a web form that can submit this JSON.
 * `backLink` and `backLinks` must now be paths relative to the wizard base URL, or full HTTP URLs.
 * forks are now unsupported.
 
-
-## Migrating to wizard v7
+### Migrating to wizard v7
 
 * Step history has been moved from a `step` array in the `sessionModel` to a structured `history` array in the `journeyModel`.
 * Journey history checking has become stricter. A step will only be allowed if it is an `entryPoint`, it is `next` from an existing step, or a `prereq` is in history. History checking can be disabled with the `checkJourney` option set to false.
@@ -362,15 +367,18 @@ A GET to this endpoint will render a web form that can submit this JSON.
 * Branching is now supported by `next`. See the Example app for details.
 * The app should provide error middleware that redirects to the location specified by the `redirect` property of the error. This is to allow any error to be intercepted before redirection occurs.
 
-## Migrating to wizard v8
+### Migrating to wizard v8
+
 * Options are deep cloned to `req.form.options` on every request. These can be mutated by overriding the `configure(req, res, next)` method. Tests may need to be updated to make sure `req.form.options` is set to the same object as the controller options when not running the whole request lifecycle.
 * The `noPost` option will now set the step as complete if the `render` method is overridden. Previously this was done by `render`.
 
-## Migrating to wizard v9
+### Migrating to wizard v9
+
 * The `hmpo-form-controller` has been merged into the wizard's controller.
 * Dependent fields that are hidden are not set to their formatted defaults in `_process` instead of as part of `_validation`
 * The interface to the validation library has changed.
 * The `locals()` lifecycle event is now called asynchronously if a callback is supplied: `locals(req, res, callback(err, locals))`. The method can still be overwridden synchonrously by only providing a method as `locals(req, res)`.
 
-## Migrating to wizard v11
+### Migrating to wizard v11
+
 * Hogan has been removed from the wizard. Error messages are no longer localised and templated by the wizard at validation time. An updated `passports-template-mixins` module is reqiured to translate and format the error messages for both the inline errors and error summary at render time.
