@@ -119,8 +119,6 @@ Any of these options can also be provided as a third argument to the wizard to c
 * `translate` - provide a function for translating validation error codes into usable messages. Previous implementations have used [i18next](https://www.npmjs.com/package/i18next) to do translations.
 * `params` - Define express parameters for the route for supporting additional URL parameters.
 
-Remaining field options documentation can be found in the hmpo-template-mixins [README](https://github.com/UKHomeOffice/passports-template-mixins#options-1).
-
 ## Field options
 
 See [hmpo-components](https://github.com/HMPO/hmpo-components) for additional field options.

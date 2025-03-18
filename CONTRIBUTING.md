@@ -6,7 +6,8 @@ This is currently maintained by HMPO DCS (Digital Customer Services).
 
 If you’ve got an idea or suggestion you can:
 
-* [create a GitHub issue](https://github.com/HMPO/hmpo-form-wizard/issues)
+* [Create a GitHub issue](https://github.com/HMPO/hmpo-form-wizard/issues)
+* [Open a Pull Request](https://github.com/HMPO/hmpo-form-wizard/pulls) to implement or fix a new or existing issue.
 
 ## Raising bugs
 
