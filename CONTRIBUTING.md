@@ -6,7 +6,7 @@
 
 If you’ve got an idea or suggestion you can:
 
-* [create a GitHub issue](https://github.com/alphagov/govuk-prototype-kit/issues)
+* [create a GitHub issue](https://github.com/HMPO/hmpo-form-wizard/issues)
 
 ## Raising bugs
 
@@ -27,9 +27,9 @@ This ensures they are discussed properly before any time is spent on them.
 
 ### Indentation and whitespace
 
-Your JavaScript code should pass [linting](internal_docs/linting.md).
+Your JavaScript code should pass linting checks.
 
-For anything else, maintain 2-space, soft-tabs only indentation. No trailing whitespace.
+For anything else, maintain 4-space, soft-tabs only indentation. No trailing whitespace.
 
 ### Testing
 
