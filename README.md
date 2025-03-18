@@ -8,7 +8,7 @@ Additional checks are also applied to ensure a user completes the form in the co
 
 ## Usage
 
-#### Define a set of steps:
+### Define a set of steps
 
 ```javascript
 // steps.js
@@ -32,7 +32,7 @@ module.exports = {
 }
 ```
 
-#### Define field rules:
+### Define field rules
 
 ```javascript
 // fields.js
@@ -46,7 +46,7 @@ module.exports = {
 }
 ```
 
-#### Create a wizard and bind it as middleware to an app:
+### Create a wizard and bind it as middleware to an app
 
 ```javascript
 // index.js
@@ -109,7 +109,7 @@ Any of these options can also be provided as a third argument to the wizard to c
 * `continueOnEdit` - While editing, if the step marked with this is evaluated to be the next step, continue to editing it instead of returning to `editBackStep`. Defaults to `false`.
 * `fields` - specifies which of the fields from the field definition list are applied to this step. Form inputs which are not named on this list will not be processed. Default: `[]`
 * `template` - Specifies the template to render for GET requests to this step. Defaults to the route (without trailing slash)
-*  `templatePath` - provides the location within `app.get('views')` that templates are stored.
+* `templatePath` - provides the location within `app.get('views')` that templates are stored.
 * `backLink` - Specifies the location of the step previous to this one.
 * `backLinks` - Specifies valid referrers that can be used as a back link. If this or `backLink` are not specified then an algorithm is applied which checks the previously visited steps which have the current step set as `next`.
 * `controller` - The constructor for the controller to be used for this step's request handling. The default is exported as a `Controller` property of this module. If custom behaviour is required for a particular form step then custom extensions can be defined - see [Custom Controllers](#custom-controllers)
@@ -122,6 +122,7 @@ Any of these options can also be provided as a third argument to the wizard to c
 Remaining field options documentation can be found in the hmpo-template-mixins [README](https://github.com/UKHomeOffice/passports-template-mixins#options-1).
 
 ## Field options
+
 See [hmpo-components](https://github.com/HMPO/hmpo-components) for additional field options.
 
 * `journeyKey` - Name of the cross-wizard field storage name
@@ -145,6 +146,7 @@ See [hmpo-components](https://github.com/HMPO/hmpo-components) for additional fi
 * `contentKey` - localisation key to use for this field instead of the field name
 
 ## Central journey storage
+
 To facilitate sharing form values between wizards in the same journey a field can be specified to save into the `journeyModel` instead of the `sessionModel` using the `journeyKey` property:
 
 ```javascript
@@ -157,6 +159,7 @@ module.exports = {
 ```
 
 ## Default field values
+
 A default value for a field can be specified with the `default` property. This is used if the value loaded from the session is missing or undefined.
 
 ```javascript
@@ -167,7 +170,6 @@ module.exports = {
   }
 }
 ```
-
 
 ## Next steps
 
@@ -212,7 +214,6 @@ The next step for each step can be a relative path, an external URL, or an array
 }
 ```
 
-
 ## Custom Controllers
 
 Creating a custom controller:
@@ -246,6 +247,7 @@ module.exports = CustomController
 Examples of custom controllers can be found in the [example app](./example/controllers/submit.js)
 
 ## Controller lifecycle
+
 These controllers can be overridden in a custom controller to provide additional behaviour to a standard controller.
 
 [This diagram](https://github.com/UKHomeOffice/passports-form-wizard/wiki/HMPO%20Forms%20Flow.pdf) shows the interaction and sequence of these lifecycle events.
@@ -280,7 +282,6 @@ These controllers can be overridden in a custom controller to provide additional
 >> Saves the values to the session model.
 >> #### - `successHandler(req, res, next)`
 >> Saves the step into the step history and redirects to the next step.
-
 ### Error handling
 > #### - `errorHandler(err, req, res, next)`
 > Additional error handling can be performed by overriding the `errorHandler`.
