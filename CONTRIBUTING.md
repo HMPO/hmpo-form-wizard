@@ -10,8 +10,26 @@ If you’ve got an idea or suggestion you can:
 
 ## Raising bugs
 
-When raising bugs please explain the issue in good detail and provide a guide to how to replicate it.
-When describing the bug it's useful to follow the format:
+When reporting an issue, please include as much detail as possible to help us recreate, discuss, and resolve the problem. Here are some guidelines to follow:
+
+1. Describe the Issue: Provide a clear and concise description of the issue. Include any error messages, unexpected behavior, and steps to reproduce the problem.
+
+2. Environment Details: Specify the environment in which the issue occurred. This includes:
+
+   * Operating System (e.g., Windows 10, macOS Big Sur, Ubuntu 20.04)
+   * Browser and version (if applicable)
+   * Node.js version (if applicable)
+   * Any other relevant software versions
+
+3. Minimal Reproducer: To help us understand and fix the issue faster, please create a minimal reproducer repository. This should be a small, self-contained example that demonstrates the problem. Include:
+
+    * A link to the minimal reproducer repository
+    * Detailed reproduction instructions
+    * Any notes on the environment setup
+
+4. Additional Context: If there are any other details that might help us understand the issue better, please include them. This could be related issues, screenshots, or logs.
+
+When describing the bug it's also useful to follow the format:
 
 * what you did
 * what you expected to happen
