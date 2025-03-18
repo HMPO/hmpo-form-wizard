@@ -64,6 +64,12 @@ For production use a database backed session store is recommended - such as [con
 
 The wizard stores values and state in a model synchronised to the session. This is made available as `req.sessionModel`. This provides `get()`, `set()`, `unset()`, `toJSON()`, and `reset()` methods.
 
+`get(key)` - Retrieve the value associated with the specified key from the session model.
+`set(key, value)` - Set the value for the specified key in the session model.
+`unset(key)` - Remove the specified key and its value from the session model.
+`toJSON()` - Convert the session model to a JSON object.
+`reset()` - Reset the wizard sessionModel when this step is accessed. Defaults to false.
+
 The wizard shares journey step history with other wizards through a journey model on the session. The is exposed as `req.journeyModel`. The history is available as `req.journeyModel.get('history')`.
 
 ## Error handling
