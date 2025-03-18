@@ -302,6 +302,10 @@ This can be useful for quickly recreating issues or testing the behaviour of a j
 An example of how the SessionInjection middleware could be enabled for development and testing is:
 
 ```javascript
+// Check if NODE_ENV is development and set app to dev mode
+app.set('dev', process.env.NODE_ENV === 'development')
+
+// IF app is in dev mode, add the SessionInjection middleware
 if (app.get('dev')) {
     const SessionInjection = require('hmpo-form-wizard').SessionInjection;
     app.use('/debug/session', new SessionInjection().middleware());
