@@ -72,6 +72,8 @@ The wizard stores values and state in a model synchronised to the session. This 
 
 The wizard shares journey step history with other wizards through a journey model on the session. The is exposed as `req.journeyModel`. The history is available as `req.journeyModel.get('history')`.
 
+Further details of core model functionality can be found in the README for the [hmpo-model](https://github.com/HMPO/hmpo-model)
+
 ## Error handling
 
 The app should provide error middleware that redirects to the location specified by the `redirect` property of the error. This is to allow any error to be intercepted before redirection occurs.
@@ -294,7 +296,20 @@ const SessionInjection = require('hmpo-form-wizard').SessionInjection;
 app.use('/debug/session', new SessionInjection().middleware());
 ```
 
+This can be used to inject a mock session object/JSON to aid with debugging/testing a form journey.
+This can be useful for quickly recreating issues or testing the behaviour of a journey with specific values.
+
+An example of how the SessionInjection middleware could be enabled for development and testing is:
+
+```javascript
+if (app.get('dev')) {
+    const SessionInjection = require('hmpo-form-wizard').SessionInjection;
+    app.use('/debug/session', new SessionInjection().middleware());
+}
+```
+
 This endpoint `/debug/session` can take a POST of JSON or url encoded data in the format:
+
 ```json
 {
   "journeyName": "name",
