@@ -37,6 +37,4 @@ Please ensure unit tests are added or updated as appropriate for your changes.
 
 ### Commit hygiene
 
-*WIP QUESTION : Do we want a rule about including the issue number in a commit?*
-
 To keep our commit history clean and easy to follow, we kindly ask that you squash your commits before merging your branch into the main branch. This helps to consolidate changes and makes the history more readable.
