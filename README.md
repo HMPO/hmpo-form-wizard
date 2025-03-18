@@ -2,7 +2,7 @@
 
 Creates routing and request handling for a multi-step form process.
 
-Given a set of form steps and field definitions, the wizard function will create an express router with routing bound to each step of the form and input validation applied as configured.
+Given a set of [form steps](https://github.com/HMPO/hmpo-form-wizard/blob/master/example/routes/basic/steps.js) and [field definitions](https://github.com/HMPO/hmpo-form-wizard/blob/master/example/routes/basic/fields.js), the wizard function will create an express router with routing bound to each step of the form and input validation applied as configured.
 
 Additional checks are also applied to ensure a user completes the form in the correct order.
 
@@ -121,7 +121,7 @@ Any of these options can also be provided as a third argument to the wizard to c
 Remaining field options documentation can be found in the hmpo-template-mixins [README](https://github.com/UKHomeOffice/passports-template-mixins#options-1).
 
 ## Field options
-See hmpo-template-mixins or hmpo-components for additional field options.
+See [hmpo-components](https://github.com/HMPO/hmpo-components) for additional field options.
 
 * `journeyKey` - Name of the cross-wizard field storage name
 * `default` - Default value for this field
