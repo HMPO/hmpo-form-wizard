@@ -2,7 +2,7 @@
 
 Creates routing and request handling for a multi-step form process.
 
-Given a set of [form steps](https://github.com/HMPO/hmpo-form-wizard/blob/master/example/routes/basic/steps.js) and [field definitions](https://github.com/HMPO/hmpo-form-wizard/blob/master/example/routes/basic/fields.js), the wizard function will create an express router with routing bound to each step of the form and input validation applied as configured.
+Given a set of [form steps](./example/routes/basic/steps.js) and [field definitions](./example/routes/basic/fields.js), the wizard function will create an express router with routing bound to each step of the form and input validation applied as configured.
 
 Additional checks are also applied to ensure a user completes the form in the correct order.
 
@@ -290,7 +290,7 @@ An example application can be found in [the ./example directory](./example). To 
 
 ## Session Injection
 
-A [helper](./injection//session-injection.js) is provided to aid with session injection:
+A [helper](./injection/session-injection.js) is provided to aid with session injection:
 
 ```javascript
 const SessionInjection = require('hmpo-form-wizard').SessionInjection;
