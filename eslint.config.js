@@ -5,7 +5,7 @@ const globals = require('globals');
 const styleRules = {
     quotes: ['error', 'single', { avoidEscape: true }],
     'no-trailing-spaces': 'error',
-    indent: 'error',
+    indent: ['error', 4],
     'linebreak-style': ['error', 'unix'],
     semi: ['error', 'always'],
     'brace-style': ['error', '1tbs', { allowSingleLine: true }],
