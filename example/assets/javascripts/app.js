@@ -1,2 +1,5 @@
-/* eslint-disable no-undef */
-window.GOVUKFrontend.initAll();
+import { initAll } from 'govuk-frontend';
+
+import 'hmpo-components/all.js';
+
+initAll();

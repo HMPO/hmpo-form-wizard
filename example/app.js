@@ -23,7 +23,7 @@ app.use(hmpoLogger.middleware());
 // add routing for static assets
 app.use('/public', express.static(path.resolve(__dirname, 'public')));
 app.use('/public/images', express.static(path.resolve(__dirname, 'node_modules', 'hmpo-components', 'assets', 'images')));
-app.use('/public', express.static(path.resolve(__dirname, 'node_modules', 'govuk-frontend', 'govuk', 'assets')));
+app.use('/public', express.static(path.resolve(__dirname, 'node_modules', 'govuk-frontend', 'dist', 'govuk', 'assets')));
 
 
 // cookies and sessions (redis or elasticache should be used in a prod env)
@@ -41,13 +41,16 @@ app.set('view engine', 'html');
 const nunjucksEnv = nunjucks.configure([
     path.resolve(__dirname, 'views'),
     path.resolve(__dirname, 'node_modules', 'hmpo-components', 'components'),
-    path.resolve(__dirname, 'node_modules', 'govuk-frontend')
+    path.resolve(__dirname, 'node_modules', 'govuk-frontend', 'dist')
 ], {
     express: app,
     dev: true,
     noCache: true,
     watch: true
 });
+
+// govuk-frontend v5 rebrand
+nunjucksEnv.addGlobal('govukRebrand', true);
 
 
 // localisation support (supports setting language with query parameters and storing in a cookie)
