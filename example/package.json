@@ -8,7 +8,7 @@
     "postinstall": "npm run build",
     "build": "npm run build:sass && npm run build:js",
     "build:sass": "mkdir -p public/stylesheets; sass -q -I . -s compressed --no-source-map assets/stylesheets/app.scss public/stylesheets/application.css",
-    "build:js": "mkdir -p public/javascripts; cat node_modules/govuk-frontend/govuk/all.js node_modules/hmpo-components/all.js assets/javascripts/*.js > public/javascripts/application.js"
+    "build:js": "mkdir -p public/javascripts && rollup -c"
   },
   "author": "HMPO",
   "dependencies": {
@@ -25,5 +25,11 @@
     "hmpo-model": "latest",
     "nunjucks": "latest",
     "sass": "latest"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.42.0"
   }
 }
