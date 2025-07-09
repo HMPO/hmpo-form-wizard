@@ -363,6 +363,8 @@ These controllers can be overridden in a custom controller to provide additional
 
 An example application can be found in [the ./example directory](./example). To run this, follow the instructions in the [README](./example/README.md).
 
+> **⚠️ Express Compatibility**: If you encounter a `path-to-regexp` error when running the example app with `"latest"` dependencies, pin Express to a v4.x version in the example's package.json by changing `"express": "latest"` to `"express": "^4.21.2"`. This is due to breaking changes in Express v5.x that affect route parameter parsing.
+
 ## Session Injection
 
 A [helper](./injection/session-injection.js) is provided to aid with session injection:
