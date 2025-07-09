@@ -217,7 +217,7 @@ describe('Form Controller', () => {
             let fn = sinon.stub();
             controller.useWithMethod('get', [fn, [fn, fn, [fn, fn]]]);
             controller.router.get.should.have.been.calledWithExactly(
-                '*',
+                /.*/,
                 sinon.match.func,
                 sinon.match.func,
                 sinon.match.func,
