@@ -200,6 +200,7 @@ See [hmpo-components](https://github.com/HMPO/hmpo-components) for additional fi
 
 * `journeyKey` - Name of the cross-wizard field storage name
 * `default` - Default value for this field
+* `placeholder` - Placeholder selection value for select box or radio button fields when first loading the form. Can be set to `true` for an empty placeholder, or with `{ key: }` to set a specific value.
 * `multiple` - Allow multiple incomming values for a field. The result is presented as an array
 * `formater` - Array of formatter names for this field in addition to the default formatter set, or formatter objects
   * `type` - Formatter name
