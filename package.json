@@ -33,7 +33,7 @@
     "underscore": "^1.13.7"
   },
   "peerDependencies": {
-    "express": ">=4",
+    "express": "4 || 5",
     "json5": ">=2"
   },
   "devDependencies": {
