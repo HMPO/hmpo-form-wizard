@@ -26,9 +26,9 @@
   "dependencies": {
     "body-parser": "^1.20.3",
     "csrf": "^3.1.0",
-    "debug": "^4.3.7",
+    "debug": "4.3.7",
     "deep-clone-merge": "^1.5.5",
-    "hmpo-model": "^6.0.1",
+    "hmpo-model": "^6.0.2",
     "moment": "^2.30.1",
     "underscore": "^1.13.7"
   },
