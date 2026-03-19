@@ -4,7 +4,6 @@ const Controller = require('../../lib/controller');
 const ErrorClass = require('../../lib/error');
 const formatting = require('../../lib/formatting');
 const validation = require('../../lib/validation');
-// const _ = require('underscore');
 
 const proxyquire = require('proxyquire');
 const express = require('express');
@@ -17,6 +16,8 @@ describe('Form Controller', () => {
         options = {
             route: '/route',
             checkJourney: true,
+            skip: false,
+            noPost: false,
             next: 'nextstep',
             template: 'template',
             fields: {
@@ -94,12 +95,19 @@ describe('Form Controller', () => {
         });
 
         it('should remove post method if noPost option is set', () =>{
-            options.noPost  = true;
+            options.noPost = true;
             let controller = new Controller(options);
             expect(controller.post).to.be.null;
         });
 
-        it('should leave post method if noPost option is not set', () =>{
+        it('should leave post method if noPost option is not set', () => {
+            delete options.noPost;
+            let controller = new Controller(options);
+            controller.post.should.be.a('function');
+        });
+
+        it('should leave post method if noPost option is set to false', () =>{
+            options.noPost = false;
             let controller = new Controller(options);
             controller.post.should.be.a('function');
         });
@@ -486,7 +494,6 @@ describe('Form Controller', () => {
         });
     });
 
-
     describe('_getErrors', () => {
         let controller;
 
@@ -730,8 +737,9 @@ describe('Form Controller', () => {
             sinon.stub(controller, 'successHandler');
         });
 
-        it('should call post if skip is true', () => {
+        it('should call post if skip is true and noPost is false', () => {
             options.skip = true;
+            options.noPost = false;
             controller._checkStatus(req, res, next);
             next.should.not.have.been.called;
             controller.post.should.have.been.calledWithExactly(req, res, next);
@@ -743,17 +751,27 @@ describe('Form Controller', () => {
             next.should.have.been.calledWithExactly();
         });
 
-        it('should call the successHandler if skip is set but there is no post method', () => {
+        it('should call the successHandler if skip is set and noPost is true', () => {
             options.skip = true;
+            options.noPost = true;
+            controller._checkStatus(req, res, next);
+            next.should.not.have.been.called;
+            controller.successHandler.should.have.been.calledWithExactly(req, res, next);
+        });
+
+        it('should call successHandler if skip is true and post is not a function', () => {
+            options.skip = true;
+            options.noPost = false;
             controller.post = null;
             controller._checkStatus(req, res, next);
             next.should.not.have.been.called;
             controller.successHandler.should.have.been.calledWithExactly(req, res, next);
         });
 
-        it('should call setStepComplete if the step has a next page and no post method', () => {
+        it('should call setStepComplete if the step has a next page, noPost is true and checkJourney is true', () => {
             res.locals.nextPage = '/next/page';
-            controller.post = null;
+            options.noPost = true;
+            options.checkJourney = true;
             controller._checkStatus(req, res, next);
             controller.setStepComplete.should.have.been.calledOnce;
             controller.setStepComplete.should.have.been.calledWithExactly(req, res);
@@ -762,9 +780,19 @@ describe('Form Controller', () => {
 
         it('should not call setStepComplete if the next page is the same as the current url', () => {
             res.locals.nextPage = '/base/route';
-            controller.post = null;
             controller._checkStatus(req, res, next);
             controller.setStepComplete.should.not.have.been.called;
+            next.should.have.been.calledWithExactly();
+        });
+
+        it('should call setStepComplete if post is not a function and checkJourney is true', () => {
+            res.locals.nextPage = '/next/page';
+            options.noPost = false;
+            options.checkJourney = true;
+            controller.post = null;
+            controller._checkStatus(req, res, next);
+            controller.setStepComplete.should.have.been.calledOnce;
+            controller.setStepComplete.should.have.been.calledWithExactly(req, res);
             next.should.have.been.calledWithExactly();
         });
     });
