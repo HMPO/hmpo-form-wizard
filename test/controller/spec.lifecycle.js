@@ -10,6 +10,8 @@ describe('Controller Lifecycle', () => {
         options = {
             route: '/route',
             checkJourney: true,
+            skip: false,
+            noPost: false,
             next: 'nextstep',
             template: 'template',
             fields: {
@@ -303,9 +305,9 @@ describe('Controller Lifecycle', () => {
             handler(req, res, next);
         });
 
-        it('runs the successHandler if the skip options is set and there is no post handler', done => {
+        it('runs the successHandler if the skip option is set and noPost option is set', done => {
             controller.options.skip = true;
-            controller.post = null;
+            controller.options.noPost = true;
 
             assert = () => {
                 controller.successHandler.should.have.been
@@ -325,8 +327,8 @@ describe('Controller Lifecycle', () => {
             handler(req, res, next);
         });
 
-        it('sets the step as complete if there is no post handler', done => {
-            controller.post = null;
+        it('sets the step as complete if noPost option is set', done => {
+            controller.options.noPost = true;
 
             assert = () => {
                 controller.setStepComplete.should.have.been
