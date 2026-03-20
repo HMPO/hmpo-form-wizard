@@ -332,6 +332,14 @@ describe('Form Controller', () => {
             next.should.not.have.been.called;
         });
 
+        it('calls methodNotSupported for POSTing when noPost is set dynamically', () =>  {
+            req.form.options.noPost = true;
+            req.method = 'POST';
+            controller.rejectUnsupportedMethods(req, res, next);
+            controller.methodNotSupported.should.have.been.calledWithExactly(req, res, next);
+            next.should.not.have.been.called;
+        });
+
         it('does not call methodNotSupported for supported methods', () =>  {
             req.method = 'POST';
             controller.rejectUnsupportedMethods(req, res, next);
