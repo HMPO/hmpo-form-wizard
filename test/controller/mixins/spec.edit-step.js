@@ -221,6 +221,41 @@ describe('mixins/edit-step', () => {
             controller.getNextStep(req, res).should.equal('/base/url/backstep');
         });
 
+        it('returns editBackStep if the current step has been previously visited', () => {
+            req.journeyModel.set('history', [
+                { path: '/base/url/hub' },
+                { path: '/base/url/path', next: '/base/url/nextstep' }
+            ]);
+            req.isEditing = true;
+            options.nonLinearJourney = true;
+            options.fullPath = '/base/url/path';
+            controller.getNextStepObject.returns({ url: 'nextstep', condition: {} });
+            controller.getNextStep(req, res).should.equal('/base/url/backstep');
+        });
+
+        it('does not return editBackStep via visited step if step is invalid', () => {
+            req.journeyModel.set('history', [
+                { path: '/base/url/hub' },
+                { path: '/base/url/path', next: '/base/url/nextstep', invalid: true }
+            ]);
+            req.isEditing = true;
+            options.nonLinearJourney = true;
+            options.fullPath = '/base/url/path';
+            controller.getNextStepObject.returns({ url: 'nextstep', condition: {} });
+            controller.getNextStep(req, res).should.not.equal('/base/url/backstep');
+        });
+
+        it('does not use visited step fallback if nonLinearJourney is not set', () => {
+            req.journeyModel.set('history', [
+                { path: '/base/url/hub' },
+                { path: '/base/url/path', next: '/base/url/nextstep' }
+            ]);
+            req.isEditing = true;
+            options.fullPath = '/base/url/path';
+            controller.getNextStepObject.returns({ url: 'nextstep', condition: {} });
+            controller.getNextStep(req, res).should.not.equal('/base/url/backstep');
+        });
+
         it('returns last valid next in history in edit mode with next arg if backstep is not valid', () => {
             req.journeyModel.set('history', [
                 { path: '/base/url/a', next: '/base/url/b' },

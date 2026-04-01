@@ -182,6 +182,66 @@ describe('mixins/check-progress', () => {
             next.should.have.been.calledOnce;
             next.should.have.been.calledWithExactly();
         });
+
+        it('calls callback with no arguments if editing and step is visited in history with a next', () => {
+            req.isEditing = true;
+            controller.options.nonLinearJourney = true;
+            req.journeyModel.set('history', [
+                { path: '/base/hub', wizard: 'wizard' },
+                { path: '/base/teststep', next: '/base/nextstep', wizard: 'wizard' }
+            ]);
+            controller.checkJourneyProgress(req, res, next);
+            next.should.have.been.calledOnce;
+            next.should.have.been.calledWithExactly();
+        });
+
+        it('calls callback with MISSING_PREREQ if editing but step has no next in history', () => {
+            req.isEditing = true;
+            controller.options.nonLinearJourney = true;
+            req.journeyModel.set('history', [
+                { path: '/base/teststep', wizard: 'wizard' }
+            ]);
+            controller.checkJourneyProgress(req, res, next);
+            next.should.have.been.calledOnce;
+            next.args[0][0].should.be.an.instanceOf(Error);
+            next.args[0][0].code.should.equal('MISSING_PREREQ');
+        });
+
+        it('calls callback with MISSING_PREREQ if editing but step is invalid in history', () => {
+            req.isEditing = true;
+            controller.options.nonLinearJourney = true;
+            req.journeyModel.set('history', [
+                { path: '/base/teststep', next: '/base/nextstep', invalid: true }
+            ]);
+            controller.checkJourneyProgress(req, res, next);
+            next.should.have.been.calledOnce;
+            next.args[0][0].should.be.an.instanceOf(Error);
+            next.args[0][0].code.should.equal('MISSING_PREREQ');
+        });
+
+        it('does not use edit history fallback if not editing', () => {
+            controller.options.nonLinearJourney = true;
+            req.journeyModel.set('history', [
+                { path: '/base/hub', wizard: 'wizard' },
+                { path: '/base/teststep', next: '/base/nextstep', wizard: 'wizard' }
+            ]);
+            controller.checkJourneyProgress(req, res, next);
+            next.should.have.been.calledOnce;
+            next.args[0][0].should.be.an.instanceOf(Error);
+            next.args[0][0].code.should.equal('MISSING_PREREQ');
+        });
+
+        it('does not use edit history fallback if nonLinearJourney is not set', () => {
+            req.isEditing = true;
+            req.journeyModel.set('history', [
+                { path: '/base/hub', wizard: 'wizard' },
+                { path: '/base/teststep', next: '/base/nextstep', wizard: 'wizard' }
+            ]);
+            controller.checkJourneyProgress(req, res, next);
+            next.should.have.been.calledOnce;
+            next.args[0][0].should.be.an.instanceOf(Error);
+            next.args[0][0].code.should.equal('MISSING_PREREQ');
+        });
     });
 
     describe('checkProceedToNextStep', () => {
@@ -478,6 +538,38 @@ describe('mixins/check-progress', () => {
             );
         });
 
+    });
+
+    describe('visitedJourneyStep', () => {
+        it('returns the step if it exists in history', () => {
+            req.journeyModel.set('history', [
+                { path: '/base/hub', wizard: 'wizard' },
+                { path: '/base/teststep', next: '/base/nextstep', wizard: 'wizard' }
+            ]);
+            let result = controller.visitedJourneyStep(req, res, '/base/teststep');
+            result.should.deep.equal({ path: '/base/teststep', next: '/base/nextstep', wizard: 'wizard' });
+        });
+
+        it('returns the step even if it has no next', () => {
+            req.journeyModel.set('history', [
+                { path: '/base/hub', wizard: 'wizard' }
+            ]);
+            let result = controller.visitedJourneyStep(req, res, '/base/hub');
+            result.should.deep.equal({ path: '/base/hub', wizard: 'wizard' });
+        });
+
+        it('returns undefined if step is not in history', () => {
+            req.journeyModel.set('history', [
+                { path: '/base/other', next: '/base/nextstep' }
+            ]);
+            let result = controller.visitedJourneyStep(req, res, '/base/teststep');
+            expect(result).to.be.undefined;
+        });
+
+        it('returns undefined if history is empty', () => {
+            let result = controller.visitedJourneyStep(req, res, '/base/teststep');
+            expect(result).to.be.undefined;
+        });
     });
 
     describe('addJourneyHistoryStep', () => {

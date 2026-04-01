@@ -767,6 +767,37 @@ describe('Form Controller', () => {
             controller.setStepComplete.should.not.have.been.called;
             next.should.have.been.calledWithExactly();
         });
+
+        it('should add hub step to history on first visit when hub option is true', () => {
+            sinon.stub(controller, 'addJourneyHistoryStep');
+            options.hub = true;
+            options.fullPath = '/base/route';
+            options.name = 'test-wizard';
+            controller._checkStatus(req, res, next);
+            controller.addJourneyHistoryStep.should.have.been.calledOnce;
+            controller.addJourneyHistoryStep.should.have.been.calledWithExactly(req, res, {
+                path: '/base/route',
+                wizard: 'test-wizard'
+            });
+            next.should.have.been.calledWithExactly();
+        });
+
+        it('should not add hub step to history if already present', () => {
+            sinon.stub(controller, 'addJourneyHistoryStep');
+            options.hub = true;
+            options.fullPath = '/base/route';
+            req.journeyModel.set('history', [{ path: '/base/route' }]);
+            controller._checkStatus(req, res, next);
+            controller.addJourneyHistoryStep.should.not.have.been.called;
+            next.should.have.been.calledWithExactly();
+        });
+
+        it('should not add hub step to history when hub option is not set', () => {
+            sinon.stub(controller, 'addJourneyHistoryStep');
+            controller._checkStatus(req, res, next);
+            controller.addJourneyHistoryStep.should.not.have.been.called;
+            next.should.have.been.calledWithExactly();
+        });
     });
 
     describe('render', () => {
@@ -1162,6 +1193,28 @@ describe('Form Controller', () => {
         it('calls next', () => {
             controller.saveValues(req, res, next);
             next.should.have.been.calledWithExactly();
+        });
+
+        it('sets setValuesOnSave values in form values before saving', () => {
+            req.form.options = { setValuesOnSave: [{ key: 'sectionComplete', value: true }] };
+            controller.saveValues(req, res, next);
+            req.sessionModel.get('sectionComplete').should.equal(true);
+        });
+
+        it('sets multiple setValuesOnSave values', () => {
+            req.form.options = { setValuesOnSave: [
+                { key: 'sectionComplete', value: true },
+                { key: 'sectionStatus', value: 'done' }
+            ] };
+            controller.saveValues(req, res, next);
+            req.sessionModel.get('sectionComplete').should.equal(true);
+            req.sessionModel.get('sectionStatus').should.equal('done');
+        });
+
+        it('does not set values when setValuesOnSave is not configured', () => {
+            req.form.options = {};
+            controller.saveValues(req, res, next);
+            expect(req.sessionModel.get('sectionComplete')).to.be.undefined;
         });
     });
 
