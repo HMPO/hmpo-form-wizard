@@ -10,6 +10,8 @@ describe('Controller Lifecycle', () => {
         options = {
             route: '/route',
             checkJourney: true,
+            skip: false,
+            noPost: false,
             next: 'nextstep',
             template: 'template',
             fields: {
@@ -303,8 +305,31 @@ describe('Controller Lifecycle', () => {
             handler(req, res, next);
         });
 
-        it('runs the successHandler if the skip options is set and there is no post handler', done => {
+        it('runs the successHandler if the skip option is set and noPost option is set', done => {
             controller.options.skip = true;
+            controller.options.noPost = true;
+
+            assert = () => {
+                controller.successHandler.should.have.been
+                    .calledOnce
+                    .calledAfter(controller._checkStatus)
+                    .and.calledOn(controller)
+                    .and.calledWithExactly(req, res, sinon.match.func);
+                controller.setStepComplete.should.have.been
+                    .calledOnce
+                    .calledAfter(controller.successHandler)
+                    .and.calledOn(controller)
+                    .and.calledWithExactly(req, res);
+                controller.render.should.not.have.been.called;
+                done();
+            };
+
+            handler(req, res, next);
+        });
+
+        it('runs the successHandler if skip is set and post is not a function', done => {
+            controller.options.skip = true;
+            controller.options.noPost = false;
             controller.post = null;
 
             assert = () => {
@@ -325,8 +350,8 @@ describe('Controller Lifecycle', () => {
             handler(req, res, next);
         });
 
-        it('sets the step as complete if there is no post handler', done => {
-            controller.post = null;
+        it('sets the step as complete if noPost option is set', done => {
+            controller.options.noPost = true;
 
             assert = () => {
                 controller.setStepComplete.should.have.been
