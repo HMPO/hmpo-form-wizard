@@ -1,6 +1,6 @@
 {
   "name": "hmpo-form-wizard",
-  "version": "17.0.0",
+  "version": "17.0.1",
   "description": "Routing and request handling for a multi-step form processes",
   "main": "index.js",
   "scripts": {
@@ -51,7 +51,8 @@
     "sinon-chai": "^3.7.0"
   },
   "overrides": {
-    "serialize-javascript": "7.0.4"
+    "serialize-javascript": "7.0.4",
+    "qs": "6.16.0"
   },
   "mocha": {
     "require": "test/helpers",
