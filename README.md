@@ -220,6 +220,13 @@ See [hmpo-components](https://github.com/HMPO/hmpo-components) for additional fi
   * `field` - Field name
   * `value` - Field value
 * `invalidates` - an array of field names that will be 'invalidated' when this field value is set or changed. Any fields specified in the `invalidates` array will be removed from the `sessionModel`. Future steps that have used this value to make a branching decision will also be invalidated, making the user go through those steps and decisions again.
+* `invalidatesTask` - an array of rules for conditionally invalidating task completion flags when a field value changes. Each rule is an object with:
+  * `values` - Array of trigger values. Invalidation only occurs when the field is set to one of these values.
+  * `taskFlag` - (optional) The session key for the task completion flag to clear (e.g. `'sectionComplete'`).
+  * `fields` - (optional) Array of additional field names to clear from the session.
+  * `condition` - (optional) An additional gate that must be satisfied for the invalidation to fire:
+    * `field` - The field name to check.
+    * `values` - Array of values the condition field must currently hold for invalidation to proceed.
 * `contentKey` - localisation key to use for this field instead of the field name
 
 ## Central journey storage
