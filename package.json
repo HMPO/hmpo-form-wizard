@@ -1,6 +1,6 @@
 {
   "name": "hmpo-form-wizard",
-  "version": "15.0.0",
+  "version": "18.0.0",
   "description": "Routing and request handling for a multi-step form processes",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,7 @@
   "author": "HMPO",
   "license": "MIT",
   "engines": {
-    "node": "20.x || 22.x"
+    "node": "24.x"
   },
   "bugs": {
     "url": "https://github.com/HMPO/hmpo-form-wizard/issues"
@@ -26,9 +26,9 @@
   "dependencies": {
     "body-parser": "^1.20.3",
     "csrf": "^3.1.0",
-    "debug": "^4.3.7",
+    "debug": "4.3.7",
     "deep-clone-merge": "^1.5.5",
-    "hmpo-model": "^6.0.1",
+    "hmpo-model": "^7.0.1",
     "moment": "^2.30.1",
     "underscore": "^1.13.7"
   },
@@ -40,15 +40,19 @@
     "chai": "^4.5.0",
     "eslint": "^9.12.0",
     "express": "^4.21.2",
+    "globals": "^15.11.0",
+    "hmpo-reqres": "^3.0.0",
+    "husky": "^9.1.6",
     "json5": "^2.2.3",
     "mocha": "^10.7.3",
     "nyc": "^17.1.0",
     "proxyquire": "^2.1.3",
-    "hmpo-reqres": "^2.0.0",
-    "sinon": "^19.0.2",
-    "sinon-chai": "^3.7.0",
-    "husky": "^9.1.6",
-    "globals": "^15.11.0"
+    "sinon": "^21.0.2",
+    "sinon-chai": "^3.7.0"
+  },
+  "overrides": {
+    "serialize-javascript": "7.0.4",
+    "qs": "6.16.0"
   },
   "mocha": {
     "require": "test/helpers",

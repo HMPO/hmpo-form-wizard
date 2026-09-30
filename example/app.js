@@ -49,9 +49,6 @@ const nunjucksEnv = nunjucks.configure([
     watch: true
 });
 
-// govuk-frontend v5 rebrand
-nunjucksEnv.addGlobal('govukRebrand', true);
-
 
 // localisation support (supports setting language with query parameters and storing in a cookie)
 i18n.middleware(app, {

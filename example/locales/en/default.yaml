@@ -2,6 +2,8 @@ govuk:
   serviceName: Example service
   backLink: Back
   error: Error
+  errorSummaryTitle: There is a problem
+  cookieBanner: We use some essential cookies to make this service work.
 buttons:
   next: Continue
   startAgain: Start again

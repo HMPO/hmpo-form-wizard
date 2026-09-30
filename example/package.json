@@ -14,7 +14,7 @@
   "dependencies": {
     "body-parser": "latest",
     "cookie-parser": "latest",
-    "express": "latest",
+    "express": "^4.21.2",
     "express-session": "latest",
     "govuk-frontend": "latest",
     "hmpo-components": "latest",
@@ -31,5 +31,8 @@
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-terser": "^0.4.4",
     "rollup": "^4.42.0"
+  },
+  "overrides": {
+    "qs": "6.16.0"
   }
 }

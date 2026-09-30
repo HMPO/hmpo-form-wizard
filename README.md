@@ -177,11 +177,14 @@ Any of these options can also be provided as a third argument to the wizard to c
 * `resetJourney` - Reset the journey `journeyModel` when this step is accessed.
 * `skip` - A template is not rendered on a GET request. The `post()` lifecycle is called instead. Defaults to `false`.
 * `noPost` - Don't allow posting to this step. The post method is set to null and the step is completed if there is a next step
+* `hub` - Mark this step as a hub: it is recorded in journey history on GET without storing a `next` pointer. This allows other steps to declare `prereqs` referencing this step without the hub influencing skip-ahead navigation. Use with `nonLinearJourney: true` on the wizard. Defaults to `false`.
+* `setValuesOnSave` - Array of `{ key, value }` pairs to unconditionally set on the session when this step is submitted (in `saveValues`). Useful for recording completion state flags. e.g. `setValuesOnSave: [{ key: 'sectionComplete', value: 'completed' }]`
 * `forwardQuery` - forward the query params when internally redirecting. Defaults to `false`.
 * `editable` - This step is editable. This allows accessing this step with the `editSuffix` and sets the back link and next step to the `editBackStep`. Defaults to `false`.
 * `editSuffix` - Suffix to use for editing steps. Defaults to `/edit`.
 * `editBackStep` - Location to return to after editing a step. Defaults to `confirm`
 * `continueOnEdit` - While editing, if the step marked with this is evaluated to be the next step, continue to editing it instead of returning to `editBackStep`. Defaults to `false`.
+* `nonLinearJourney` - Enable support for branching journeys. When `true`, edit mode allows access to previously-completed steps even when not reachable by normal chain-walking. Defaults to `false`. Set as a wizard-level option.
 * `fields` - specifies which of the fields from the field definition list are applied to this step. Form inputs which are not named on this list will not be processed. Default: `[]`
 * `template` - Specifies the template to render for GET requests to this step. Defaults to the route (without trailing slash)
 * `templatePath` - provides the location within `app.get('views')` that templates are stored.
@@ -200,6 +203,7 @@ See [hmpo-components](https://github.com/HMPO/hmpo-components) for additional fi
 
 * `journeyKey` - Name of the cross-wizard field storage name
 * `default` - Default value for this field
+* `placeholder` - Placeholder selection value for select box or radio button fields when first loading the form. Can be set to `true` for an empty placeholder, or with `{ key: }` to set a specific value.
 * `multiple` - Allow multiple incomming values for a field. The result is presented as an array
 * `formater` - Array of formatter names for this field in addition to the default formatter set, or formatter objects
   * `type` - Formatter name
@@ -359,9 +363,94 @@ These controllers can be overridden in a custom controller to provide additional
 > #### - `errorHandler(err, req, res, next)`
 > Additional error handling can be performed by overriding the `errorHandler`.
 
+## Non-linear journeys
+
+By default, the wizard validates step access by walking a linear chain of `next` pointers in journey history. This works well for sequential journeys but breaks when a journey branches into multiple independent sections from a central step.
+
+To support this pattern, two opt-in options are provided:
+
+### `hub: true` (step option)
+
+Marks a step as a hub. On each GET request, the step is recorded in journey history with only `path` and `wizard` — no `next`. This allows other steps to declare `prereqs: ['hub-step']` to validate that the hub has been visited, without the hub interfering with skip-ahead navigation.
+
+```js
+'/dashboard': {
+  noPost: true,
+  checkJourney: false,
+  hub: true
+}
+```
+
+The `checkJourney: false` is typically set alongside `hub: true` since hub steps are dispatch points, not part of a linear sequence.
+
+### `nonLinearJourney: true` (wizard option)
+
+Enables two fallbacks for edit mode that the standard chain walk cannot handle:
+
+1. **Progress check**: When editing, a step that was previously completed (present in history with a `next` and not invalid) is allowed even if the chain walk cannot reach it.
+2. **Next step**: When editing, `editBackStep` is returned if the current step was previously visited, bypassing the normal reachability check.
+
+Set at the wizard level so it applies to all steps:
+
+```js
+app.use(wizard(steps, fields, {
+  name: 'my-wizard',
+  editBackStep: 'summary',
+  nonLinearJourney: true
+}));
+```
+
+### Full example
+
+```js
+// steps.js
+module.exports = {
+  '/dashboard': {
+    noPost: true,
+    checkJourney: false,
+    hub: true
+  },
+  '/section-a': {
+    prereqs: ['dashboard'],
+    editable: true,
+    next: 'section-a-details'
+  },
+  '/section-a-details': {
+    editable: true,
+    next: 'dashboard',
+    setValuesOnSave: [{ key: 'sectionAComplete', value: 'completed' }]
+  },
+  '/section-b': {
+    prereqs: ['dashboard'],
+    editable: true,
+    next: 'section-b-details'
+  },
+  '/section-b-details': {
+    editable: true,
+    next: 'dashboard',
+    setValuesOnSave: [{ key: 'sectionBComplete', value: 'completed' }]
+  },
+  '/summary': {
+    checkJourney: false,
+    prereqs: ['dashboard']
+  }
+}
+
+// index.js
+app.use(wizard(steps, fields, {
+  name: 'my-wizard',
+  editBackStep: 'summary',
+  nonLinearJourney: true
+}));
+```
+
+In this pattern, a user visits `/dashboard`, enters any section, completes it (which sets a flag via `setValuesOnSave`), and returns to `/dashboard`. They can later edit any previously-completed section step from `/summary` and be returned to `/summary` afterwards.
+
 ## Example app
 
 An example application can be found in [the ./example directory](./example). To run this, follow the instructions in the [README](./example/README.md).
+
+> **⚠️ Express Compatibility**: If you encounter a `path-to-regexp` error when running the example app with `"latest"` dependencies, pin Express to a v4.x version in the example's package.json by changing `"express": "latest"` to `"express": "^4.21.2"`. This is due to breaking changes in Express v5.x that affect route parameter parsing.
 
 ## Session Injection
 

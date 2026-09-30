@@ -1,5 +1,5 @@
-$govuk-assets-path: "/public/";
-$path: "./images/";
+@use "node_modules/govuk-frontend/dist/govuk" as * with (
+  $govuk-assets-path: "/public/"
+);
 
-@import "node_modules/govuk-frontend/dist/govuk/all";
 @import "node_modules/hmpo-components/all";
