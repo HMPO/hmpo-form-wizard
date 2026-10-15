@@ -10,32 +10,40 @@
     </script>
 </head>
 <body>
-<form method="POST">
-</br/>
-<% if (obj.notice) { %>
-  <h2 id="notice"><%- notice %></h2>
-<% } %>
-<h3>Session Injection JSON:</h3>
-<div>
-    <a href="javascript: showExample('simple')">Show Simple Example</a>
-    <textarea id="simpleExample" style="display: none" label="simpleExample"><%- simpleExample %></textarea>
-    |
-    <a href="javascript: showExample('full')">Show Full Example</a>
-    <textarea id="fullExample" style="display: none" label="fullExample"><%- fullExample %></textarea>
-</div>
-<textarea id="payload" name="payload" rows="20" cols="80" label="payload"><%- payload %></textarea><br/><br/>
-<input type="submit" label="submit"/>
-</form>
-</br/>
-<% if (obj.journeyKeys) { %>
-  <h3>Current Journey Keys:</h3>
-  <pre id="journeyKeys"><%- journeyKeys %></pre>
-  </br/>
-<% } %>
-<% if (obj.featureFlags) { %>
-  <h3>Current Feature Flags:</h3>
-  <pre id="featureFlags"><%- featureFlags %></pre>
-  </br/>
-<% } %>
+    <header role="banner">
+        <h1>Session Injection JSON:</h1>
+        </br/>
+        <% if (obj.notice) { %>
+        <h2 id="notice"><%- notice %></h2>
+        <% } %>
+    </header>
+
+    <main role="main">
+        <form method="POST">
+            <div>
+                <a href="javascript: showExample('simple')">Show Simple Example</a>
+                <textarea id="simpleExample" style="display: none" label="simpleExample" aria-label="payloadLabel"><%- simpleExample %></textarea>
+                |
+                <a href="javascript: showExample('full')">Show Full Example</a>
+                <textarea id="fullExample" style="display: none" label="fullExample" aria-label="payloadLabel"><%- fullExample %></textarea>
+            </div>
+            <br/>
+            <label id="payloadLabel" for="payload">Payload:</label>
+            <br/>
+            <textarea id="payload" name="payload" rows="20" cols="80"><%- payload %></textarea><br/><br/>
+            <input type="submit" label="submit"/>
+        </form>
+        </br/>
+        <% if (obj.journeyKeys) { %>
+        <h3>Current Journey Keys:</h3>
+        <pre id="journeyKeys"><%- journeyKeys %></pre>
+        </br/>
+        <% } %>
+        <% if (obj.featureFlags) { %>
+        <h3>Current Feature Flags:</h3>
+        <pre id="featureFlags"><%- featureFlags %></pre>
+        </br/>
+        <% } %>
+    </main>
 </body>
 </html>
